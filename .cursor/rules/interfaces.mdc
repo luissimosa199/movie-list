@@ -1,0 +1,46 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+
+# Here's the interface of the objects with are dealing with
+
+interface TMDBMovie {
+  adult: boolean;
+  backdrop_path: string;
+  genre_ids: number[];
+  id: number;
+  original_language: string;
+  original_title: string;
+  overview: string;
+  popularity: number;
+  poster_path: string;
+  release_date: string;
+  title: string;
+  video: boolean;
+  vote_average: number;
+  vote_count: number;
+}
+
+interface Movie {
+  id: number;
+  tmdb_id: number;
+  imdb_id: string;
+  created_at: string;
+  updated_at: string;
+  watched_at?: string | null;
+  title: string;
+  overview?: string | null;
+  release_date?: string | null;
+  runtime?: number | null;
+  genres?: string[] | null;
+  poster_url?: string | null;
+  score?: number | null;
+  isInList: boolean;
+}
+
+all components should be compatible with this interfaces, do not add them explicitly, just import them from ./types
+
+- You can @ files here
+- You can use markdown but dont have to
