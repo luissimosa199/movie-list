@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { addMovieToList, removeMovieFromList } from "@/api/db";
 import type { TMDBMovie } from "@/types";
-import { getMovieDetails } from "@/api/tmdb";
+import { getMovieDetails, searchMovies } from "@/api/tmdb";
 
 interface TMDBMovieDetails extends TMDBMovie {
   imdb_id: string;
@@ -38,6 +38,24 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error("Error adding movie:", error);
     return NextResponse.json({ error: "Failed to add movie" }, { status: 500 });
+  }
+}
+
+export async function GET(request: Request) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const query = searchParams.get("query") || "";
+    const page = parseInt(searchParams.get("page") || "1");
+    const limit = parseInt(searchParams.get("limit") || "10");
+
+    const movies = await searchMovies(query, page, limit);
+    return NextResponse.json(movies);
+  } catch (error) {
+    console.error("Error searching movies:", error);
+    return NextResponse.json(
+      { error: "Failed to search movies" },
+      { status: 500 }
+    );
   }
 }
 

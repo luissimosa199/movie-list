@@ -5,7 +5,7 @@ import {
   getTopRatedMovies,
   getUpcomingMovies,
 } from "@/api/tmdb";
-
+import SearchBar from "@/components/SearchBar";
 export default async function Movies() {
   const latestWatchedMovies = await getLatestWatchedMovies();
   const recentlyAddedMovies = await getRecentlyAddedMovies();
@@ -16,6 +16,8 @@ export default async function Movies() {
 
   return (
     <main className="bg-black text-white min-h-screen py-12 px-4">
+      <SearchBar />
+
       <div className="container mx-auto py-4">
         <h1 className="text-3xl md:text-4xl font-bold mb-10 tracking-tight">
           Latest Watched
