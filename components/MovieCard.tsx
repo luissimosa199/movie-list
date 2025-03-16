@@ -14,7 +14,6 @@ type MovieCardProps = {
 
 const MovieCard = async ({ movie, source }: MovieCardProps) => {
   const isMovieInDb = source === "db" || (await movieExistsInDb(movie.id));
-
   const posterUrl = getPosterUrl(movie, source);
   const genres = getGenres(movie, source);
   const releaseDate =
@@ -28,7 +27,11 @@ const MovieCard = async ({ movie, source }: MovieCardProps) => {
       className="bg-zinc-900 rounded-lg overflow-hidden border border-zinc-800 transition-transform hover:scale-[1.02] hover:shadow-lg"
     >
       <div className="aspect-[2/3] bg-zinc-800 relative">
-        <Link href={`/movies/${movie.id}${isMovieInDb ? "" : "?tmdb=true"}`}>
+        <Link
+          href={`/movies/${isMovieInDb || movie.id}${
+            !isMovieInDb ? "?tmdb=true" : ""
+          }`}
+        >
           {posterUrl ? (
             <Image
               src={posterUrl}
