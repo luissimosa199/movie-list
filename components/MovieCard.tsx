@@ -99,6 +99,7 @@ const MovieCard = async ({ movie, source }: MovieCardProps) => {
 
         <div className="flex gap-2 mt-4">
           <MarkMovieAsWatchedButton movie={movie as Movie} />
+          {/* TODO: Update MovieCardButton when the movie is marked as watched */}
           <MovieCardButton
             movie={movie as TMDBMovie}
             isMovieInDb={isMovieInDb}
