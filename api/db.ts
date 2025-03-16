@@ -63,5 +63,5 @@ export async function movieExistsInDb(tmdb_id: number): Promise<boolean> {
     },
   });
 
-  return movie !== null;
+  return movie ? movie.id : false;
 }
