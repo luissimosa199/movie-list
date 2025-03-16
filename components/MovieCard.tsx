@@ -51,7 +51,7 @@ const MovieCard = async ({ movie, source }: MovieCardProps) => {
         </Link>
       </div>
 
-      <div className="p-4">
+      <div className="p-4 flex flex-col justify-between">
         <h2 className="text-lg font-semibold mb-2 line-clamp-1">
           {movie.title}
         </h2>
@@ -72,7 +72,7 @@ const MovieCard = async ({ movie, source }: MovieCardProps) => {
         )}
 
         {genres && (
-          <p className="text-xs text-zinc-400 mb-1">
+          <p className="text-xs text-zinc-400 mb-1 h-7">
             <span className="text-zinc-500">Genres:</span> {genres.join(", ")}
           </p>
         )}
