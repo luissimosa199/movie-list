@@ -1,5 +1,6 @@
 "use client";
 
+import { updateMovieScore } from "@/lib/actions";
 import React, { useState } from "react";
 
 type StarRatingProps = {
@@ -11,15 +12,20 @@ export default function StarRating({ initialScore, movieId }: StarRatingProps) {
   const [score, setScore] = useState(initialScore);
   const [hoverScore, setHoverScore] = useState(0);
 
-  const handleStarClick = (index: number) => {
+  const handleStarClick = async (index: number) => {
     const newScore = index + 1;
     setScore(newScore);
-    console.log("@", { newScore, movieId });
+    try {
+      await updateMovieScore(movieId, newScore);
+    } catch (error) {
+      setScore(initialScore);
+      console.error("Error updating movie score:", error);
+    }
   };
 
   return (
     <div
-      className="flex items-center gap-1"
+      className="flex items-center justify-center gap-1 mt-2"
       role="group"
       aria-label="Movie rating"
     >
@@ -34,7 +40,7 @@ export default function StarRating({ initialScore, movieId }: StarRatingProps) {
             onClick={() => handleStarClick(index)}
             onMouseEnter={() => setHoverScore(starValue)}
             onMouseLeave={() => setHoverScore(0)}
-            className={`p-0.5 transition-colors duration-200 cursor-pointer`}
+            className={`p-0.5 transition-colors duration-200 cursor-pointer text-2xl`}
             aria-label={`Rate ${starValue} out of 5 stars`}
           >
             <span
