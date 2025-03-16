@@ -34,14 +34,15 @@ export async function removeMovie(id: number): Promise<Movie> {
 
 export async function markMovieAsWatched(
   id: number,
-  now: Date
+  now: Date,
+  isMovieInDb: boolean
 ): Promise<Movie> {
   const response = await fetch("/api/movies", {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ id, now }),
+    body: JSON.stringify({ id, now, isMovieInDb }),
   });
 
   if (!response.ok) {

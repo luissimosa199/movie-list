@@ -13,7 +13,8 @@ type MovieCardProps = {
 };
 
 const MovieCard = async ({ movie, source }: MovieCardProps) => {
-  const isMovieInDb = source === "db" || (await movieExistsInDb(movie.id));
+  const isMovieInDb =
+    source === "db" ? movie.id : await movieExistsInDb(movie.id);
   const posterUrl = getPosterUrl(movie, source);
   const genres = getGenres(movie, source);
   const releaseDate =
@@ -99,7 +100,7 @@ const MovieCard = async ({ movie, source }: MovieCardProps) => {
 
         <MovieCardButtonsSection
           movie={movie}
-          isMovieInDb={isMovieInDb}
+          isMovieInDb={!!isMovieInDb}
         />
       </div>
     </div>

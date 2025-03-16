@@ -66,25 +66,55 @@ export async function movieExistsInDb(tmdb_id: number): Promise<boolean> {
   return movie ? movie.id : false;
 }
 
-export async function markMovieAsWatched(
-  movieData: {
-    tmdb_id: number;
-    imdb_id: string;
-    title: string;
-    overview: string | null;
-    release_date: Date | null;
-    runtime: number | null;
-    genres: string[] | null;
-    poster_url: string | null;
-  },
-  now: Date
+type ExistingMovieData = {
+  id: number;
+};
+
+type NewMovieData = {
+  id: number;
+  title: string;
+  overview: string | null;
+  release_date: Date | null;
+  runtime: number | null;
+  genres: string[] | null;
+  poster_path: string | null;
+  imdb_id: string;
+};
+
+export async function markMovieAsWatched<T extends boolean>(
+  movieData: T extends true ? ExistingMovieData : NewMovieData,
+  now: Date,
+  isMovieInDb: T
 ) {
-  return (await prisma.movies.upsert({
-    where: { tmdb_id: movieData.tmdb_id },
-    update: { watched_at: now },
-    create: {
-      ...movieData,
-      watched_at: now,
-    },
-  })) as Movie;
+  if (isMovieInDb) {
+    console.log("@", { movieData });
+    return (await prisma.movies.update({
+      where: { id: movieData.id },
+      data: { watched_at: now },
+    })) as Movie;
+  } else {
+    const mappedMovieData = {
+      tmdb_id: movieData.id,
+      imdb_id: (movieData as NewMovieData).imdb_id,
+      title: (movieData as NewMovieData).title,
+      overview: (movieData as NewMovieData).overview || null,
+      release_date: (movieData as NewMovieData).release_date,
+      runtime: (movieData as NewMovieData).runtime || null,
+      genres: (movieData as NewMovieData).genres || null,
+      poster_url: (movieData as NewMovieData).poster_path
+        ? `https://image.tmdb.org/t/p/original${
+            (movieData as NewMovieData).poster_path
+          }`
+        : null,
+    };
+
+    return (await prisma.movies.upsert({
+      where: { tmdb_id: mappedMovieData.tmdb_id },
+      update: { watched_at: now },
+      create: {
+        ...mappedMovieData,
+        watched_at: now,
+      },
+    })) as Movie;
+  }
 }

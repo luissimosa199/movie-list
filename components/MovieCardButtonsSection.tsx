@@ -19,9 +19,9 @@ const MovieCardButtonsSection = ({
     <div className="flex gap-4 mt-4">
       <MarkMovieAsWatchedButton
         movie={movie as Movie}
+        isMovieInDb={isInDb}
         setIsInDb={setIsInDb}
       />
-      {/* TODO: Update MovieCardButton when the movie is marked as watched */}
       <MovieCardButton
         movie={movie as TMDBMovie}
         isMovieInDb={isInDb}

@@ -61,27 +61,34 @@ export async function DELETE(request: Request) {
 
 export async function PATCH(request: Request) {
   try {
-    const { id, now } = (await request.json()) as {
+    const { id, now, isMovieInDb } = (await request.json()) as {
       id: number;
       now: Date;
+      isMovieInDb: boolean;
     };
+
+    if (isMovieInDb) {
+      const result = await markMovieAsWatched({ id }, new Date(now), true);
+      return NextResponse.json(result);
+    }
+
     const movieData = (await getMovieDetails(id)) as TMDBMovieDetails;
+
     const result = await markMovieAsWatched(
       {
-        tmdb_id: movieData.id,
+        id: movieData.id,
         imdb_id: movieData.imdb_id,
         title: movieData.title,
-        overview: movieData.overview || null,
+        overview: movieData.overview,
         release_date: movieData.release_date
           ? new Date(movieData.release_date)
           : null,
-        runtime: movieData.runtime || null,
-        genres: movieData.genres?.map((g) => g.name) || null,
-        poster_url: movieData.poster_path
-          ? `https://image.tmdb.org/t/p/original${movieData.poster_path}`
-          : null,
+        runtime: movieData.runtime,
+        genres: movieData.genres?.map((g) => g.name),
+        poster_path: movieData.poster_path,
       },
-      now
+      new Date(now),
+      false
     );
     return NextResponse.json(result);
   } catch (error) {

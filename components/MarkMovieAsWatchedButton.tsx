@@ -7,9 +7,11 @@ import { formatCardDate } from "@/utils";
 
 export default function MarkMovieAsWatchedButton({
   movie,
+  isMovieInDb,
   setIsInDb,
 }: {
   movie: Movie;
+  isMovieInDb: boolean;
   setIsInDb: (isInDb: boolean) => void;
 }) {
   const [isWatched, setIsWatched] = useState<string | null>(() => {
@@ -24,7 +26,7 @@ export default function MarkMovieAsWatchedButton({
     try {
       setIsWatched(now.toISOString());
       setIsInDb(true);
-      await markMovieAsWatched(movie.id, now);
+      await markMovieAsWatched(movie.id, now, isMovieInDb);
     } catch (error) {
       setIsWatched(null);
       setIsInDb(false);
