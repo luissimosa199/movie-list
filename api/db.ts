@@ -65,3 +65,26 @@ export async function movieExistsInDb(tmdb_id: number): Promise<boolean> {
 
   return movie ? movie.id : false;
 }
+
+export async function markMovieAsWatched(
+  movieData: {
+    tmdb_id: number;
+    imdb_id: string;
+    title: string;
+    overview: string | null;
+    release_date: Date | null;
+    runtime: number | null;
+    genres: string[] | null;
+    poster_url: string | null;
+  },
+  now: Date
+) {
+  return (await prisma.movies.upsert({
+    where: { tmdb_id: movieData.tmdb_id },
+    update: { watched_at: now },
+    create: {
+      ...movieData,
+      watched_at: now,
+    },
+  })) as Movie;
+}
