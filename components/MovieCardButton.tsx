@@ -2,17 +2,16 @@
 
 import { addMovie, removeMovie } from "@/lib/actions";
 import { TMDBMovie } from "@/types";
-import { useState } from "react";
 
 const MovieCardButton = ({
   movie,
   isMovieInDb,
+  setIsInDb,
 }: {
   movie: TMDBMovie;
   isMovieInDb: number | boolean;
+  setIsInDb: (isInDb: boolean) => void;
 }) => {
-  const [isInDb, setIsInDb] = useState<boolean>(!!isMovieInDb);
-
   return (
     <button
       className="bg-transparent border border-zinc-700 hover:border-zinc-600 text-white text-sm py-2 px-4 rounded-md transition-colors flex-1 cursor-pointer"
@@ -36,7 +35,7 @@ const MovieCardButton = ({
         }
       }}
     >
-      {isInDb ? "Remove from List" : "Add to List"}
+      {isMovieInDb ? "Remove from List" : "Add to List"}
     </button>
   );
 };

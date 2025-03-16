@@ -27,6 +27,10 @@ export const getFormattedDate = (
   return parsedDate.toLocaleDateString();
 };
 
+export const formatCardDate = (date: string) => {
+  return date.slice(0, 10).split("-").reverse().join("/");
+};
+
 // Helper function to get genres based on source
 export const getGenres = (movie: Movie | TMDBMovie, source: "db" | "tmdb") => {
   if (source === "db") {

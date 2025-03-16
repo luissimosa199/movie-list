@@ -4,9 +4,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { getFormattedDate, getGenres } from "@/utils";
 import { getPosterUrl } from "@/utils";
-import MovieCardButton from "./MovieCardButton";
 import { movieExistsInDb } from "@/api/db";
-import MarkMovieAsWatchedButton from "./MarkMovieAsWatchedButton";
+import MovieCardButtonsSection from "./MovieCardButtonsSection";
+
 type MovieCardProps = {
   movie: Movie | TMDBMovie;
   source: "db" | "tmdb";
@@ -97,14 +97,10 @@ const MovieCard = async ({ movie, source }: MovieCardProps) => {
           </p>
         )}
 
-        <div className="flex gap-2 mt-4">
-          <MarkMovieAsWatchedButton movie={movie as Movie} />
-          {/* TODO: Update MovieCardButton when the movie is marked as watched */}
-          <MovieCardButton
-            movie={movie as TMDBMovie}
-            isMovieInDb={isMovieInDb}
-          />
-        </div>
+        <MovieCardButtonsSection
+          movie={movie}
+          isMovieInDb={isMovieInDb}
+        />
       </div>
     </div>
   );

@@ -3,8 +3,15 @@
 import { Movie } from "@/types";
 import { useState } from "react";
 import { markMovieAsWatched } from "@/lib/actions";
+import { formatCardDate } from "@/utils";
 
-export default function MarkMovieAsWatchedButton({ movie }: { movie: Movie }) {
+export default function MarkMovieAsWatchedButton({
+  movie,
+  setIsInDb,
+}: {
+  movie: Movie;
+  setIsInDb: (isInDb: boolean) => void;
+}) {
   const [isWatched, setIsWatched] = useState<string | null>(() => {
     if (!movie.watched_at) return null;
     return movie.watched_at instanceof Date
@@ -15,10 +22,12 @@ export default function MarkMovieAsWatchedButton({ movie }: { movie: Movie }) {
   const handleClick = async () => {
     const now = new Date();
     try {
-      await markMovieAsWatched(movie.id, now);
       setIsWatched(now.toISOString());
+      setIsInDb(true);
+      await markMovieAsWatched(movie.id, now);
     } catch (error) {
       setIsWatched(null);
+      setIsInDb(false);
       console.error("Error marking movie as watched:", error);
     }
   };
@@ -30,7 +39,7 @@ export default function MarkMovieAsWatchedButton({ movie }: { movie: Movie }) {
       className="bg-primary hover:bg-primary/90 text-white text-sm py-2 px-4 rounded-md transition-all flex-1 cursor-pointer hover:scale-105 hover:shadow-sm hover:shadow-zinc-800"
     >
       {isWatched
-        ? `Watched on ${new Date(isWatched).toLocaleDateString()}`
+        ? `Watched on ${formatCardDate(isWatched)}`
         : "Mark as Watched"}
     </button>
   );
