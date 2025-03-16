@@ -76,7 +76,7 @@ export interface CreateMovieData {
   runtime: number;
   genres: string[];
   poster_url: string | null;
-  score: number;
+  score?: number;
   created_at: Date;
   updated_at: Date;
   watched_at: Date | null;
