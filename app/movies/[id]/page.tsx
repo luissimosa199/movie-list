@@ -5,6 +5,7 @@ import MovieDetailGrid from "@/components/MovieDetailGrid";
 import { getMovieDetails } from "@/api/tmdb";
 import { FullDetailTMDBMovie } from "@/types";
 import { getPosterUrl } from "@/utils";
+import MovieCardButtonsSection from "@/components/MovieCardButtonsSection";
 
 interface PageProps {
   params: Promise<{
@@ -88,14 +89,22 @@ export default async function MoviePage({ params, searchParams }: PageProps) {
               source={isTmdb ? "tmdb" : "db"}
             />
 
-            <div className="flex flex-col sm:flex-row gap-4 mt-auto">
+            {/* Add new buttons */}
+
+            <MovieCardButtonsSection
+              movie={movie}
+              isMovieInDb={!isTmdb}
+            />
+
+            {/* <div className="flex flex-col sm:flex-row gap-4 mt-auto">
               <button className="bg-primary hover:bg-primary/90 text-white py-3 px-6 rounded-md transition-colors font-medium">
                 Watch Now
               </button>
               <button className="bg-transparent border border-zinc-700 hover:border-zinc-600 text-white py-3 px-6 rounded-md transition-colors">
                 {isTmdb ? "Add to List" : "Remove from List"}
               </button>
-            </div>
+            </div> */}
+            {/* TODO: Add new buttons */}
           </div>
         </div>
       </div>
