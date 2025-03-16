@@ -6,6 +6,7 @@ import { getFormattedDate, getGenres } from "@/utils";
 import { getPosterUrl } from "@/utils";
 import { movieExistsInDb } from "@/api/db";
 import MovieCardButtonsSection from "./MovieCardButtonsSection";
+import StarRating from "./StarRating";
 
 type MovieCardProps = {
   movie: Movie | TMDBMovie;
@@ -102,6 +103,13 @@ const MovieCard = async ({ movie, source }: MovieCardProps) => {
           movie={movie}
           isMovieInDb={!!isMovieInDb}
         />
+
+        {source === "db" && (
+          <StarRating
+            movieId={movie.id}
+            initialScore={(movie as Movie).score || 0}
+          />
+        )}
       </div>
     </div>
   );
