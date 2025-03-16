@@ -28,7 +28,6 @@ export async function POST(request: Request) {
       poster_url: movieData.poster_path
         ? `https://image.tmdb.org/t/p/original${movieData.poster_path}`
         : null,
-      score: movieData.vote_average,
       created_at: new Date(),
       updated_at: new Date(),
       watched_at: null,
