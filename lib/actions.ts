@@ -31,3 +31,22 @@ export async function removeMovie(id: number): Promise<Movie> {
 
   return response.json();
 }
+
+export async function markMovieAsWatched(
+  id: number,
+  now: Date
+): Promise<Movie> {
+  const response = await fetch("/api/movies", {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ id, now }),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to mark movie as watched");
+  }
+
+  return response.json();
+}
