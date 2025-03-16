@@ -37,7 +37,7 @@ export async function markMovieAsWatched(
   now: Date,
   isMovieInDb: boolean
 ): Promise<Movie> {
-  const response = await fetch("/api/movies", {
+  const response = await fetch("/api/movies/watched", {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
@@ -47,6 +47,25 @@ export async function markMovieAsWatched(
 
   if (!response.ok) {
     throw new Error("Failed to mark movie as watched");
+  }
+
+  return response.json();
+}
+
+export async function updateMovieScore(
+  id: number,
+  score: number
+): Promise<Movie> {
+  const response = await fetch("/api/movies/score", {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ id, score }),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to update movie score");
   }
 
   return response.json();
