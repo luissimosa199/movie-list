@@ -9,7 +9,6 @@ const MovieDetailGrid = ({
   source: "tmdb" | "db";
 }) => {
   const isTMDBMovie = source === "tmdb";
-  console.log(movie);
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 bg-zinc-900 p-6 rounded-lg border border-zinc-800">
