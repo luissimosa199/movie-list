@@ -18,11 +18,21 @@ const MovieCardButton = ({
       className="bg-transparent border border-zinc-700 hover:border-zinc-600 text-white text-sm py-2 px-4 rounded-md transition-colors flex-1 cursor-pointer"
       onClick={() => {
         if (isMovieInDb) {
-          removeMovie(isMovieInDb as number);
           setIsInDb(false);
+          try {
+            removeMovie(isMovieInDb as number);
+          } catch (error) {
+            setIsInDb(true);
+            console.error("Error removing movie:", error);
+          }
         } else {
-          addMovie(movie as TMDBMovie);
           setIsInDb(true);
+          try {
+            addMovie(movie as TMDBMovie);
+          } catch (error) {
+            setIsInDb(false);
+            console.error("Error adding movie:", error);
+          }
         }
       }}
     >
