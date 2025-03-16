@@ -6,7 +6,7 @@ import { getFormattedDate, getGenres } from "@/utils";
 import { getPosterUrl } from "@/utils";
 import MovieCardButton from "./MovieCardButton";
 import { movieExistsInDb } from "@/api/db";
-
+import MarkMovieAsWatchedButton from "./MarkMovieAsWatchedButton";
 type MovieCardProps = {
   movie: Movie | TMDBMovie;
   source: "db" | "tmdb";
@@ -98,14 +98,7 @@ const MovieCard = async ({ movie, source }: MovieCardProps) => {
         )}
 
         <div className="flex gap-2 mt-4">
-          <button className="bg-primary hover:bg-primary/90 text-white text-sm py-2 px-4 rounded-md transition-colors flex-1">
-            {isMovieInDb && (movie as Movie).watched_at
-              ? `Watched on ${getFormattedDate(
-                  (movie as Movie).watched_at,
-                  "db"
-                )}`
-              : "Mark as Watched"}
-          </button>
+          <MarkMovieAsWatchedButton movie={movie as Movie} />
           <MovieCardButton
             movie={movie as TMDBMovie}
             isMovieInDb={isMovieInDb}
