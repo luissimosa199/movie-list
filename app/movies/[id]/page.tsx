@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import Image from "next/image";
-import { getMovie } from "@/api/db";
+import { getMovie, movieExistsInDb } from "@/api/db";
 import MovieDetailGrid from "@/components/MovieDetailGrid";
 import { getMovieDetails } from "@/api/tmdb";
 import { FullDetailTMDBMovie } from "@/types";
@@ -33,6 +33,9 @@ export default async function MoviePage({ params, searchParams }: PageProps) {
   if (!movie) {
     notFound();
   }
+
+  // Check if movie is in database
+  const isMovieInDb = isTmdb ? await movieExistsInDb(movieId) : movie.id;
 
   const posterUrl = getPosterUrl(movie, isTmdb ? "tmdb" : "db");
 
@@ -93,7 +96,7 @@ export default async function MoviePage({ params, searchParams }: PageProps) {
 
             <MovieCardButtonsSection
               movie={movie}
-              isMovieInDb={!isTmdb}
+              isMovieInDb={isMovieInDb}
             />
 
             {/* <div className="flex flex-col sm:flex-row gap-4 mt-auto">

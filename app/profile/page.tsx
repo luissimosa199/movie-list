@@ -4,8 +4,8 @@ import Link from "next/link";
 
 export default async function ProfilePage() {
   // Get a subset of movies for preview (5 each)
-  const latestWatchedMovies = await getLatestWatchedMovies(5);
-  const recentlyAddedMovies = await getRecentlyAddedMovies(5);
+  const latestWatchedMovies = await getLatestWatchedMovies(4);
+  const recentlyAddedMovies = await getRecentlyAddedMovies(4);
 
   return (
     <main className="bg-black text-white min-h-screen py-12 px-4">
@@ -29,7 +29,7 @@ export default async function ProfilePage() {
           </Link>
 
           {latestWatchedMovies.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
               {latestWatchedMovies.map((movie) => (
                 <MovieCard
                   key={movie.id}
@@ -63,7 +63,7 @@ export default async function ProfilePage() {
           </Link>
 
           {recentlyAddedMovies.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
               {recentlyAddedMovies.map((movie) => (
                 <MovieCard
                   key={movie.id}
