@@ -1,4 +1,4 @@
-import { TMDBMovie } from "@/types";
+import { TMDBMovie, TMDBSeries } from "@/types";
 
 type QueryParams = Record<string, string | number>;
 
@@ -130,6 +130,79 @@ export async function getMovieRecommendations(
 ): Promise<TMDBResponse<TMDBMovie>> {
   const response = await fetchFromTMDB<TMDBResponse<TMDBMovie>>(
     `/movie/${movieId}/recommendations`,
+    { page }
+  );
+  return {
+    ...response,
+    results: response.results.slice(0, limit),
+  };
+}
+
+// TV Series API Functions
+export async function getSeriesDetails(id: number): Promise<TMDBSeries> {
+  return fetchFromTMDB<TMDBSeries>(`/tv/${id}`);
+}
+
+export async function searchSeries(
+  query: string,
+  page: number = 1,
+  limit: number = 10
+): Promise<TMDBResponse<TMDBSeries>> {
+  return fetchFromTMDB<TMDBResponse<TMDBSeries>>("/search/tv", {
+    query,
+    page,
+    per_page: limit,
+  });
+}
+
+export async function getPopularSeries(
+  page: number = 1,
+  limit: number = 10
+): Promise<TMDBResponse<TMDBSeries>> {
+  const response = await fetchFromTMDB<TMDBResponse<TMDBSeries>>(
+    "/tv/popular",
+    { page }
+  );
+  return {
+    ...response,
+    results: response.results.slice(0, limit),
+  };
+}
+
+export async function getTopRatedSeries(
+  page: number = 1,
+  limit: number = 10
+): Promise<TMDBResponse<TMDBSeries>> {
+  const response = await fetchFromTMDB<TMDBResponse<TMDBSeries>>(
+    "/tv/top_rated",
+    { page }
+  );
+  return {
+    ...response,
+    results: response.results.slice(0, limit),
+  };
+}
+
+export async function getOnTheAirSeries(
+  page: number = 1,
+  limit: number = 10
+): Promise<TMDBResponse<TMDBSeries>> {
+  const response = await fetchFromTMDB<TMDBResponse<TMDBSeries>>(
+    "/tv/on_the_air",
+    { page }
+  );
+  return {
+    ...response,
+    results: response.results.slice(0, limit),
+  };
+}
+
+export async function getAiringTodaySeries(
+  page: number = 1,
+  limit: number = 10
+): Promise<TMDBResponse<TMDBSeries>> {
+  const response = await fetchFromTMDB<TMDBResponse<TMDBSeries>>(
+    "/tv/airing_today",
     { page }
   );
   return {
