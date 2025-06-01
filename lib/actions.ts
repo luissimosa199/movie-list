@@ -1,72 +1,130 @@
+"use server";
+
+import { revalidatePath } from "next/cache";
+import {
+  addMovieToList,
+  removeMovieFromList,
+  markMovieAsWatched as dbMarkMovieAsWatched,
+  updateMovieScore as dbUpdateMovieScore,
+} from "@/api/db";
+import { getMovieDetails } from "@/api/tmdb";
 import { Movie, TMDBMovie } from "@/types";
 
-export async function addMovie(movie: TMDBMovie): Promise<Movie> {
-  const response = await fetch("/api/movies", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(movie),
-  });
+interface TMDBMovieDetails extends TMDBMovie {
+  imdb_id: string;
+  runtime: number;
+  genres: Array<{
+    id: number;
+    name: string;
+  }>;
+}
 
-  if (!response.ok) {
+export async function addMovie(movie: TMDBMovie): Promise<Movie> {
+  try {
+    const movieData = (await getMovieDetails(movie.id)) as TMDBMovieDetails;
+
+    const now = new Date();
+    const result = await addMovieToList({
+      tmdb_id: movieData.id,
+      imdb_id: movieData.imdb_id,
+      title: movieData.title,
+      overview: movieData.overview,
+      release_date: new Date(movieData.release_date),
+      runtime: movieData.runtime,
+      genres: movieData.genres.map((g) => g.name),
+      poster_url: movieData.poster_path
+        ? `https://image.tmdb.org/t/p/original${movieData.poster_path}`
+        : null,
+      created_at: now,
+      updated_at: now,
+      watched_at: null,
+    });
+
+    // Revalidate the movies page
+    revalidatePath("/movies");
+
+    return result;
+  } catch (error) {
+    console.error("Failed to add movie:", error);
     throw new Error("Failed to add movie");
   }
-
-  return response.json();
 }
 
 export async function removeMovie(id: number): Promise<Movie> {
-  const response = await fetch("/api/movies", {
-    method: "DELETE",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ id }),
-  });
+  try {
+    const result = await removeMovieFromList(id);
 
-  if (!response.ok) {
+    // Revalidate the movies page
+    revalidatePath("/movies");
+
+    return result;
+  } catch (error) {
+    console.error("Failed to remove movie:", error);
     throw new Error("Failed to remove movie");
   }
-
-  return response.json();
 }
 
 export async function markMovieAsWatched(
-  id: number,
-  now: Date,
+  movieId: number,
+  watchedAt: Date,
   isMovieInDb: boolean
-): Promise<Movie> {
-  const response = await fetch("/api/movies/watched", {
-    method: "PATCH",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ id, now, isMovieInDb }),
-  });
+): Promise<{ movie: Movie; shouldShowRating: boolean }> {
+  try {
+    let result: Movie;
 
-  if (!response.ok) {
+    if (isMovieInDb) {
+      // Movie is already in database, just mark as watched
+      result = await dbMarkMovieAsWatched({ id: movieId }, watchedAt, true);
+    } else {
+      // Movie is from TMDB, need to add to database and mark as watched
+      const movieData = (await getMovieDetails(movieId)) as TMDBMovieDetails;
+
+      result = await dbMarkMovieAsWatched(
+        {
+          id: movieData.id,
+          imdb_id: movieData.imdb_id,
+          title: movieData.title,
+          overview: movieData.overview,
+          release_date: movieData.release_date
+            ? new Date(movieData.release_date)
+            : null,
+          runtime: movieData.runtime,
+          genres: movieData.genres?.map((g: { name: string }) => g.name),
+          poster_path: movieData.poster_path,
+        },
+        watchedAt,
+        false
+      );
+    }
+
+    // Revalidate paths to update latest watched movies
+    revalidatePath("/movies");
+    revalidatePath(`/movies/${movieId}`);
+
+    return {
+      movie: result,
+      shouldShowRating: true,
+    };
+  } catch (error) {
+    console.error("Failed to mark movie as watched:", error);
     throw new Error("Failed to mark movie as watched");
   }
-
-  return response.json();
 }
 
 export async function updateMovieScore(
-  id: number,
+  movieId: number,
   score: number
 ): Promise<Movie> {
-  const response = await fetch("/api/movies/score", {
-    method: "PATCH",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ id, score }),
-  });
+  try {
+    const result = await dbUpdateMovieScore(movieId, score);
 
-  if (!response.ok) {
+    // Revalidate paths to update movie data
+    revalidatePath("/movies");
+    revalidatePath(`/movies/${movieId}`);
+
+    return result;
+  } catch (error) {
+    console.error("Failed to update movie score:", error);
     throw new Error("Failed to update movie score");
   }
-
-  return response.json();
 }

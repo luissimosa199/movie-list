@@ -118,3 +118,13 @@ export async function markMovieAsWatched<T extends boolean>(
     })) as Movie;
   }
 }
+
+export async function updateMovieScore(
+  movieId: number,
+  score: number
+): Promise<Movie> {
+  return (await prisma.movies.update({
+    where: { id: movieId },
+    data: { score },
+  })) as Movie;
+}

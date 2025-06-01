@@ -29,6 +29,24 @@ export default function Header() {
           >
             Profile
           </Link>
+          <Link
+            href="/about"
+            className="text-sm font-medium tracking-wide hover:text-primary transition-colors duration-200"
+          >
+            About
+          </Link>
+          <Link
+            href="/contact-us"
+            className="text-sm font-medium tracking-wide hover:text-primary transition-colors duration-200"
+          >
+            Contact Us
+          </Link>
+          <Link
+            href="/terms"
+            className="text-sm font-medium tracking-wide hover:text-primary transition-colors duration-200"
+          >
+            Terms
+          </Link>
         </nav>
       </div>
     </header>
