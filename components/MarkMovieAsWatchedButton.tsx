@@ -10,20 +10,27 @@ export default function MarkMovieAsWatchedButton({
   movie,
   isMovieInDb,
   setIsInDb,
+  watchedMovie,
 }: {
   movie: Movie;
   isMovieInDb: boolean;
   setIsInDb: (isInDb: boolean) => void;
+  watchedMovie?: Movie | null;
 }) {
+  // Determine initial watched status from either the movie itself (if from DB) or watchedMovie (if from TMDB)
+  const initialWatchedAt = movie.watched_at || watchedMovie?.watched_at;
+
   const [isWatched, setIsWatched] = useState<string | null>(() => {
-    if (!movie.watched_at) return null;
-    return movie.watched_at instanceof Date
-      ? movie.watched_at.toISOString()
-      : movie.watched_at;
+    if (!initialWatchedAt) return null;
+    return initialWatchedAt instanceof Date
+      ? initialWatchedAt.toISOString()
+      : initialWatchedAt;
   });
   const [showRating, setShowRating] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [dbMovieId, setDbMovieId] = useState<number | null>(null);
+  const [dbMovieId, setDbMovieId] = useState<number | null>(
+    watchedMovie?.id || (isMovieInDb ? movie.id : null)
+  );
 
   const handleClick = async () => {
     const now = new Date();
@@ -56,7 +63,7 @@ export default function MarkMovieAsWatchedButton({
         </div>
         <StarRating
           movieId={dbMovieId} // Use the database ID
-          initialScore={movie.score || 0}
+          initialScore={movie.score || watchedMovie?.score || 0}
         />
       </div>
     );

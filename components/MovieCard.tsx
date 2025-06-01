@@ -5,6 +5,7 @@ import Link from "next/link";
 import { getFormattedDate, getGenres } from "@/utils";
 import { getPosterUrl } from "@/utils";
 import { movieExistsInDb } from "@/api/db";
+import { getMovieWatchedStatus } from "@/lib/actions";
 import MovieCardButtonsSection from "./MovieCardButtonsSection";
 import StarRating from "./StarRating";
 
@@ -16,6 +17,15 @@ type MovieCardProps = {
 const MovieCard = async ({ movie, source }: MovieCardProps) => {
   const isMovieInDb =
     source === "db" ? movie.id : await movieExistsInDb(movie.id);
+
+  // For TMDB movies, check if they have been watched by the user
+  const watchedMovie =
+    source === "tmdb" ? await getMovieWatchedStatus(movie.id) : null;
+  const isWatched =
+    source === "db"
+      ? !!(movie as Movie).watched_at
+      : !!watchedMovie?.watched_at;
+
   const posterUrl = getPosterUrl(movie, source);
   const genres = getGenres(movie, source);
   const releaseDate =
@@ -26,8 +36,25 @@ const MovieCard = async ({ movie, source }: MovieCardProps) => {
   return (
     <div
       key={movie.id}
-      className="bg-zinc-900 rounded-lg overflow-hidden border border-zinc-800 transition-transform hover:scale-[1.02] hover:shadow-lg"
+      className="bg-zinc-900 rounded-lg overflow-hidden border border-zinc-800 transition-transform hover:scale-[1.02] hover:shadow-lg relative"
     >
+      {/* Watched indicator overlay */}
+      {isWatched && (
+        <div className="absolute top-2 right-2 z-10 bg-primary rounded-full p-1">
+          <svg
+            className="w-4 h-4 text-white"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+          >
+            <path
+              fillRule="evenodd"
+              d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+              clipRule="evenodd"
+            />
+          </svg>
+        </div>
+      )}
+
       <div className="aspect-[2/3] bg-zinc-800 relative">
         <Link
           href={`/movies/${isMovieInDb || movie.id}${
@@ -84,14 +111,16 @@ const MovieCard = async ({ movie, source }: MovieCardProps) => {
           </p>
         )}
 
-        {source === "db" && (movie as Movie).score && (
+        {/* Show score for watched movies regardless of source */}
+        {((source === "db" && (movie as Movie).score) ||
+          (source === "tmdb" && watchedMovie?.score)) && (
           <p className="text-xs text-zinc-400 mb-4">
-            <span className="text-zinc-500">Score:</span>{" "}
-            {(movie as Movie).score}
+            <span className="text-zinc-500">Your Score:</span>{" "}
+            {source === "db" ? (movie as Movie).score : watchedMovie?.score}
           </p>
         )}
 
-        {source === "tmdb" && (
+        {source === "tmdb" && !watchedMovie?.score && (
           <p className="text-xs text-zinc-400 mb-4">
             <span className="text-zinc-500">Rating:</span>{" "}
             {(movie as TMDBMovie).vote_average.toFixed(1)} (
@@ -102,12 +131,19 @@ const MovieCard = async ({ movie, source }: MovieCardProps) => {
         <MovieCardButtonsSection
           movie={movie}
           isMovieInDb={isMovieInDb}
+          {...(source === "tmdb" && { watchedMovie })}
         />
 
-        {source === "db" && (movie as Movie).watched_at && (
+        {/* Show star rating for watched movies regardless of source */}
+        {((source === "db" && (movie as Movie).watched_at) ||
+          (source === "tmdb" && watchedMovie?.watched_at)) && (
           <StarRating
-            movieId={movie.id}
-            initialScore={(movie as Movie).score || 0}
+            movieId={source === "db" ? movie.id : watchedMovie!.id}
+            initialScore={
+              source === "db"
+                ? (movie as Movie).score || 0
+                : watchedMovie?.score || 0
+            }
           />
         )}
       </div>

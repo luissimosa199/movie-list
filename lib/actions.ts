@@ -6,6 +6,7 @@ import {
   removeMovieFromList,
   markMovieAsWatched as dbMarkMovieAsWatched,
   updateMovieScore as dbUpdateMovieScore,
+  getMovieByTmdbId,
 } from "@/api/db";
 import { getMovieDetails } from "@/api/tmdb";
 import { Movie, TMDBMovie } from "@/types";
@@ -108,6 +109,17 @@ export async function markMovieAsWatched(
   } catch (error) {
     console.error("Failed to mark movie as watched:", error);
     throw new Error("Failed to mark movie as watched");
+  }
+}
+
+export async function getMovieWatchedStatus(
+  tmdbId: number
+): Promise<Movie | null> {
+  try {
+    return await getMovieByTmdbId(tmdbId);
+  } catch (error) {
+    console.error("Failed to get movie watched status:", error);
+    return null;
   }
 }
 

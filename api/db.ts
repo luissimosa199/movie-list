@@ -130,3 +130,11 @@ export async function updateMovieScore(
     data: { score },
   })) as Movie;
 }
+
+export async function getMovieByTmdbId(tmdb_id: number): Promise<Movie | null> {
+  return (await prisma.movies.findFirst({
+    where: {
+      tmdb_id: tmdb_id,
+    },
+  })) as Movie | null;
+}

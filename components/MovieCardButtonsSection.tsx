@@ -9,9 +9,11 @@ import { useState } from "react";
 const MovieCardButtonsSection = ({
   movie,
   isMovieInDb,
+  watchedMovie,
 }: {
   movie: Movie | TMDBMovie;
   isMovieInDb: number | false;
+  watchedMovie?: Movie | null;
 }) => {
   const [movieDbId, setMovieDbId] = useState<number | false>(isMovieInDb);
 
@@ -26,6 +28,7 @@ const MovieCardButtonsSection = ({
           }
           // Note: We can't set the ID from a boolean, this will be handled by the server action
         }}
+        watchedMovie={watchedMovie}
       />
       <MovieCardButton
         movie={movie as TMDBMovie}
