@@ -11,21 +11,26 @@ const MovieCardButtonsSection = ({
   isMovieInDb,
 }: {
   movie: Movie | TMDBMovie;
-  isMovieInDb: boolean;
+  isMovieInDb: number | false;
 }) => {
-  const [isInDb, setIsInDb] = useState<boolean>(!!isMovieInDb);
+  const [movieDbId, setMovieDbId] = useState<number | false>(isMovieInDb);
 
   return (
     <div className="flex gap-4 mt-4">
       <MarkMovieAsWatchedButton
         movie={movie as Movie}
-        isMovieInDb={isInDb}
-        setIsInDb={setIsInDb}
+        isMovieInDb={!!movieDbId}
+        setIsInDb={(inDb: boolean) => {
+          if (!inDb) {
+            setMovieDbId(false);
+          }
+          // Note: We can't set the ID from a boolean, this will be handled by the server action
+        }}
       />
       <MovieCardButton
         movie={movie as TMDBMovie}
-        isMovieInDb={isInDb}
-        setIsInDb={setIsInDb}
+        movieDbId={movieDbId}
+        setMovieDbId={setMovieDbId}
       />
     </div>
   );

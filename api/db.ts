@@ -53,7 +53,9 @@ export async function removeMovieFromList(id: number): Promise<Movie> {
   })) as Movie;
 }
 
-export async function movieExistsInDb(tmdb_id: number): Promise<boolean> {
+export async function movieExistsInDb(
+  tmdb_id: number
+): Promise<number | false> {
   const movie = await prisma.movies.findFirst({
     where: {
       tmdb_id: tmdb_id,

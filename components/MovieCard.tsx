@@ -101,7 +101,7 @@ const MovieCard = async ({ movie, source }: MovieCardProps) => {
 
         <MovieCardButtonsSection
           movie={movie}
-          isMovieInDb={!!isMovieInDb}
+          isMovieInDb={isMovieInDb}
         />
 
         {source === "db" && (
