@@ -1,17 +1,20 @@
 import { NextResponse } from "next/server";
-import type { TMDBSeries } from "@/types";
-import { getSeriesDetails, searchSeries } from "@/api/tmdb";
+// import type { TMDBSeries } from "@/types";
+import {
+  // getSeriesDetails,
+  searchSeries,
+} from "@/api/tmdb";
 
-interface TMDBSeriesDetails extends TMDBSeries {
-  episode_run_time: number[];
-  genres: Array<{
-    id: number;
-    name: string;
-  }>;
-  number_of_episodes: number;
-  number_of_seasons: number;
-  last_air_date: string;
-}
+// interface TMDBSeriesDetails extends TMDBSeries {
+//   episode_run_time: number[];
+//   genres: Array<{
+//     id: number;
+//     name: string;
+//   }>;
+//   number_of_episodes: number;
+//   number_of_seasons: number;
+//   last_air_date: string;
+// }
 
 export async function GET(request: Request) {
   try {
