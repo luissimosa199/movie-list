@@ -104,7 +104,7 @@ const MovieCard = async ({ movie, source }: MovieCardProps) => {
           isMovieInDb={isMovieInDb}
         />
 
-        {source === "db" && (
+        {source === "db" && (movie as Movie).watched_at && (
           <StarRating
             movieId={movie.id}
             initialScore={(movie as Movie).score || 0}

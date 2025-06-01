@@ -23,6 +23,7 @@ export default function MarkMovieAsWatchedButton({
   });
   const [showRating, setShowRating] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [dbMovieId, setDbMovieId] = useState<number | null>(null);
 
   const handleClick = async () => {
     const now = new Date();
@@ -35,6 +36,7 @@ export default function MarkMovieAsWatchedButton({
       const result = await markMovieAsWatched(movie.id, now, isMovieInDb);
 
       if (result.shouldShowRating) {
+        setDbMovieId(result.movie.id); // Store the database ID
         setShowRating(true);
       }
     } catch (error) {
@@ -46,14 +48,14 @@ export default function MarkMovieAsWatchedButton({
     }
   };
 
-  if (showRating && isWatched) {
+  if (showRating && isWatched && dbMovieId) {
     return (
       <div className="flex flex-col gap-2">
         <div className="bg-primary/20 text-white text-sm py-2 px-4 rounded-md text-center">
           Watched on {formatCardDate(isWatched)}
         </div>
         <StarRating
-          movieId={movie.id}
+          movieId={dbMovieId} // Use the database ID
           initialScore={movie.score || 0}
         />
       </div>
