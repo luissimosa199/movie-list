@@ -53,7 +53,7 @@ export async function GET(request: Request) {
     const year = searchParams.get("year") || undefined;
     const min_rating = searchParams.get("min_rating") || undefined;
 
-    if (with_genres || year || min_rating) {
+    if (!query && (with_genres || year || min_rating)) {
       const movies = await discoverMovies({
         page,
         limit,
@@ -64,7 +64,7 @@ export async function GET(request: Request) {
       return NextResponse.json(movies);
     }
 
-    const movies = await searchMovies(query, page, limit);
+    const movies = await searchMovies(query, page, limit, { year });
     return NextResponse.json(movies);
   } catch (error) {
     console.error("Error searching movies:", error);

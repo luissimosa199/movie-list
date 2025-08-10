@@ -45,12 +45,14 @@ export async function getMovieDetails(id: number): Promise<TMDBMovie> {
 export async function searchMovies(
   query: string,
   page: number = 1,
-  limit: number = 10
+  limit: number = 10,
+  filters?: { year?: string }
 ): Promise<TMDBResponse<TMDBMovie>> {
   return fetchFromTMDB<TMDBResponse<TMDBMovie>>("/search/movie", {
     query,
     page,
     per_page: limit,
+    ...(filters?.year ? { year: filters.year } : {}),
   });
 }
 
