@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { addMovieToList, removeMovieFromList } from "@/api/db";
 import type { TMDBMovie } from "@/types";
-import { getMovieDetails, searchMovies, discoverMovies } from "@/api/tmdb";
+import { getMovieDetails, searchMovies } from "@/api/tmdb";
 
 interface TMDBMovieDetails extends TMDBMovie {
   imdb_id: string;
@@ -48,23 +48,7 @@ export async function GET(request: Request) {
     const page = parseInt(searchParams.get("page") || "1");
     const limit = parseInt(searchParams.get("limit") || "10");
 
-    // Optional filters (TMDB Discover)
-    const with_genres = searchParams.get("with_genres") || undefined;
-    const year = searchParams.get("year") || undefined;
-    const min_rating = searchParams.get("min_rating") || undefined;
-
-    if (!query && (with_genres || year || min_rating)) {
-      const movies = await discoverMovies({
-        page,
-        limit,
-        with_genres,
-        primary_release_year: year,
-        "vote_average.gte": min_rating,
-      });
-      return NextResponse.json(movies);
-    }
-
-    const movies = await searchMovies(query, page, limit, { year });
+    const movies = await searchMovies(query, page, limit);
     return NextResponse.json(movies);
   } catch (error) {
     console.error("Error searching movies:", error);
