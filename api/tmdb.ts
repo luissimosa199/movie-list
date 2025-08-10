@@ -54,6 +54,24 @@ export async function searchMovies(
   });
 }
 
+export async function discoverMovies(params: {
+  page?: number;
+  limit?: number;
+  with_genres?: string; // comma-separated TMDB genre IDs
+  primary_release_year?: string;
+  'vote_average.gte'?: string;
+}): Promise<TMDBResponse<TMDBMovie>> {
+  const { page = 1, limit = 10, ...rest } = params;
+  const response = await fetchFromTMDB<TMDBResponse<TMDBMovie>>(
+    "/discover/movie",
+    { page, ...rest }
+  );
+  return {
+    ...response,
+    results: response.results.slice(0, limit),
+  };
+}
+
 export async function getMovieEndpoint(
   endpoint: string,
   queryParams: QueryParams = {}
