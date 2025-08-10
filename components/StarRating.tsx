@@ -1,14 +1,14 @@
 "use client";
 
-import { updateMovieScore } from "@/lib/actions";
+import { updateMovieScore, updateSeriesScore } from "@/lib/actions";
 import React, { useState, useTransition } from "react";
 
-type StarRatingProps = {
-  initialScore: number;
-  movieId: number;
-};
+type StarRatingProps =
+  | { initialScore: number; movieId: number; seriesId?: never }
+  | { initialScore: number; seriesId: number; movieId?: never };
 
-export default function StarRating({ initialScore, movieId }: StarRatingProps) {
+export default function StarRating(props: StarRatingProps) {
+  const { initialScore } = props as { initialScore: number };
   const [score, setScore] = useState(initialScore);
   const [hoverScore, setHoverScore] = useState(0);
   const [isPending, startTransition] = useTransition();
@@ -21,11 +21,15 @@ export default function StarRating({ initialScore, movieId }: StarRatingProps) {
 
     startTransition(async () => {
       try {
-        await updateMovieScore(movieId, newScore);
+        if ("movieId" in props && typeof props.movieId === "number") {
+          await updateMovieScore(props.movieId, newScore);
+        } else if ("seriesId" in props && typeof props.seriesId === "number") {
+          await updateSeriesScore(props.seriesId, newScore);
+        }
       } catch (error) {
         // Revert on error
         setScore(initialScore);
-        console.error("Error updating movie score:", error);
+        console.error("Error updating score:", error);
       }
     });
   };
@@ -34,7 +38,7 @@ export default function StarRating({ initialScore, movieId }: StarRatingProps) {
     <div
       className="flex items-center justify-center gap-1 mt-2"
       role="group"
-      aria-label="Movie rating"
+      aria-label="Rating"
     >
       {[...Array(5)].map((_, index) => {
         const starValue = index + 1;

@@ -145,15 +145,7 @@ export default async function SeriesPage({ params, searchParams }: PageProps) {
               )}
             </div>
 
-            {/* Future: Series action buttons would go here */}
-            <div className="flex flex-col sm:flex-row gap-4 mt-auto">
-              <button className="bg-primary hover:bg-primary/90 text-white py-3 px-6 rounded-md transition-colors font-medium">
-                Add to Watchlist
-              </button>
-              <button className="bg-transparent border border-zinc-700 hover:border-zinc-600 text-white py-3 px-6 rounded-md transition-colors">
-                Mark as Watched
-              </button>
-            </div>
+            {/* Actions placeholder kept minimal for details page; card handles main actions */}
           </div>
         </div>
       </div>

@@ -9,6 +9,9 @@ import {
   getMovieByTmdbId,
   addSeriesToList,
   getSeriesByTmdbId,
+  markSeriesAsWatched as dbMarkSeriesAsWatched,
+  updateSeriesScore as dbUpdateSeriesScore,
+  removeSeriesFromList,
 } from "@/api/db";
 import { getMovieDetails, getSeriesDetails } from "@/api/tmdb";
 import { Movie, TMDBMovie, Series as SeriesType, TMDBSeries } from "@/types";
@@ -190,6 +193,17 @@ export async function addSeries(series: TMDBSeries): Promise<SeriesType> {
   }
 }
 
+export async function removeSeries(id: number): Promise<SeriesType> {
+  try {
+    const result = await removeSeriesFromList(id);
+    revalidatePath("/series");
+    return result;
+  } catch (error) {
+    console.error("Failed to remove series:", error);
+    throw new Error("Failed to remove series");
+  }
+}
+
 export async function getSeriesInDbStatus(
   tmdbId: number
 ): Promise<SeriesType | null> {
@@ -198,5 +212,67 @@ export async function getSeriesInDbStatus(
   } catch (error) {
     console.error("Failed to get series status:", error);
     return null;
+  }
+}
+
+export async function markSeriesAsWatched(
+  seriesId: number,
+  watchedAt: Date,
+  isSeriesInDb: boolean
+): Promise<{ series: SeriesType; shouldShowRating: boolean }> {
+  try {
+    let result: SeriesType;
+
+    if (isSeriesInDb) {
+      // if coming from TMDB, resolve DB id first
+      let idToUse = seriesId;
+      const dbSeries = await getSeriesByTmdbId(seriesId);
+      if (dbSeries?.id) idToUse = dbSeries.id;
+      result = (await dbMarkSeriesAsWatched({ id: idToUse }, watchedAt, true)) as SeriesType;
+    } else {
+      const details = await getSeriesDetails(seriesId);
+      result = (await dbMarkSeriesAsWatched(
+        {
+          id: (details as any).id,
+          name: (details as any).name,
+          overview: (details as any).overview,
+          first_air_date: (details as any).first_air_date
+            ? new Date((details as any).first_air_date)
+            : null,
+          last_air_date: (details as any).last_air_date
+            ? new Date((details as any).last_air_date)
+            : null,
+          number_of_episodes: (details as any).number_of_episodes ?? null,
+          number_of_seasons: (details as any).number_of_seasons ?? null,
+          genres: ((details as any).genres || []).map((g: { name: string }) => g.name),
+          poster_path: (details as any).poster_path,
+        },
+        watchedAt,
+        false
+      )) as SeriesType;
+    }
+
+    revalidatePath("/series");
+    revalidatePath(`/series/${seriesId}`);
+
+    return { series: result, shouldShowRating: true };
+  } catch (error) {
+    console.error("Failed to mark series as watched:", error);
+    throw new Error("Failed to mark series as watched");
+  }
+}
+
+export async function updateSeriesScore(
+  seriesId: number,
+  score: number
+): Promise<SeriesType> {
+  try {
+    const result = await dbUpdateSeriesScore(seriesId, score);
+    revalidatePath("/series");
+    revalidatePath(`/series/${seriesId}`);
+    return result;
+  } catch (error) {
+    console.error("Failed to update series score:", error);
+    throw new Error("Failed to update series score");
   }
 }

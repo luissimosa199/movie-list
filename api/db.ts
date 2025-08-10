@@ -155,6 +155,72 @@ export async function getSeriesByTmdbId(
   })) as SeriesType | null;
 }
 
+export async function removeSeriesFromList(id: number): Promise<SeriesType> {
+  return (await prisma.series.delete({ where: { id } })) as SeriesType;
+}
+
+type ExistingSeriesData = {
+  id: number;
+};
+
+type NewSeriesData = {
+  id: number; // tmdb id
+  name: string;
+  overview: string | null;
+  first_air_date: Date | null;
+  last_air_date: Date | null;
+  number_of_episodes: number | null;
+  number_of_seasons: number | null;
+  genres: string[] | null;
+  poster_path: string | null;
+};
+
+export async function markSeriesAsWatched<T extends boolean>(
+  seriesData: T extends true ? ExistingSeriesData : NewSeriesData,
+  now: Date,
+  isSeriesInDb: T
+) {
+  if (isSeriesInDb) {
+    return (await prisma.series.update({
+      where: { id: (seriesData as ExistingSeriesData).id },
+      data: { watched_at: now },
+    })) as SeriesType;
+  } else {
+    const mappedSeriesData = {
+      tmdb_id: (seriesData as NewSeriesData).id,
+      name: (seriesData as NewSeriesData).name,
+      overview: (seriesData as NewSeriesData).overview || null,
+      first_air_date: (seriesData as NewSeriesData).first_air_date,
+      last_air_date: (seriesData as NewSeriesData).last_air_date,
+      number_of_episodes: (seriesData as NewSeriesData).number_of_episodes,
+      number_of_seasons: (seriesData as NewSeriesData).number_of_seasons,
+      genres: (seriesData as NewSeriesData).genres || [],
+      poster_url: (seriesData as NewSeriesData).poster_path
+        ? `https://image.tmdb.org/t/p/original${(seriesData as NewSeriesData).poster_path}`
+        : null,
+    };
+
+    return (await prisma.series.upsert({
+      where: { tmdb_id: mappedSeriesData.tmdb_id },
+      update: { watched_at: now },
+      create: {
+        ...mappedSeriesData,
+        watched_at: now,
+      },
+    })) as SeriesType;
+  }
+}
+
+export async function updateSeriesScore(
+  seriesId: number,
+  score: number
+): Promise<SeriesType> {
+  return (await prisma.series.update({
+    where: { id: seriesId },
+    data: { score },
+  })) as SeriesType;
+}
+
 // Stats and dashboard helpers
 
 export async function getTotalWatchedCount(): Promise<number> {
