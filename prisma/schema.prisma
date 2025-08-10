@@ -3,8 +3,9 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_DATABASE_URL")
 }
 
 model movies {
@@ -39,32 +40,25 @@ model series {
   watched_at       DateTime? @db.Timestamp(6)
   added_to_list_at DateTime? @db.Timestamp(6)
 
-  tmdb_id       Int     @unique
-  name          String
-  original_name String?
-  overview      String?
+  tmdb_id  Int     @unique
+  name     String
+  overview String?
 
   // Store a fully qualified URL for UI parity with movies
-  poster_url    String?
-  backdrop_path String?
+  poster_url String?
 
   first_air_date    DateTime? @db.Date
   last_air_date     DateTime? @db.Date
   status            String?
-  vote_average      Float?
-  vote_count        Int?
-  popularity        Float?
   original_language String?
   origin_country    String[]  @default([])
 
   // Genres as simple names array for UI consumption (aligns with types)
-  genres   String[] @default([])
-  networks Json?
+  genres String[] @default([])
 
   number_of_episodes Int?
   number_of_seasons  Int?
 
   score        Int?
-  notes        String?
   watch_status WatchStatus?
 }
