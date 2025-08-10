@@ -87,3 +87,9 @@ export default async function ProfilePage() {
     </main>
   );
 }
+
+export const metadata = {
+  title: "Profile – Movie Tracker",
+  description:
+    "View your latest watched movies and recently added list in your profile.",
+};

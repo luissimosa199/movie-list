@@ -29,3 +29,9 @@ export default async function SeriesPage() {
     </main>
   );
 }
+
+export const metadata = {
+  title: "Series – Discover Popular TV Series",
+  description:
+    "Browse and discover popular TV series to add to your watchlist.",
+};
