@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { markMovieAsWatched } from "@/api/db";
+import { markMovieAsWatched, getMovieByTmdbId } from "@/api/db";
 import { getMovieDetails } from "@/api/tmdb";
 import type { TMDBMovie } from "@/types";
 
@@ -21,7 +21,9 @@ export async function PATCH(request: Request) {
     };
 
     if (isMovieInDb) {
-      const result = await markMovieAsWatched({ id }, new Date(now), true);
+      // id might be a TMDB id if coming from a TMDB page; resolve DB id when available
+      const dbId = (await getMovieByTmdbId(id))?.id ?? id;
+      const result = await markMovieAsWatched({ id: dbId }, new Date(now), true);
       return NextResponse.json(result);
     }
 

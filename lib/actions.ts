@@ -74,8 +74,15 @@ export async function markMovieAsWatched(
     let result: Movie;
 
     if (isMovieInDb) {
-      // Movie is already in database, just mark as watched
-      result = await dbMarkMovieAsWatched({ id: movieId }, watchedAt, true);
+      // Movie is already in database, but movieId may be a TMDB id when coming from a TMDB page.
+      // Resolve the actual database id if possible.
+      let idToUse = movieId;
+      const dbMovie = await getMovieByTmdbId(movieId);
+      if (dbMovie?.id) {
+        idToUse = dbMovie.id;
+      }
+
+      result = await dbMarkMovieAsWatched({ id: idToUse }, watchedAt, true);
     } else {
       // Movie is from TMDB, need to add to database and mark as watched
       const movieData = (await getMovieDetails(movieId)) as TMDBMovieDetails;
