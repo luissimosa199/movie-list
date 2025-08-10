@@ -1,5 +1,5 @@
 import prisma from "@/lib/prisma";
-import { CreateMovieData, Movie } from "@/types";
+import { CreateMovieData, Movie, CreateSeriesData, Series as SeriesType } from "@/types";
 
 export async function getLatestWatchedMovies(
   limit: number = 10,
@@ -136,6 +136,23 @@ export async function getMovieByTmdbId(tmdb_id: number): Promise<Movie | null> {
       tmdb_id: tmdb_id,
     },
   })) as Movie | null;
+}
+
+// === Series DB helpers ===
+export async function addSeriesToList(
+  seriesData: CreateSeriesData
+): Promise<SeriesType> {
+  return (await prisma.series.create({
+    data: seriesData,
+  })) as SeriesType;
+}
+
+export async function getSeriesByTmdbId(
+  tmdb_id: number
+): Promise<SeriesType | null> {
+  return (await prisma.series.findFirst({
+    where: { tmdb_id },
+  })) as SeriesType | null;
 }
 
 // Stats and dashboard helpers

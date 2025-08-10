@@ -22,3 +22,49 @@ model movies {
   tmdb_id      Int?      @unique
   imdb_id      String?   @unique
 }
+
+// TV Series
+enum WatchStatus {
+  plan_to_watch
+  watching
+  completed
+  dropped
+  on_hold
+}
+
+model series {
+  id               Int       @id @default(autoincrement())
+  created_at       DateTime  @default(now()) @db.Timestamp(6)
+  updated_at       DateTime  @default(now()) @db.Timestamp(6)
+  watched_at       DateTime? @db.Timestamp(6)
+  added_to_list_at DateTime? @db.Timestamp(6)
+
+  tmdb_id       Int     @unique
+  name          String
+  original_name String?
+  overview      String?
+
+  // Store a fully qualified URL for UI parity with movies
+  poster_url    String?
+  backdrop_path String?
+
+  first_air_date    DateTime? @db.Date
+  last_air_date     DateTime? @db.Date
+  status            String?
+  vote_average      Float?
+  vote_count        Int?
+  popularity        Float?
+  original_language String?
+  origin_country    String[]  @default([])
+
+  // Genres as simple names array for UI consumption (aligns with types)
+  genres   String[] @default([])
+  networks Json?
+
+  number_of_episodes Int?
+  number_of_seasons  Int?
+
+  score        Int?
+  notes        String?
+  watch_status WatchStatus?
+}

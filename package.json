@@ -7,10 +7,12 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "restore:movies": "tsx scripts/restoreMoviesFromCsv.ts movies.csv"
   },
   "dependencies": {
     "@prisma/extension-accelerate": "^1.2.2",
+    "csv-parse": "^5.5.6",
     "next": "15.2.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"

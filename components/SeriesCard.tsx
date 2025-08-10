@@ -7,6 +7,7 @@ import {
   getSeriesGenres,
   getSeriesPosterUrl,
 } from "@/utils";
+import SeriesCardButton from "./SeriesCardButton";
 
 type SeriesCardProps = {
   series: Series | TMDBSeries;
@@ -108,11 +109,10 @@ const SeriesCard = async ({ series, source }: SeriesCardProps) => {
           </p>
         )}
 
-        {/* Series-specific action buttons would go here in the future */}
         <div className="flex gap-4 mt-4">
-          <button className="bg-transparent border border-zinc-700 hover:border-zinc-600 text-white text-sm py-2 px-4 rounded-md transition-colors flex-1 cursor-pointer">
-            Add to Watchlist
-          </button>
+          {source === "tmdb" ? (
+            <SeriesCardButton series={series as TMDBSeries} />
+          ) : null}
         </div>
       </div>
     </div>

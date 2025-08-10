@@ -7,9 +7,11 @@ import {
   markMovieAsWatched as dbMarkMovieAsWatched,
   updateMovieScore as dbUpdateMovieScore,
   getMovieByTmdbId,
+  addSeriesToList,
+  getSeriesByTmdbId,
 } from "@/api/db";
-import { getMovieDetails } from "@/api/tmdb";
-import { Movie, TMDBMovie } from "@/types";
+import { getMovieDetails, getSeriesDetails } from "@/api/tmdb";
+import { Movie, TMDBMovie, Series as SeriesType, TMDBSeries } from "@/types";
 
 interface TMDBMovieDetails extends TMDBMovie {
   imdb_id: string;
@@ -145,5 +147,56 @@ export async function updateMovieScore(
   } catch (error) {
     console.error("Failed to update movie score:", error);
     throw new Error("Failed to update movie score");
+  }
+}
+
+// === Series actions ===
+export async function addSeries(series: TMDBSeries): Promise<SeriesType> {
+  try {
+    const details = await getSeriesDetails(series.id);
+    const now = new Date();
+
+    const result = await addSeriesToList({
+      tmdb_id: details.id,
+      name: details.name,
+      overview: details.overview,
+      first_air_date: details.first_air_date
+        ? new Date(details.first_air_date)
+        : (null as unknown as Date),
+      last_air_date: (details as any).last_air_date
+        ? new Date((details as any).last_air_date)
+        : null,
+      number_of_episodes: (details as any).number_of_episodes ?? null,
+      number_of_seasons: (details as any).number_of_seasons ?? null,
+      genres: (details as any).genres?.map((g: { name: string }) => g.name) ?? [],
+      poster_url: details.poster_path
+        ? `https://image.tmdb.org/t/p/original${details.poster_path}`
+        : null,
+      created_at: now,
+      updated_at: now,
+      watched_at: null,
+      // Extra fields present in schema but not in CreateSeriesData type are omitted
+      // origin_country is required at DB level; include from TMDB minimal object
+      // We will rely on Prisma to accept additional fields only through direct create
+      // For type safety, we only pass fields declared in CreateSeriesData here
+    } as any);
+
+    revalidatePath("/series");
+
+    return result;
+  } catch (error) {
+    console.error("Failed to add series:", error);
+    throw new Error("Failed to add series");
+  }
+}
+
+export async function getSeriesInDbStatus(
+  tmdbId: number
+): Promise<SeriesType | null> {
+  try {
+    return await getSeriesByTmdbId(tmdbId);
+  } catch (error) {
+    console.error("Failed to get series status:", error);
+    return null;
   }
 }
