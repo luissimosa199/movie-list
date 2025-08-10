@@ -133,19 +133,10 @@ const SeriesCard = async ({ series, source }: SeriesCardProps) => {
           )}
         </div>
 
-        {((source === "db" && (series as Series).watched_at) ||
-          (source === "tmdb" && seriesInDb?.watched_at)) && (
+        {source === "db" && (series as Series).watched_at && (
           <StarRating
-            seriesId={
-              source === "db"
-                ? (series as Series).id
-                : (seriesInDb as Series).id
-            }
-            initialScore={
-              source === "db"
-                ? (series as Series).score || 0
-                : (seriesInDb as Series)?.score || 0
-            }
+            seriesId={(series as Series).id}
+            initialScore={(series as Series).score || 0}
           />
         )}
       </div>

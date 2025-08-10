@@ -23,7 +23,9 @@ export default function MarkSeriesAsWatchedButton({
       ? initialWatchedAt.toISOString()
       : (initialWatchedAt as unknown as string);
   });
-  const [showRating, setShowRating] = useState(false);
+  const [showRating, setShowRating] = useState(
+    !!initialWatchedAt && !!watchedSeries?.id
+  );
   const [isLoading, setIsLoading] = useState(false);
   const [dbSeriesId, setDbSeriesId] = useState<number | null>(
     watchedSeries?.id || null
