@@ -10,10 +10,12 @@ export default function MarkSeriesAsWatchedButton({
   series,
   isSeriesInDb,
   watchedSeries,
+  onAddedToDb,
 }: {
   series: TMDBSeries;
   isSeriesInDb: boolean;
   watchedSeries?: Series | null;
+  onAddedToDb?: (id: number) => void;
 }) {
   const initialWatchedAt = watchedSeries?.watched_at ?? null;
 
@@ -41,6 +43,11 @@ export default function MarkSeriesAsWatchedButton({
       if (result.shouldShowRating) {
         setDbSeriesId(result.series.id);
         setShowRating(true);
+      }
+
+      // Notify parent/state manager so the other button flips to "Remove from Watchlist"
+      if (typeof onAddedToDb === "function") {
+        onAddedToDb(result.series.id);
       }
     } catch (error) {
       setIsWatched(null);
@@ -71,7 +78,7 @@ export default function MarkSeriesAsWatchedButton({
     >
       {isLoading ? (
         <div className="flex items-center justify-center gap-2">
-          <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+          <div className="inline-block w-4 aspect-square shrink-0 border-[3px] border-white/30 border-t-white rounded-full animate-spin"></div>
           Marking as watched...
         </div>
       ) : isWatched ? (

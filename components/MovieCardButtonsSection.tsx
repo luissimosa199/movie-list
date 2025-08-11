@@ -29,6 +29,7 @@ const MovieCardButtonsSection = ({
           // Note: We can't set the ID from a boolean, this will be handled by the server action
         }}
         watchedMovie={watchedMovie}
+        onAddedToDb={(id: number) => setMovieDbId(id)}
       />
       <MovieCardButton
         movie={movie as TMDBMovie}

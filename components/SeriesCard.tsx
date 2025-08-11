@@ -7,8 +7,7 @@ import {
   getSeriesGenres,
   getSeriesPosterUrl,
 } from "@/utils";
-import SeriesCardButton from "./SeriesCardButton";
-import MarkSeriesAsWatchedButton from "@/components/MarkSeriesAsWatchedButton";
+import SeriesCardButtonsSection from "@/components/SeriesCardButtonsSection";
 import StarRating from "./StarRating";
 import { getSeriesInDbStatus } from "@/lib/actions";
 
@@ -117,21 +116,13 @@ const SeriesCard = async ({ series, source }: SeriesCardProps) => {
           </p>
         )}
 
-        <div className="flex gap-4 mt-4">
-          {source === "tmdb" && (
-            <>
-              <MarkSeriesAsWatchedButton
-                series={series as TMDBSeries}
-                isSeriesInDb={!!seriesInDb}
-                watchedSeries={seriesInDb as Series | null}
-              />
-              <SeriesCardButton
-                series={series as TMDBSeries}
-                seriesDbId={seriesInDb?.id || false}
-              />
-            </>
-          )}
-        </div>
+        {source === "tmdb" && (
+          <SeriesCardButtonsSection
+            series={series as TMDBSeries}
+            initialSeriesDbId={seriesInDb?.id || false}
+            watchedSeries={seriesInDb as Series | null}
+          />
+        )}
 
         {source === "db" && (series as Series).watched_at && (
           <StarRating

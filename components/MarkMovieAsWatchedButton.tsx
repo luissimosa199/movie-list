@@ -11,11 +11,13 @@ export default function MarkMovieAsWatchedButton({
   isMovieInDb,
   setIsInDb,
   watchedMovie,
+  onAddedToDb,
 }: {
   movie: Movie;
   isMovieInDb: boolean;
   setIsInDb: (isInDb: boolean) => void;
   watchedMovie?: Movie | null;
+  onAddedToDb?: (id: number) => void;
 }) {
   // Determine initial watched status from either the movie itself (if from DB) or watchedMovie (if from TMDB)
   const initialWatchedAt = movie.watched_at || watchedMovie?.watched_at;
@@ -45,6 +47,11 @@ export default function MarkMovieAsWatchedButton({
       if (result.shouldShowRating) {
         setDbMovieId(result.movie.id); // Store the database ID
         setShowRating(true);
+      }
+
+      // Ensure the movie is reflected as added to the watchlist (DB) in the parent state
+      if (typeof onAddedToDb === "function") {
+        onAddedToDb(result.movie.id);
       }
     } catch (error) {
       setIsWatched(null);
