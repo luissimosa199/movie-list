@@ -1,4 +1,4 @@
-import { TMDBMovie, TMDBSeries } from "@/types";
+import { TMDBMovie, TMDBSeries, FullDetailTMDBMovie, FullDetailTMDBSeries } from "@/types";
 
 type QueryParams = Record<string, string | number>;
 
@@ -38,8 +38,8 @@ async function fetchFromTMDB<T>(
   return response.json();
 }
 
-export async function getMovieDetails(id: number): Promise<TMDBMovie> {
-  return fetchFromTMDB<TMDBMovie>(`/movie/${id}`);
+export async function getMovieDetails(id: number): Promise<FullDetailTMDBMovie> {
+  return fetchFromTMDB<FullDetailTMDBMovie>(`/movie/${id}`);
 }
 
 export async function searchMovies(
@@ -157,8 +157,8 @@ export async function getMovieRecommendations(
 }
 
 // TV Series API Functions
-export async function getSeriesDetails(id: number): Promise<TMDBSeries> {
-  return fetchFromTMDB<TMDBSeries>(`/tv/${id}`);
+export async function getSeriesDetails(id: number): Promise<FullDetailTMDBSeries> {
+  return fetchFromTMDB<FullDetailTMDBSeries>(`/tv/${id}`);
 }
 
 export async function searchSeries(

@@ -16,18 +16,11 @@ import {
 import { getMovieDetails, getSeriesDetails } from "@/api/tmdb";
 import { Movie, TMDBMovie, Series as SeriesType, TMDBSeries } from "@/types";
 
-interface TMDBMovieDetails extends TMDBMovie {
-  imdb_id: string;
-  runtime: number;
-  genres: Array<{
-    id: number;
-    name: string;
-  }>;
-}
+
 
 export async function addMovie(movie: TMDBMovie): Promise<Movie> {
   try {
-    const movieData = (await getMovieDetails(movie.id)) as TMDBMovieDetails;
+    const movieData = await getMovieDetails(movie.id);
 
     const now = new Date();
     const result = await addMovieToList({
@@ -90,7 +83,7 @@ export async function markMovieAsWatched(
       result = await dbMarkMovieAsWatched({ id: idToUse }, watchedAt, true);
     } else {
       // Movie is from TMDB, need to add to database and mark as watched
-      const movieData = (await getMovieDetails(movieId)) as TMDBMovieDetails;
+      const movieData = await getMovieDetails(movieId);
 
       result = await dbMarkMovieAsWatched(
         {
@@ -102,7 +95,7 @@ export async function markMovieAsWatched(
             ? new Date(movieData.release_date)
             : null,
           runtime: movieData.runtime,
-          genres: movieData.genres?.map((g: { name: string }) => g.name),
+          genres: movieData.genres?.map((g) => g.name),
           poster_path: movieData.poster_path,
         },
         watchedAt,
@@ -166,12 +159,12 @@ export async function addSeries(series: TMDBSeries): Promise<SeriesType> {
       first_air_date: details.first_air_date
         ? new Date(details.first_air_date)
         : (null as unknown as Date),
-      last_air_date: (details as any).last_air_date
-        ? new Date((details as any).last_air_date)
+      last_air_date: details.last_air_date
+        ? new Date(details.last_air_date)
         : null,
-      number_of_episodes: (details as any).number_of_episodes ?? null,
-      number_of_seasons: (details as any).number_of_seasons ?? null,
-      genres: (details as any).genres?.map((g: { name: string }) => g.name) ?? [],
+      number_of_episodes: details.number_of_episodes ?? null,
+      number_of_seasons: details.number_of_seasons ?? null,
+      genres: details.genres?.map((g) => g.name) ?? [],
       poster_url: details.poster_path
         ? `https://image.tmdb.org/t/p/original${details.poster_path}`
         : null,
@@ -182,7 +175,7 @@ export async function addSeries(series: TMDBSeries): Promise<SeriesType> {
       // origin_country is required at DB level; include from TMDB minimal object
       // We will rely on Prisma to accept additional fields only through direct create
       // For type safety, we only pass fields declared in CreateSeriesData here
-    } as any);
+    });
 
     revalidatePath("/series");
 
@@ -233,19 +226,19 @@ export async function markSeriesAsWatched(
       const details = await getSeriesDetails(seriesId);
       result = (await dbMarkSeriesAsWatched(
         {
-          id: (details as any).id,
-          name: (details as any).name,
-          overview: (details as any).overview,
-          first_air_date: (details as any).first_air_date
-            ? new Date((details as any).first_air_date)
+          id: details.id,
+          name: details.name,
+          overview: details.overview,
+          first_air_date: details.first_air_date
+            ? new Date(details.first_air_date)
             : null,
-          last_air_date: (details as any).last_air_date
-            ? new Date((details as any).last_air_date)
+          last_air_date: details.last_air_date
+            ? new Date(details.last_air_date)
             : null,
-          number_of_episodes: (details as any).number_of_episodes ?? null,
-          number_of_seasons: (details as any).number_of_seasons ?? null,
-          genres: ((details as any).genres || []).map((g: { name: string }) => g.name),
-          poster_path: (details as any).poster_path,
+          number_of_episodes: details.number_of_episodes ?? null,
+          number_of_seasons: details.number_of_seasons ?? null,
+          genres: (details.genres || []).map((g) => g.name),
+          poster_path: details.poster_path,
         },
         watchedAt,
         false
