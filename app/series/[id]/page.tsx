@@ -3,6 +3,8 @@ import Image from "next/image";
 import { getSeriesDetails } from "@/api/tmdb";
 import { FullDetailTMDBSeries } from "@/types";
 import { getSeriesPosterUrl } from "@/utils";
+import SeriesCardButtonsSection from "@/components/SeriesCardButtonsSection";
+import { getSeriesInDbStatus } from "@/lib/actions";
 
 interface PageProps {
   params: Promise<{
@@ -31,6 +33,7 @@ export default async function SeriesPage({ params, searchParams }: PageProps) {
   }
 
   const series = (await getSeriesDetails(seriesId)) as FullDetailTMDBSeries;
+  const dbSeries = await getSeriesInDbStatus(seriesId);
 
   if (!series) {
     notFound();
@@ -145,7 +148,12 @@ export default async function SeriesPage({ params, searchParams }: PageProps) {
               )}
             </div>
 
-            {/* Actions placeholder kept minimal for details page; card handles main actions */}
+            {/* Actions (below details, like movies page) */}
+            <SeriesCardButtonsSection
+              series={series}
+              initialSeriesDbId={dbSeries?.id ?? false}
+              watchedSeries={dbSeries ?? null}
+            />
           </div>
         </div>
       </div>
