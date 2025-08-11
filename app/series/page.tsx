@@ -1,11 +1,13 @@
 import SeriesCard from "@/components/SeriesCard";
 import { getPopularSeries } from "@/api/tmdb";
+import SeriesSearchBar from "@/components/SeriesSearchBar";
 
 export default async function SeriesPage() {
   const popularSeries = await getPopularSeries(1, 20);
 
   return (
     <main className="bg-black text-white min-h-screen py-12 px-4">
+      <SeriesSearchBar />
       <div className="container mx-auto">
         <h1 className="text-3xl md:text-4xl font-bold mb-10 tracking-tight">
           TV Series
