@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import Image from "next/image";
+import { Metadata } from "next";
 import { getMovie, movieExistsInDb } from "@/api/db";
 import MovieDetailGrid from "@/components/MovieDetailGrid";
 import { getMovieDetails } from "@/api/tmdb";
@@ -14,6 +15,151 @@ interface PageProps {
   searchParams: Promise<{
     tmdb?: string;
   }>;
+}
+
+export async function generateMetadata({
+  params,
+  searchParams,
+}: PageProps): Promise<Metadata> {
+  const resolvedParams = await params;
+  const resolvedSearchParams = await searchParams;
+
+  if (!resolvedParams?.id || isNaN(Number(resolvedParams.id))) {
+    return {
+      title: "Movie Not Found",
+      description: "The requested movie could not be found.",
+    };
+  }
+
+  const movieId = Number(resolvedParams.id);
+  const isTmdb = resolvedSearchParams.tmdb === "true";
+
+  try {
+    const movie = isTmdb
+      ? ((await getMovieDetails(movieId)) as FullDetailTMDBMovie)
+      : await getMovie(movieId);
+
+    if (!movie) {
+      return {
+        title: "Movie Not Found",
+        description: "The requested movie could not be found.",
+      };
+    }
+
+    const releaseYear = movie.release_date
+      ? new Date(movie.release_date).getFullYear()
+      : "";
+
+    const title = `${movie.title}${
+      releaseYear ? ` (${releaseYear})` : ""
+    } - Movie Details`;
+    const description = movie.overview
+      ? movie.overview.length > 160
+        ? `${movie.overview.substring(0, 157)}...`
+        : movie.overview
+      : `Watch ${movie.title}${
+          releaseYear ? ` (${releaseYear})` : ""
+        } and discover amazing movies.`;
+
+    const posterUrl = getPosterUrl(movie, isTmdb ? "tmdb" : "db");
+    const fullPosterUrl = posterUrl?.startsWith("http")
+      ? posterUrl
+      : posterUrl
+      ? `https://image.tmdb.org/t/p/w500${posterUrl}`
+      : null;
+
+    // Generate keywords from genres
+    const keywords = ["movie", "film", "cinema", "watch"];
+    if (isTmdb && "genres" in movie && movie.genres) {
+      keywords.push(
+        ...movie.genres.map((g) =>
+          typeof g === "string" ? g.toLowerCase() : g.name.toLowerCase()
+        )
+      );
+    } else if (!isTmdb && "genres" in movie && movie.genres) {
+      keywords.push(
+        ...movie.genres.map((g) =>
+          typeof g === "string" ? g.toLowerCase() : g.name.toLowerCase()
+        )
+      );
+    }
+
+    const baseUrl =
+      process.env.NODE_ENV === "production"
+        ? "https://your-domain.com" // Replace with your actual domain
+        : "http://localhost:3000";
+
+    const currentUrl = `${baseUrl}/movies/${movieId}${
+      isTmdb ? "?tmdb=true" : ""
+    }`;
+
+    return {
+      title,
+      description,
+      keywords: keywords.join(", "),
+      authors: [{ name: "Movie List App" }],
+      creator: "Movie List App",
+      publisher: "Movie List App",
+      robots: {
+        index: true,
+        follow: true,
+        googleBot: {
+          index: true,
+          follow: true,
+          "max-video-preview": -1,
+          "max-image-preview": "large",
+          "max-snippet": -1,
+        },
+      },
+      openGraph: {
+        title,
+        description,
+        url: currentUrl,
+        siteName: "Movie List",
+        type: "video.movie",
+        images: fullPosterUrl
+          ? [
+              {
+                url: fullPosterUrl,
+                width: 500,
+                height: 750,
+                alt: `${movie.title} poster`,
+              },
+            ]
+          : [],
+        locale: "en_US",
+      },
+      twitter: {
+        card: "summary_large_image",
+        title,
+        description,
+        images: fullPosterUrl ? [fullPosterUrl] : [],
+        creator: "@yourtwitterhandle", // Replace with your Twitter handle
+      },
+      alternates: {
+        canonical: currentUrl,
+      },
+      other: {
+        "movie:release_date": movie.release_date
+          ? typeof movie.release_date === "string"
+            ? movie.release_date
+            : movie.release_date.toISOString().split("T")[0]
+          : "",
+        "movie:duration":
+          isTmdb && "runtime" in movie ? `${movie.runtime} minutes` : "",
+        "movie:rating":
+          isTmdb && "vote_average" in movie
+            ? movie.vote_average?.toString() || ""
+            : "",
+      },
+    };
+  } catch (error) {
+    console.error("Error generating metadata:", error);
+    return {
+      title: "Movie Details",
+      description: "Discover amazing movies and add them to your watchlist.",
+    };
+  }
 }
 
 export default async function MoviePage({ params, searchParams }: PageProps) {
