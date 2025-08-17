@@ -1,7 +1,90 @@
-import React from "react";
+"use client";
+
+import React, { useState, useCallback } from "react";
 import Link from "next/link";
+import Image from "next/image";
+import { TMDBMovie, RecommendationFilters } from "@/types";
+import {
+  getDefaultFilters,
+  getRandomRecommendation,
+  getSurpriseMeRecommendation,
+  buildFilterSummary,
+  validateFilters,
+  RecommendationHistory,
+} from "@/utils/randomRecommendation";
+import GenreFilter from "@/components/decisions/GenreFilter";
+import YearRangeSlider from "@/components/decisions/YearRangeSlider";
+import RatingFilter from "@/components/decisions/RatingFilter";
+import MovieRecommendationCard from "@/components/decisions/MovieRecommendationCard";
 
 const RandomRecommendationPage = () => {
+  // State management
+  const [filters, setFilters] = useState<RecommendationFilters>(
+    getDefaultFilters()
+  );
+  const [currentMovie, setCurrentMovie] = useState<TMDBMovie | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [showFilters, setShowFilters] = useState(true);
+  const [history, setHistory] = useState<TMDBMovie[]>([]);
+
+  // Initialize history from localStorage
+  React.useEffect(() => {
+    setHistory(RecommendationHistory.load());
+  }, []);
+
+  const handleGetRecommendation = useCallback(
+    async (useFilters = true) => {
+      setLoading(true);
+      setError(null);
+
+      try {
+        // Validate filters first
+        const validation = validateFilters(filters);
+        if (!validation.isValid) {
+          throw new Error(validation.errors[0]);
+        }
+
+        const movie = useFilters
+          ? await getRandomRecommendation(filters)
+          : await getSurpriseMeRecommendation();
+
+        setCurrentMovie(movie);
+
+        // Save to history
+        RecommendationHistory.save(movie);
+        setHistory(RecommendationHistory.load());
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error ? err.message : "Failed to get recommendation";
+        setError(errorMessage);
+        console.error("Error getting recommendation:", err);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [filters]
+  );
+
+  const handleFilterChange = {
+    genres: (genres: number[]) => setFilters((prev) => ({ ...prev, genres })),
+    yearRange: (yearRange: [number, number]) =>
+      setFilters((prev) => ({ ...prev, yearRange })),
+    minRating: (minRating: number) =>
+      setFilters((prev) => ({ ...prev, minRating })),
+  };
+
+  const handleResetFilters = () => {
+    setFilters(getDefaultFilters());
+    setCurrentMovie(null);
+    setError(null);
+  };
+
+  const handleClearHistory = () => {
+    RecommendationHistory.clear();
+    setHistory([]);
+  };
+
   return (
     <main className="bg-black text-white min-h-screen py-12 px-4">
       {/* Breadcrumb Navigation */}
@@ -57,227 +140,150 @@ const RandomRecommendationPage = () => {
         </p>
       </div>
 
-      {/* Coming Soon Section */}
-      <div className="container mx-auto max-w-4xl">
-        <div className="bg-gradient-to-br from-blue-900/20 to-cyan-900/20 border border-blue-800/50 rounded-lg p-8 md:p-12">
-          {/* Features Preview */}
-          <div className="text-center mb-8">
-            <h2 className="text-2xl md:text-3xl font-bold text-blue-200 mb-6">
-              🎯 Smart Random Features Coming Soon
+      <div className="container mx-auto max-w-6xl">
+        {/* Filter Section */}
+        <div className="mb-8">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-2xl font-bold text-blue-200">
+              Customize Your Discovery
             </h2>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-left">
-              <div className="space-y-4">
-                <div className="flex items-start gap-3">
-                  <span className="text-2xl">🎭</span>
-                  <div>
-                    <h3 className="font-semibold text-blue-300 mb-1">
-                      Genre Filtering
-                    </h3>
-                    <p className="text-zinc-400 text-sm">
-                      Choose specific genres or let fate decide across all
-                      categories
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-3">
-                  <span className="text-2xl">📅</span>
-                  <div>
-                    <h3 className="font-semibold text-blue-300 mb-1">
-                      Era Selection
-                    </h3>
-                    <p className="text-zinc-400 text-sm">
-                      Set year ranges from classic films to the latest releases
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                <div className="flex items-start gap-3">
-                  <span className="text-2xl">⭐</span>
-                  <div>
-                    <h3 className="font-semibold text-blue-300 mb-1">
-                      Rating Thresholds
-                    </h3>
-                    <p className="text-zinc-400 text-sm">
-                      Set minimum rating requirements to ensure quality
-                      recommendations
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-3">
-                  <span className="text-2xl">🎪</span>
-                  <div>
-                    <h3 className="font-semibold text-blue-300 mb-1">
-                      Surprise Me Mode
-                    </h3>
-                    <p className="text-zinc-400 text-sm">
-                      Completely random selection with no filters for true
-                      serendipity
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Filter Preview Interface */}
-          <div className="bg-zinc-900/50 rounded-lg p-6 mb-8">
-            <h3 className="text-lg font-semibold text-blue-200 mb-4 text-center">
-              🎯 Filter Interface Preview
-            </h3>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {/* Genre Filter */}
-              <div className="space-y-3">
-                <label className="text-blue-300 font-medium text-sm">
-                  Genres
-                </label>
-                <div className="bg-zinc-800 rounded-lg p-3 border border-zinc-700">
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2 text-sm text-zinc-400">
-                      <div className="w-4 h-4 border border-zinc-600 rounded"></div>
-                      <span>Action</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-sm text-zinc-400">
-                      <div className="w-4 h-4 border border-zinc-600 rounded"></div>
-                      <span>Comedy</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-sm text-zinc-400">
-                      <div className="w-4 h-4 border border-zinc-600 rounded"></div>
-                      <span>Drama</span>
-                    </div>
-                    <div className="text-xs text-zinc-500">+ more genres</div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Year Range */}
-              <div className="space-y-3">
-                <label className="text-blue-300 font-medium text-sm">
-                  Year Range
-                </label>
-                <div className="bg-zinc-800 rounded-lg p-3 border border-zinc-700">
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-sm text-zinc-400">
-                      <span>From: 1950</span>
-                      <span>To: 2024</span>
-                    </div>
-                    <div className="bg-zinc-700 h-2 rounded-full">
-                      <div className="bg-blue-500 h-2 rounded-full w-3/4"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Rating Filter */}
-              <div className="space-y-3">
-                <label className="text-blue-300 font-medium text-sm">
-                  Minimum Rating
-                </label>
-                <div className="bg-zinc-800 rounded-lg p-3 border border-zinc-700">
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2 text-sm text-zinc-400">
-                      <span>⭐</span>
-                      <span>7.0+ IMDb</span>
-                    </div>
-                    <div className="bg-zinc-700 h-2 rounded-full">
-                      <div className="bg-blue-500 h-2 rounded-full w-3/5"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Sample Buttons */}
-            <div className="mt-6 flex flex-wrap gap-3 justify-center">
-              <button className="bg-blue-600/20 border border-blue-600/50 text-blue-300 px-4 py-2 rounded-lg text-sm">
-                🎲 Get Random Movie
-              </button>
-              <button className="bg-cyan-600/20 border border-cyan-600/50 text-cyan-300 px-4 py-2 rounded-lg text-sm">
-                ✨ Surprise Me!
-              </button>
-              <button className="bg-zinc-700/50 border border-zinc-600 text-zinc-400 px-4 py-2 rounded-lg text-sm">
-                🔄 Reset Filters
-              </button>
-            </div>
-          </div>
-
-          {/* Advanced Features */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            <div className="bg-gradient-to-r from-blue-600/10 to-cyan-600/10 border border-blue-600/30 rounded-lg p-4">
-              <h4 className="font-semibold text-blue-200 mb-2 flex items-center gap-2">
-                <span>🧠</span>
-                Smart Recommendations
-              </h4>
-              <p className="text-zinc-400 text-sm">
-                AI-powered suggestions based on your viewing history and
-                preferences for truly personalized discoveries.
-              </p>
-            </div>
-
-            <div className="bg-gradient-to-r from-cyan-600/10 to-blue-600/10 border border-cyan-600/30 rounded-lg p-4">
-              <h4 className="font-semibold text-cyan-200 mb-2 flex items-center gap-2">
-                <span>🔄</span>
-                Endless Discovery
-              </h4>
-              <p className="text-zinc-400 text-sm">
-                Don't like the first suggestion? Keep rolling for new
-                recommendations with your current filter settings.
-              </p>
-            </div>
-          </div>
-
-          {/* Call to Action */}
-          <div className="text-center">
-            <div className="inline-flex items-center gap-3 bg-blue-600/20 border border-blue-600/50 rounded-lg px-6 py-4 mb-6">
-              <span className="text-2xl">🚧</span>
-              <div className="text-left">
-                <div className="font-semibold text-blue-200">
-                  Under Development
-                </div>
-                <div className="text-sm text-zinc-400">
-                  Coming in Phase 3 of implementation
-                </div>
-              </div>
-            </div>
-
-            <p className="text-zinc-400 mb-6">
-              Get ready to discover your next favorite movie through smart
-              random recommendations! This feature will be available soon.
-            </p>
-
-            <Link
-              href="/decisions"
-              className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white font-semibold px-6 py-3 rounded-lg transition-all duration-300 transform hover:scale-105"
+            {/* Mobile filter toggle */}
+            <button
+              onClick={() => setShowFilters(!showFilters)}
+              className="md:hidden bg-zinc-700 hover:bg-zinc-600 text-white px-4 py-2 rounded-lg transition-colors"
             >
-              <span>Try Other Games</span>
-              <svg
-                className="w-4 h-4"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
-                  clipRule="evenodd"
+              {showFilters ? "Hide Filters" : "Show Filters"}
+            </button>
+          </div>
+
+          <div className={`${showFilters ? "block" : "hidden md:block"}`}>
+            <div className="bg-gradient-to-br from-blue-900/20 to-cyan-900/20 border border-blue-800/50 rounded-lg p-6 mb-6">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+                <GenreFilter
+                  selectedGenres={filters.genres}
+                  onGenreChange={handleFilterChange.genres}
+                  disabled={loading}
                 />
-              </svg>
-            </Link>
+
+                <YearRangeSlider
+                  yearRange={filters.yearRange}
+                  onYearRangeChange={handleFilterChange.yearRange}
+                  disabled={loading}
+                />
+
+                <RatingFilter
+                  minRating={filters.minRating}
+                  onRatingChange={handleFilterChange.minRating}
+                  disabled={loading}
+                />
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex flex-wrap gap-3 justify-center">
+                <button
+                  onClick={() => handleGetRecommendation(true)}
+                  disabled={loading}
+                  className="bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 font-semibold"
+                >
+                  <span>🎲</span>
+                  Get Random Movie
+                </button>
+
+                <button
+                  onClick={() => handleGetRecommendation(false)}
+                  disabled={loading}
+                  className="bg-cyan-600 hover:bg-cyan-500 text-white px-6 py-3 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 font-semibold"
+                >
+                  <span>✨</span>
+                  Surprise Me!
+                </button>
+
+                <button
+                  onClick={handleResetFilters}
+                  disabled={loading}
+                  className="bg-zinc-700 hover:bg-zinc-600 text-white px-6 py-3 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                >
+                  <span>🔄</span>
+                  Reset Filters
+                </button>
+              </div>
+
+              {/* Filter Summary */}
+              {(filters.genres.length > 0 ||
+                filters.minRating > 0 ||
+                filters.yearRange[0] !== 1990 ||
+                filters.yearRange[1] !== new Date().getFullYear()) && (
+                <div className="mt-4 pt-4 border-t border-zinc-700">
+                  <p className="text-sm text-zinc-400 text-center">
+                    <span className="text-blue-300">Active filters:</span>{" "}
+                    {buildFilterSummary(filters, [])}
+                  </p>
+                </div>
+              )}
+            </div>
           </div>
         </div>
+
+        {/* Recommendation Display */}
+        <div className="mb-8">
+          <MovieRecommendationCard
+            movie={currentMovie}
+            loading={loading}
+            error={error}
+            onGetAnother={() => handleGetRecommendation(true)}
+            disabled={loading}
+          />
+        </div>
+
+        {/* Recommendation History */}
+        {history.length > 0 && (
+          <div className="bg-zinc-900/50 rounded-lg border border-zinc-800 p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-blue-200">
+                Recent Discoveries
+              </h3>
+              <button
+                onClick={handleClearHistory}
+                className="text-xs text-zinc-400 hover:text-white transition-colors"
+              >
+                Clear History
+              </button>
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+              {history.map((movie, index) => (
+                <Link
+                  key={`${movie.id}-${index}`}
+                  href={`/movies/${movie.id}?tmdb=true`}
+                  className="group"
+                >
+                  <div className="aspect-[2/3] bg-zinc-800 rounded-lg overflow-hidden relative group-hover:ring-2 group-hover:ring-blue-500 transition-all">
+                    {movie.poster_path ? (
+                      <Image
+                        src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`}
+                        alt={`${movie.title} poster`}
+                        fill
+                        sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, 20vw"
+                        className="object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-zinc-500 text-xs text-center">
+                        No Poster
+                      </div>
+                    )}
+                  </div>
+                  <p className="text-xs text-zinc-400 mt-2 line-clamp-2 group-hover:text-white transition-colors">
+                    {movie.title}
+                  </p>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </main>
   );
 };
 
 export default RandomRecommendationPage;
-
-export const metadata = {
-  title: "Random Discovery – Smart Movie Recommendations",
-  description:
-    "Get perfectly random movie recommendations with smart filtering. Discover hidden gems based on your preferences for genre, year, and rating.",
-};
