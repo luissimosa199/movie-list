@@ -210,3 +210,26 @@ export interface CreateSeriesData {
   updated_at: Date;
   watched_at: Date | null;
 }
+
+// Genre Types for Random Recommendation
+export interface Genre {
+  id: number;
+  name: string;
+}
+
+// Random Recommendation Filter Types
+export interface RecommendationFilters {
+  genres: number[];
+  yearRange: [number, number];
+  minRating: number;
+  excludeWatched?: boolean;
+}
+
+export interface DiscoverParams {
+  page?: number;
+  with_genres?: string;
+  'primary_release_date.gte'?: string;
+  'primary_release_date.lte'?: string;
+  'vote_average.gte'?: string;
+  'vote_count.gte'?: string;
+}
