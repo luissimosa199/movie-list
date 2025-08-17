@@ -1,4 +1,4 @@
-import { TMDBMovie, TMDBSeries, FullDetailTMDBMovie, FullDetailTMDBSeries } from "@/types";
+import { TMDBMovie, TMDBSeries, FullDetailTMDBMovie, FullDetailTMDBSeries, Genre, DiscoverParams } from "@/types";
 
 type QueryParams = Record<string, string | number>;
 
@@ -227,4 +227,93 @@ export async function getAiringTodaySeries(
     ...response,
     results: response.results.slice(0, limit),
   };
+}
+
+// Random Recommendation Functions
+
+export async function getGenres(): Promise<Genre[]> {
+  interface GenreResponse {
+    genres: Genre[];
+  }
+  const response = await fetchFromTMDB<GenreResponse>("/genre/movie/list");
+  return response.genres;
+}
+
+export async function getRandomMoviePage(params: DiscoverParams): Promise<number> {
+  // First, get total pages from a discover call
+  const response = await fetchFromTMDB<TMDBResponse<TMDBMovie>>(
+    "/discover/movie",
+    { ...params, page: 1 }
+  );
+
+  // Generate random page number between 1 and total_pages (max 500 as per TMDB limit)
+  const maxPage = Math.min(response.total_pages, 500);
+  return Math.floor(Math.random() * maxPage) + 1;
+}
+
+export async function discoverMoviesWithRandom(params: DiscoverParams): Promise<TMDBMovie> {
+  try {
+    // Get a random page
+    const randomPage = await getRandomMoviePage(params);
+
+    // Fetch movies from that random page
+    const response = await fetchFromTMDB<TMDBResponse<TMDBMovie>>(
+      "/discover/movie",
+      { ...params, page: randomPage }
+    );
+
+    if (response.results.length === 0) {
+      throw new Error("No movies found for the given criteria");
+    }
+
+    // Return a random movie from the page
+    const randomIndex = Math.floor(Math.random() * response.results.length);
+    return response.results[randomIndex];
+  } catch (error) {
+    // Fallback: try with broader criteria
+    console.warn("Random movie fetch failed, trying fallback:", error);
+
+    // Remove rating constraint for fallback
+    const fallbackParams = { ...params };
+    delete fallbackParams['vote_average.gte'];
+
+    const fallbackResponse = await fetchFromTMDB<TMDBResponse<TMDBMovie>>(
+      "/discover/movie",
+      fallbackParams
+    );
+
+    if (fallbackResponse.results.length === 0) {
+      throw new Error("No movies found even with fallback criteria");
+    }
+
+    const randomIndex = Math.floor(Math.random() * fallbackResponse.results.length);
+    return fallbackResponse.results[randomIndex];
+  }
+}
+
+export function buildDiscoverParams(filters: {
+  genres: number[];
+  yearRange: [number, number];
+  minRating: number;
+}): DiscoverParams {
+  const params: DiscoverParams = {};
+
+  // Add genres filter
+  if (filters.genres.length > 0) {
+    params.with_genres = filters.genres.join(',');
+  }
+
+  // Add year range filters
+  const [minYear, maxYear] = filters.yearRange;
+  params['primary_release_date.gte'] = `${minYear}-01-01`;
+  params['primary_release_date.lte'] = `${maxYear}-12-31`;
+
+  // Add minimum rating filter
+  if (filters.minRating > 0) {
+    params['vote_average.gte'] = filters.minRating.toString();
+    // Also add vote count requirement to ensure quality ratings
+    params['vote_count.gte'] = '50';
+  }
+
+  return params;
 }
