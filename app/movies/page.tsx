@@ -5,6 +5,7 @@ import {
   getUpcomingMovies,
 } from "@/api/tmdb";
 import SearchBar from "@/components/SearchBar";
+import DecisionsBanner from "@/components/DecisionsBanner";
 export default async function Movies() {
   const popularMovies = await getPopularMovies();
   const topRatedMovies = await getTopRatedMovies();
@@ -13,6 +14,11 @@ export default async function Movies() {
   return (
     <main className="bg-black text-white min-h-screen py-12 px-4">
       <SearchBar />
+
+      {/* Decisions Banner */}
+      <div className="container mx-auto py-6">
+        <DecisionsBanner />
+      </div>
 
       <div className="container mx-auto py-4">
         <h1 className="text-3xl md:text-4xl font-bold mb-10 tracking-tight">
