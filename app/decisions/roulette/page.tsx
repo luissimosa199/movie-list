@@ -1,7 +1,143 @@
-import React from "react";
+"use client";
+
+import React, { useState, useRef, useCallback, useEffect } from "react";
 import Link from "next/link";
+import { TMDBMovie } from "@/types";
+import {
+  determineWinner,
+  generateWheelSegments,
+} from "@/utils/roulettePhysics";
+import MovieSelector from "@/components/decisions/MovieSelector";
+import RouletteWheel from "@/components/decisions/RouletteWheel";
+import RouletteControls from "@/components/decisions/RouletteControls";
+import WinnerDisplay from "@/components/decisions/WinnerDisplay";
+
+interface RouletteHistory {
+  winner: TMDBMovie;
+  timestamp: number;
+  movies: TMDBMovie[];
+}
 
 const RouletteGamePage = () => {
+  const [selectedMovies, setSelectedMovies] = useState<TMDBMovie[]>([]);
+  const [isSpinning, setIsSpinning] = useState(false);
+  const [winner, setWinner] = useState<TMDBMovie | null>(null);
+  const [spinHistory, setSpinHistory] = useState<RouletteHistory[]>([]);
+  const [gameState, setGameState] = useState<
+    "setup" | "ready" | "spinning" | "winner"
+  >("setup");
+
+  const wheelRef = useRef<{
+    spin: (totalRotation: number, duration: number) => void;
+  }>(null);
+
+  // Load history from localStorage on mount
+  useEffect(() => {
+    const savedHistory = localStorage.getItem("roulette-history");
+    if (savedHistory) {
+      try {
+        const history = JSON.parse(savedHistory);
+        setSpinHistory(history);
+      } catch (error) {
+        console.error("Error loading roulette history:", error);
+      }
+    }
+  }, []);
+
+  // Save history to localStorage when it changes
+  useEffect(() => {
+    if (spinHistory.length > 0) {
+      localStorage.setItem(
+        "roulette-history",
+        JSON.stringify(spinHistory.slice(0, 10))
+      ); // Keep last 10
+    }
+  }, [spinHistory]);
+
+  // Update game state based on current conditions
+  useEffect(() => {
+    if (isSpinning) {
+      setGameState("spinning");
+    } else if (winner) {
+      setGameState("winner");
+    } else if (selectedMovies.length >= 2) {
+      setGameState("ready");
+    } else {
+      setGameState("setup");
+    }
+  }, [selectedMovies.length, isSpinning, winner]);
+
+  const handleMoviesChange = useCallback(
+    (movies: TMDBMovie[]) => {
+      setSelectedMovies(movies);
+      // Clear winner when movies change
+      if (winner) {
+        setWinner(null);
+      }
+    },
+    [winner]
+  );
+
+  const handleSpinStart = useCallback(() => {
+    setIsSpinning(true);
+    setWinner(null);
+  }, []);
+
+  const handleSpinEnd = useCallback(
+    (finalAngle: number) => {
+      setIsSpinning(false);
+
+      // Determine winner based on final wheel position
+      if (selectedMovies.length > 0) {
+        const segments = generateWheelSegments(selectedMovies);
+        const winnerMovie = determineWinner(finalAngle, segments);
+
+        if (winnerMovie) {
+          setWinner(winnerMovie);
+
+          // Add to history
+          const newHistoryEntry: RouletteHistory = {
+            winner: winnerMovie,
+            timestamp: Date.now(),
+            movies: [...selectedMovies],
+          };
+
+          setSpinHistory((prev) => [newHistoryEntry, ...prev]);
+        }
+      }
+    },
+    [selectedMovies]
+  );
+
+  const handleSpin = useCallback(
+    (totalRotation: number, duration: number) => {
+      if (wheelRef.current) {
+        wheelRef.current.spin(totalRotation, duration);
+
+        // Handle spin end after duration
+        setTimeout(() => {
+          handleSpinEnd(totalRotation % 360);
+        }, duration);
+      }
+    },
+    [handleSpinEnd]
+  );
+
+  const handleSpinAgain = useCallback(() => {
+    setWinner(null);
+    setGameState(selectedMovies.length >= 2 ? "ready" : "setup");
+  }, [selectedMovies.length]);
+
+  const handleClearWinner = useCallback(() => {
+    setWinner(null);
+    setSelectedMovies([]);
+    setGameState("setup");
+  }, []);
+
+  const getRecentWinners = () => {
+    return spinHistory.slice(0, 5).map((entry) => entry.winner);
+  };
+
   return (
     <main className="bg-black text-white min-h-screen py-12 px-4">
       {/* Breadcrumb Navigation */}
@@ -57,311 +193,188 @@ const RouletteGamePage = () => {
         </p>
       </div>
 
-      {/* Coming Soon Section */}
-      <div className="container mx-auto max-w-5xl">
-        <div className="bg-gradient-to-br from-purple-900/20 to-pink-900/20 border border-purple-800/50 rounded-lg p-8 md:p-12">
-          {/* Roulette Wheel Preview */}
-          <div className="text-center mb-8">
-            <h2 className="text-2xl md:text-3xl font-bold text-purple-200 mb-6">
-              🎡 Interactive Roulette Wheel Coming Soon
-            </h2>
+      {/* Game Content */}
+      <div className="container mx-auto max-w-7xl">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Left Column - Movie Selection */}
+          <div className="lg:col-span-1 order-2 lg:order-1">
+            <MovieSelector
+              selectedMovies={selectedMovies}
+              onMoviesChange={handleMoviesChange}
+              maxMovies={12}
+              disabled={isSpinning}
+              className="mb-6"
+            />
 
-            {/* Visual Roulette Mockup */}
-            <div className="flex justify-center mb-8">
-              <div className="relative">
-                {/* Wheel Background */}
-                <div className="w-64 h-64 md:w-80 md:h-80 rounded-full bg-gradient-to-br from-purple-800/30 to-pink-800/30 border-4 border-purple-600/50 relative overflow-hidden">
-                  {/* Wheel Sections */}
-                  <div className="absolute inset-4 rounded-full bg-gradient-to-br from-purple-700/20 to-pink-700/20 border-2 border-purple-500/30">
-                    {/* Sample movie sections */}
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="grid grid-cols-4 gap-1 text-xs text-center">
-                        <div className="bg-red-600/30 rounded p-1">Movie A</div>
-                        <div className="bg-blue-600/30 rounded p-1">
-                          Movie B
-                        </div>
-                        <div className="bg-green-600/30 rounded p-1">
-                          Movie C
-                        </div>
-                        <div className="bg-yellow-600/30 rounded p-1">
-                          Movie D
-                        </div>
-                        <div className="bg-purple-600/30 rounded p-1">
-                          Movie E
-                        </div>
-                        <div className="bg-pink-600/30 rounded p-1">
-                          Movie F
-                        </div>
-                        <div className="bg-indigo-600/30 rounded p-1">
-                          Movie G
-                        </div>
-                        <div className="bg-orange-600/30 rounded p-1">
-                          Movie H
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Center Circle */}
-                  <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-12 h-12 bg-gradient-to-br from-purple-600 to-pink-600 rounded-full border-2 border-white/20 flex items-center justify-center">
-                    <span className="text-xl">🎬</span>
-                  </div>
+            {/* Quick Stats */}
+            <div className="bg-zinc-900/50 border border-zinc-800 rounded-lg p-4">
+              <h3 className="text-sm font-semibold text-purple-200 mb-3">
+                Game Stats
+              </h3>
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-zinc-400">Movies on wheel:</span>
+                  <span className="text-white">{selectedMovies.length}/12</span>
                 </div>
-
-                {/* Pointer */}
-                <div className="absolute top-4 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                  <div className="w-0 h-0 border-l-4 border-r-4 border-b-8 border-l-transparent border-r-transparent border-b-yellow-500"></div>
+                <div className="flex justify-between">
+                  <span className="text-zinc-400">Total spins:</span>
+                  <span className="text-white">{spinHistory.length}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-zinc-400">Game state:</span>
+                  <span
+                    className={`
+                    ${gameState === "setup" ? "text-yellow-400" : ""}
+                    ${gameState === "ready" ? "text-green-400" : ""}
+                    ${gameState === "spinning" ? "text-blue-400" : ""}
+                    ${gameState === "winner" ? "text-purple-400" : ""}
+                  `}
+                  >
+                    {gameState.charAt(0).toUpperCase() + gameState.slice(1)}
+                  </span>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Features Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-left mb-8">
-            <div className="space-y-4">
-              <div className="flex items-start gap-3">
-                <span className="text-2xl">🎡</span>
-                <div>
-                  <h3 className="font-semibold text-purple-300 mb-1">
-                    Interactive Wheel
-                  </h3>
-                  <p className="text-zinc-400 text-sm">
-                    Beautiful spinning wheel with smooth animations and
-                    realistic physics
-                  </p>
-                </div>
-              </div>
+          {/* Center Column - Roulette Wheel */}
+          <div className="lg:col-span-1 order-1 lg:order-2">
+            <div className="text-center mb-6">
+              <h2 className="text-2xl font-bold text-purple-200 mb-4">
+                The Wheel of Fate
+              </h2>
 
-              <div className="flex items-start gap-3">
-                <span className="text-2xl">🎬</span>
-                <div>
-                  <h3 className="font-semibold text-purple-300 mb-1">
-                    Custom Movie Lists
-                  </h3>
-                  <p className="text-zinc-400 text-sm">
-                    Add any movies you want to the wheel - from your watchlist
-                    or popular selections
-                  </p>
-                </div>
-              </div>
+              <RouletteWheel
+                ref={wheelRef}
+                movies={selectedMovies}
+                isSpinning={isSpinning}
+                winner={winner}
+                onSpinComplete={handleSpinEnd}
+                className="mb-6"
+              />
 
-              <div className="flex items-start gap-3">
-                <span className="text-2xl">🌪️</span>
-                <div>
-                  <h3 className="font-semibold text-purple-300 mb-1">
-                    Realistic Spin Physics
-                  </h3>
-                  <p className="text-zinc-400 text-sm">
-                    Watch the wheel spin with realistic momentum and gradually
-                    slow down
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="space-y-4">
-              <div className="flex items-start gap-3">
-                <span className="text-2xl">👥</span>
-                <div>
-                  <h3 className="font-semibold text-purple-300 mb-1">
-                    Group Decision Making
-                  </h3>
-                  <p className="text-zinc-400 text-sm">
-                    Perfect for friend groups or families who can't decide what
-                    to watch
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-3">
-                <span className="text-2xl">🎨</span>
-                <div>
-                  <h3 className="font-semibold text-purple-300 mb-1">
-                    Colorful Sections
-                  </h3>
-                  <p className="text-zinc-400 text-sm">
-                    Each movie gets its own colorful section with movie poster
-                    thumbnails
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-3">
-                <span className="text-2xl">🏆</span>
-                <div>
-                  <h3 className="font-semibold text-purple-300 mb-1">
-                    Winner Highlights
-                  </h3>
-                  <p className="text-zinc-400 text-sm">
-                    Dramatic winner reveal with confetti and movie details
-                  </p>
-                </div>
-              </div>
+              <RouletteControls
+                movies={selectedMovies}
+                isSpinning={isSpinning}
+                onSpin={handleSpin}
+                onSpinStart={handleSpinStart}
+                disabled={selectedMovies.length < 2}
+              />
             </div>
           </div>
 
-          {/* Interface Preview */}
-          <div className="bg-zinc-900/50 rounded-lg p-6 mb-8">
-            <h3 className="text-lg font-semibold text-purple-200 mb-4 text-center">
-              🎮 Game Interface Preview
-            </h3>
+          {/* Right Column - Winner Display & History */}
+          <div className="lg:col-span-1 order-3">
+            <WinnerDisplay
+              winner={winner}
+              isSpinning={isSpinning}
+              onSpinAgain={handleSpinAgain}
+              onClearWinner={handleClearWinner}
+              spinHistory={getRecentWinners()}
+              className="mb-6"
+            />
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              {/* Movie Selection Panel */}
-              <div className="space-y-4">
-                <h4 className="font-medium text-purple-300 text-center">
-                  Add Movies to Wheel
-                </h4>
-                <div className="bg-zinc-800 rounded-lg p-4 border border-zinc-700">
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-3 p-2 bg-zinc-700/50 rounded">
-                      <div className="w-8 h-12 bg-gradient-to-b from-red-600 to-red-800 rounded text-xs flex items-center justify-center">
-                        🎬
-                      </div>
-                      <span className="text-sm text-zinc-300 flex-1">
-                        The Dark Knight
-                      </span>
-                      <button className="text-red-400 hover:text-red-300 text-xs">
-                        Remove
-                      </button>
-                    </div>
-                    <div className="flex items-center gap-3 p-2 bg-zinc-700/50 rounded">
-                      <div className="w-8 h-12 bg-gradient-to-b from-blue-600 to-blue-800 rounded text-xs flex items-center justify-center">
-                        🎬
-                      </div>
-                      <span className="text-sm text-zinc-300 flex-1">
-                        Inception
-                      </span>
-                      <button className="text-red-400 hover:text-red-300 text-xs">
-                        Remove
-                      </button>
-                    </div>
-                    <div className="flex items-center gap-3 p-2 bg-zinc-700/50 rounded">
-                      <div className="w-8 h-12 bg-gradient-to-b from-green-600 to-green-800 rounded text-xs flex items-center justify-center">
-                        🎬
-                      </div>
-                      <span className="text-sm text-zinc-300 flex-1">
-                        Pulp Fiction
-                      </span>
-                      <button className="text-red-400 hover:text-red-300 text-xs">
-                        Remove
-                      </button>
-                    </div>
-                    <button className="w-full bg-purple-600/20 border border-purple-600/50 text-purple-300 py-2 rounded text-sm hover:bg-purple-600/30 transition-colors">
-                      + Add More Movies
-                    </button>
+            {/* Game Instructions */}
+            {gameState === "setup" && (
+              <div className="bg-gradient-to-br from-purple-900/20 to-pink-900/20 border border-purple-800/50 rounded-lg p-6">
+                <h3 className="text-lg font-semibold text-purple-200 mb-3">
+                  How to Play
+                </h3>
+                <div className="space-y-3 text-sm text-zinc-300">
+                  <div className="flex items-start gap-3">
+                    <span className="text-lg">1️⃣</span>
+                    <p>Search and add 2-12 movies to your wheel</p>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <span className="text-lg">2️⃣</span>
+                    <p>Hold the spin button to charge up power</p>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <span className="text-lg">3️⃣</span>
+                    <p>Release to spin - longer hold = stronger spin!</p>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <span className="text-lg">4️⃣</span>
+                    <p>Watch the wheel decide your movie fate!</p>
                   </div>
                 </div>
               </div>
+            )}
 
-              {/* Controls Panel */}
-              <div className="space-y-4">
-                <h4 className="font-medium text-purple-300 text-center">
-                  Spin Controls
-                </h4>
-                <div className="bg-zinc-800 rounded-lg p-4 border border-zinc-700 space-y-4">
-                  <button className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-semibold py-3 rounded-lg transition-all duration-300 transform hover:scale-105">
-                    🎪 SPIN THE WHEEL!
-                  </button>
-
-                  <div className="grid grid-cols-2 gap-3">
-                    <button className="bg-zinc-700 hover:bg-zinc-600 text-zinc-300 py-2 px-3 rounded text-sm transition-colors">
-                      🔄 Reset Wheel
-                    </button>
-                    <button className="bg-zinc-700 hover:bg-zinc-600 text-zinc-300 py-2 px-3 rounded text-sm transition-colors">
-                      ⚙️ Settings
-                    </button>
-                  </div>
-
-                  <div className="text-center text-sm text-zinc-400">
-                    <div>Spin Speed: Normal</div>
-                    <div>Movies on Wheel: 8</div>
-                  </div>
+            {/* Pro Tips */}
+            {gameState === "ready" && !winner && (
+              <div className="bg-gradient-to-br from-green-900/20 to-emerald-900/20 border border-green-800/50 rounded-lg p-6">
+                <h3 className="text-lg font-semibold text-green-200 mb-3">
+                  🎯 Pro Tips
+                </h3>
+                <div className="space-y-2 text-sm text-zinc-300">
+                  <p>• Hold the spin button longer for more dramatic spins</p>
+                  <p>• Try different speed settings for varied experiences</p>
+                  <p>• Use keyboard spacebar for quick spinning</p>
+                  <p>• Share your winner with friends!</p>
                 </div>
               </div>
-            </div>
-          </div>
-
-          {/* Fun Features */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-            <div className="bg-gradient-to-br from-purple-600/10 to-pink-600/10 border border-purple-600/30 rounded-lg p-4 text-center">
-              <div className="text-2xl mb-2">🎊</div>
-              <h4 className="font-semibold text-purple-200 mb-2">
-                Winner Celebration
-              </h4>
-              <p className="text-zinc-400 text-sm">
-                Confetti animations and victory sounds when the wheel stops
-              </p>
-            </div>
-
-            <div className="bg-gradient-to-br from-pink-600/10 to-purple-600/10 border border-pink-600/30 rounded-lg p-4 text-center">
-              <div className="text-2xl mb-2">🔊</div>
-              <h4 className="font-semibold text-pink-200 mb-2">
-                Sound Effects
-              </h4>
-              <p className="text-zinc-400 text-sm">
-                Spinning sounds and winner chimes for immersive experience
-              </p>
-            </div>
-
-            <div className="bg-gradient-to-br from-indigo-600/10 to-purple-600/10 border border-indigo-600/30 rounded-lg p-4 text-center">
-              <div className="text-2xl mb-2">📱</div>
-              <h4 className="font-semibold text-indigo-200 mb-2">
-                Mobile Optimized
-              </h4>
-              <p className="text-zinc-400 text-sm">
-                Touch-friendly interface that works great on all devices
-              </p>
-            </div>
-          </div>
-
-          {/* Call to Action */}
-          <div className="text-center">
-            <div className="inline-flex items-center gap-3 bg-purple-600/20 border border-purple-600/50 rounded-lg px-6 py-4 mb-6">
-              <span className="text-2xl">🚧</span>
-              <div className="text-left">
-                <div className="font-semibold text-purple-200">
-                  Under Development
-                </div>
-                <div className="text-sm text-zinc-400">
-                  Coming in Phase 3 of implementation
-                </div>
-              </div>
-            </div>
-
-            <p className="text-zinc-400 mb-6">
-              Get ready to spin your way to movie night decisions! This
-              interactive roulette wheel will be available soon.
-            </p>
-
-            <Link
-              href="/decisions"
-              className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-semibold px-6 py-3 rounded-lg transition-all duration-300 transform hover:scale-105"
-            >
-              <span>Try Other Games</span>
-              <svg
-                className="w-4 h-4"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            </Link>
+            )}
           </div>
         </div>
+
+        {/* Recent Spin History (Full Width) */}
+        {spinHistory.length > 0 && (
+          <div className="mt-12 bg-zinc-900/50 border border-zinc-800 rounded-lg p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold text-purple-200">
+                Spin History
+              </h2>
+              <button
+                onClick={() => {
+                  setSpinHistory([]);
+                  localStorage.removeItem("roulette-history");
+                }}
+                className="text-sm text-zinc-400 hover:text-red-400 transition-colors"
+              >
+                Clear History
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {spinHistory.slice(0, 6).map((entry, index) => (
+                <div
+                  key={`${entry.winner.id}-${entry.timestamp}`}
+                  className="bg-zinc-800/50 border border-zinc-700 rounded-lg p-4 hover:bg-zinc-800 transition-colors"
+                >
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="text-2xl">{index === 0 ? "🏆" : "🎬"}</div>
+                    <div className="flex-1">
+                      <h4 className="font-semibold text-white line-clamp-1">
+                        {entry.winner.title}
+                      </h4>
+                      <p className="text-xs text-zinc-400">
+                        {new Date(entry.timestamp).toLocaleDateString()} •{" "}
+                        {entry.movies.length} movies
+                      </p>
+                    </div>
+                  </div>
+
+                  <Link
+                    href={`/movies/${entry.winner.id}?tmdb=true`}
+                    className="text-xs text-purple-400 hover:text-purple-300 transition-colors"
+                  >
+                    View Details →
+                  </Link>
+                </div>
+              ))}
+            </div>
+
+            {spinHistory.length > 6 && (
+              <p className="text-center text-zinc-500 text-sm mt-4">
+                Showing latest 6 of {spinHistory.length} total spins
+              </p>
+            )}
+          </div>
+        )}
       </div>
     </main>
   );
 };
 
 export default RouletteGamePage;
-
-export const metadata = {
-  title: "Movie Roulette – Spin to Decide Your Next Watch",
-  description:
-    "Add movies to an interactive spinning roulette wheel and let fate decide what to watch next. Perfect for group movie nights and indecisive moments.",
-};
