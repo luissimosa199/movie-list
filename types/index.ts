@@ -233,3 +233,29 @@ export interface DiscoverParams {
   'vote_average.gte'?: string;
   'vote_count.gte'?: string;
 }
+
+// Movie Roulette Types
+export interface RouletteWheelSegment {
+  movie: TMDBMovie;
+  startAngle: number;
+  endAngle: number;
+  color: string;
+}
+
+export interface RouletteSpinConfig {
+  force: number; // 0-100 based on hold duration
+  friction: number; // deceleration rate
+  minSpins: number; // minimum rotations
+}
+
+export interface RouletteSpinResult {
+  duration: number; // in milliseconds
+  finalAngle: number; // in degrees
+  rotations: number; // number of full rotations
+}
+
+export interface RouletteHistory {
+  winner: TMDBMovie;
+  timestamp: number;
+  movies: TMDBMovie[];
+}
