@@ -1,7 +1,201 @@
-import React from "react";
+"use client";
+
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { TMDBMovie } from "@/types";
+import {
+  SimpleTournament,
+  createTournament,
+  getCurrentBattle,
+  recordBattleWinner,
+  saveTournament,
+  loadTournament,
+  deleteTournament,
+  getTournamentProgress,
+} from "@/utils/simpleTournament";
+
+// Components
+import TournamentSetup from "@/components/decisions/TournamentSetup";
+import MovieBattle from "@/components/decisions/MovieBattle";
+import TournamentProgress from "@/components/decisions/TournamentProgress";
+import TournamentChampion from "@/components/decisions/TournamentChampion";
+
+type TournamentPhase = "setup" | "battle" | "champion";
 
 const VSBattlePage = () => {
+  const [currentPhase, setCurrentPhase] = useState<TournamentPhase>("setup");
+  const [tournament, setTournament] = useState<SimpleTournament | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // Load existing tournament on mount
+  useEffect(() => {
+    const existingTournament = loadTournament();
+    if (existingTournament) {
+      setTournament(existingTournament);
+
+      if (existingTournament.completed) {
+        setCurrentPhase("champion");
+      } else {
+        setCurrentPhase("battle");
+      }
+    }
+  }, []);
+
+  const handleStartTournament = async (movies: TMDBMovie[], title: string) => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const newTournament = createTournament(movies, title);
+      setTournament(newTournament);
+      saveTournament(newTournament);
+      setCurrentPhase("battle");
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Failed to create tournament"
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleBattleWinner = async (winner: TMDBMovie) => {
+    if (!tournament) return;
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const updatedTournament = recordBattleWinner(tournament, winner);
+      setTournament(updatedTournament);
+      saveTournament(updatedTournament);
+
+      // Check if tournament is complete
+      if (updatedTournament.completed) {
+        setCurrentPhase("champion");
+      }
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Failed to record battle winner"
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleNewTournament = () => {
+    if (tournament) {
+      deleteTournament(tournament.id);
+    }
+    setTournament(null);
+    setCurrentPhase("setup");
+    setError(null);
+  };
+
+  const handleRematch = () => {
+    if (!tournament) return;
+
+    try {
+      // Create new tournament with same movies
+      const rematchTournament = createTournament(
+        tournament.movies,
+        `${tournament.title} (Rematch)`
+      );
+      setTournament(rematchTournament);
+      saveTournament(rematchTournament);
+      setCurrentPhase("battle");
+      setError(null);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to create rematch");
+    }
+  };
+
+  const currentBattle = tournament ? getCurrentBattle(tournament) : null;
+  const tournamentProgress = tournament
+    ? getTournamentProgress(tournament)
+    : null;
+
+  const renderPhaseContent = () => {
+    switch (currentPhase) {
+      case "setup":
+        return (
+          <TournamentSetup
+            onStartTournament={handleStartTournament}
+            loading={loading}
+          />
+        );
+
+      case "battle":
+        if (!tournament || !currentBattle || !tournamentProgress) {
+          return (
+            <div className="text-center py-12">
+              <div className="text-4xl mb-4">❌</div>
+              <h2 className="text-xl font-bold text-white mb-2">
+                Tournament Error
+              </h2>
+              <p className="text-zinc-400 mb-4">
+                Unable to load tournament data.
+              </p>
+              <button
+                onClick={handleNewTournament}
+                className="bg-red-600 hover:bg-red-500 text-white px-6 py-2 rounded-lg transition-colors"
+              >
+                Start New Tournament
+              </button>
+            </div>
+          );
+        }
+
+        return (
+          <div className="space-y-8">
+            {/* Battle Interface */}
+            <MovieBattle
+              battle={currentBattle}
+              tournamentProgress={tournamentProgress}
+              onSelectWinner={handleBattleWinner}
+              loading={loading}
+            />
+
+            {/* Tournament Progress Sidebar */}
+            <div className="lg:fixed lg:top-4 lg:right-4 lg:w-80 lg:max-h-screen lg:overflow-y-auto">
+              <TournamentProgress tournament={tournament} />
+            </div>
+          </div>
+        );
+
+      case "champion":
+        if (!tournament) {
+          return (
+            <div className="text-center py-12">
+              <div className="text-4xl mb-4">❌</div>
+              <h2 className="text-xl font-bold text-white mb-2">
+                No Tournament Data
+              </h2>
+              <p className="text-zinc-400 mb-4">Tournament data not found.</p>
+              <button
+                onClick={handleNewTournament}
+                className="bg-red-600 hover:bg-red-500 text-white px-6 py-2 rounded-lg transition-colors"
+              >
+                Start New Tournament
+              </button>
+            </div>
+          );
+        }
+
+        return (
+          <TournamentChampion
+            tournament={tournament}
+            onNewTournament={handleNewTournament}
+            onRematch={handleRematch}
+          />
+        );
+
+      default:
+        return null;
+    }
+  };
+
   return (
     <main className="bg-black text-white min-h-screen py-12 px-4">
       {/* Breadcrumb Navigation */}
@@ -51,163 +245,37 @@ const VSBattlePage = () => {
         </h1>
         <div className="w-24 h-1 bg-red-500 rounded mx-auto mb-6"></div>
         <p className="text-zinc-300 text-lg md:text-xl max-w-3xl mx-auto">
-          Tournament-style movie battles where only the strongest films survive!
-          Create brackets, face off movies head-to-head, and crown the ultimate
-          champion.
+          {currentPhase === "setup"
+            ? "Tournament-style movie battles where only the strongest films survive! Create brackets, face off movies head-to-head, and crown the ultimate champion."
+            : currentPhase === "battle"
+            ? `Fighting in ${
+                tournament?.title || "Movie Tournament"
+              } - Choose your champions!`
+            : `Tournament Complete! We have a champion in ${
+                tournament?.title || "Movie Tournament"
+              }!`}
         </p>
       </div>
 
-      {/* Coming Soon Section */}
-      <div className="container mx-auto max-w-4xl">
-        <div className="bg-gradient-to-br from-red-900/20 to-orange-900/20 border border-red-800/50 rounded-lg p-8 md:p-12">
-          {/* Tournament Preview */}
-          <div className="text-center mb-8">
-            <h2 className="text-2xl md:text-3xl font-bold text-red-200 mb-6">
-              🏆 Tournament Features Coming Soon
-            </h2>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-left">
-              <div className="space-y-4">
-                <div className="flex items-start gap-3">
-                  <span className="text-2xl">🎯</span>
-                  <div>
-                    <h3 className="font-semibold text-red-300 mb-1">
-                      Smart Bracket Generation
-                    </h3>
-                    <p className="text-zinc-400 text-sm">
-                      Automatically create balanced tournament brackets from
-                      your movie selections
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-3">
-                  <span className="text-2xl">⚡</span>
-                  <div>
-                    <h3 className="font-semibold text-red-300 mb-1">
-                      Quick Battles
-                    </h3>
-                    <p className="text-zinc-400 text-sm">
-                      Fast-paced 1v1 movie comparisons with visual movie cards
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                <div className="flex items-start gap-3">
-                  <span className="text-2xl">📊</span>
-                  <div>
-                    <h3 className="font-semibold text-red-300 mb-1">
-                      Battle Statistics
-                    </h3>
-                    <p className="text-zinc-400 text-sm">
-                      Track wins, losses, and champion history across all your
-                      tournaments
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-3">
-                  <span className="text-2xl">👑</span>
-                  <div>
-                    <h3 className="font-semibold text-red-300 mb-1">
-                      Championship Mode
-                    </h3>
-                    <p className="text-zinc-400 text-sm">
-                      Crown the ultimate champion and see detailed battle
-                      progression
-                    </p>
-                  </div>
-                </div>
+      {/* Error Display */}
+      {error && (
+        <div className="container mx-auto mb-8">
+          <div className="bg-red-900/20 border border-red-600/50 rounded-lg p-4">
+            <div className="flex items-center gap-2 text-red-200">
+              <span className="text-xl">⚠️</span>
+              <div>
+                <div className="font-semibold">Tournament Error</div>
+                <div className="text-sm text-red-300">{error}</div>
               </div>
             </div>
           </div>
+        </div>
+      )}
 
-          {/* Tournament Bracket Preview */}
-          <div className="bg-zinc-900/50 rounded-lg p-6 mb-8">
-            <h3 className="text-lg font-semibold text-red-200 mb-4 text-center">
-              🏆 Tournament Bracket Preview
-            </h3>
-            <div className="grid grid-cols-3 gap-4 text-center text-sm">
-              <div className="space-y-2">
-                <div className="text-red-400 font-medium">Quarterfinals</div>
-                <div className="space-y-1 text-zinc-400">
-                  <div className="bg-zinc-800 rounded p-2">
-                    Movie A vs Movie B
-                  </div>
-                  <div className="bg-zinc-800 rounded p-2">
-                    Movie C vs Movie D
-                  </div>
-                  <div className="bg-zinc-800 rounded p-2">
-                    Movie E vs Movie F
-                  </div>
-                  <div className="bg-zinc-800 rounded p-2">
-                    Movie G vs Movie H
-                  </div>
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <div className="text-orange-400 font-medium">Semifinals</div>
-                <div className="space-y-1 text-zinc-400">
-                  <div className="bg-zinc-800 rounded p-2">
-                    Winner 1 vs Winner 2
-                  </div>
-                  <div className="bg-zinc-800 rounded p-2">
-                    Winner 3 vs Winner 4
-                  </div>
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <div className="text-yellow-400 font-medium">Championship</div>
-                <div className="space-y-1 text-zinc-400">
-                  <div className="bg-gradient-to-r from-yellow-600/20 to-orange-600/20 border border-yellow-600/50 rounded p-2">
-                    👑 Final Battle 👑
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Call to Action */}
-          <div className="text-center">
-            <div className="inline-flex items-center gap-3 bg-red-600/20 border border-red-600/50 rounded-lg px-6 py-4 mb-6">
-              <span className="text-2xl">🚧</span>
-              <div className="text-left">
-                <div className="font-semibold text-red-200">
-                  Under Development
-                </div>
-                <div className="text-sm text-zinc-400">
-                  Coming in Phase 3 of implementation
-                </div>
-              </div>
-            </div>
-
-            <p className="text-zinc-400 mb-6">
-              Get ready to battle your favorite movies in epic tournaments! This
-              feature will be available soon.
-            </p>
-
-            <Link
-              href="/decisions"
-              className="inline-flex items-center gap-2 bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-500 hover:to-orange-500 text-white font-semibold px-6 py-3 rounded-lg transition-all duration-300 transform hover:scale-105"
-            >
-              <span>Try Other Games</span>
-              <svg
-                className="w-4 h-4"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            </Link>
-          </div>
+      {/* Phase Content */}
+      <div className="container mx-auto max-w-6xl">
+        <div className={`${currentPhase === "battle" ? "lg:pr-96" : ""}`}>
+          {renderPhaseContent()}
         </div>
       </div>
     </main>
@@ -215,9 +283,3 @@ const VSBattlePage = () => {
 };
 
 export default VSBattlePage;
-
-export const metadata = {
-  title: "Movie Battles – Tournament VS Games",
-  description:
-    "Battle your favorite movies head-to-head in tournament-style brackets. Create epic movie showdowns and crown the ultimate champion film.",
-};
