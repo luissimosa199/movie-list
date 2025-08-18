@@ -14,7 +14,6 @@ interface RouletteWheelProps {
   movies: TMDBMovie[];
   isSpinning: boolean;
   winner: TMDBMovie | null;
-  onSpinComplete?: (winner: TMDBMovie) => void;
   className?: string;
 }
 

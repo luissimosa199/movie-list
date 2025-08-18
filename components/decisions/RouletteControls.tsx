@@ -1,10 +1,15 @@
 "use client";
 
-import React, { useState, useRef, useCallback, useEffect } from "react";
+import React, {
+  useState,
+  useRef,
+  useCallback,
+  useEffect,
+  useMemo,
+} from "react";
 import { TMDBMovie } from "@/types";
 import {
   calculateSpinForce,
-  calculateSpinDuration,
   calculateSpinPhysics,
   getDefaultSpinConfig,
   validateWheelMovies,
@@ -54,21 +59,27 @@ const RouletteControls: React.FC<RouletteControlsProps> = ({
   const validation = validateWheelMovies(movies);
   const canSpin = validation.isValid && !isSpinning && !disabled;
 
-  // Speed multipliers
-  const speedMultipliers = {
-    slow: 0.7,
-    normal: 1.0,
-    fast: 1.4,
-  };
+  // Speed multipliers - memoized to prevent recreation on every render
+  const speedMultipliers = useMemo(
+    () => ({
+      slow: 0.7,
+      normal: 1.0,
+      fast: 1.4,
+    }),
+    []
+  );
 
   // Clean up intervals on unmount
   useEffect(() => {
+    const chargeInterval = chargeIntervalRef.current;
+    const touchTimeout = touchTimeoutRef.current;
+
     return () => {
-      if (chargeIntervalRef.current) {
-        clearInterval(chargeIntervalRef.current);
+      if (chargeInterval) {
+        clearInterval(chargeInterval);
       }
-      if (touchTimeoutRef.current) {
-        clearTimeout(touchTimeoutRef.current);
+      if (touchTimeout) {
+        clearTimeout(touchTimeout);
       }
     };
   }, []);
@@ -105,40 +116,6 @@ const RouletteControls: React.FC<RouletteControlsProps> = ({
     }
   }, [canSpin, updateChargeLevel]);
 
-  // Stop charging and trigger spin
-  const stopCharging = useCallback(() => {
-    if (!isCharging || !holdStartTime) return;
-
-    const holdDuration = Date.now() - holdStartTime;
-
-    // Clear intervals
-    if (chargeIntervalRef.current) {
-      clearInterval(chargeIntervalRef.current);
-      chargeIntervalRef.current = null;
-    }
-
-    // Reset states
-    setIsCharging(false);
-    setHoldStartTime(null);
-
-    // Reset button animation
-    if (buttonRef.current) {
-      resetChargeButton(buttonRef.current);
-    }
-
-    // Only spin if held for at least 500ms
-    if (holdDuration >= 500) {
-      triggerSpin(holdDuration);
-    } else {
-      setChargeLevel(0);
-    }
-
-    // Haptic feedback
-    if ("vibrate" in navigator) {
-      navigator.vibrate(100);
-    }
-  }, [isCharging, holdStartTime]);
-
   // Trigger the actual spin
   const triggerSpin = useCallback(
     (holdDuration: number) => {
@@ -173,8 +150,42 @@ const RouletteControls: React.FC<RouletteControlsProps> = ({
         console.log("🔊 Spin sound effect");
       }
     },
-    [onSpin, onSpinStart, settings]
+    [onSpin, onSpinStart, settings, speedMultipliers]
   );
+
+  // Stop charging and trigger spin
+  const stopCharging = useCallback(() => {
+    if (!isCharging || !holdStartTime) return;
+
+    const holdDuration = Date.now() - holdStartTime;
+
+    // Clear intervals
+    if (chargeIntervalRef.current) {
+      clearInterval(chargeIntervalRef.current);
+      chargeIntervalRef.current = null;
+    }
+
+    // Reset states
+    setIsCharging(false);
+    setHoldStartTime(null);
+
+    // Reset button animation
+    if (buttonRef.current) {
+      resetChargeButton(buttonRef.current);
+    }
+
+    // Only spin if held for at least 500ms
+    if (holdDuration >= 500) {
+      triggerSpin(holdDuration);
+    } else {
+      setChargeLevel(0);
+    }
+
+    // Haptic feedback
+    if ("vibrate" in navigator) {
+      navigator.vibrate(100);
+    }
+  }, [isCharging, holdStartTime, triggerSpin]);
 
   // Mouse event handlers
   const handleMouseDown = (e: React.MouseEvent) => {

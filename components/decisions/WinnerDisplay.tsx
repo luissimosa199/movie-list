@@ -7,7 +7,6 @@ import { TMDBMovie } from "@/types";
 import {
   generateConfetti,
   animateConfetti,
-  animateCelebrationText,
   ConfettiParticle,
 } from "@/utils/rouletteAnimations";
 

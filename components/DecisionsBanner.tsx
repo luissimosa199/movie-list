@@ -31,7 +31,7 @@ const DecisionsBanner: React.FC<DecisionsBannerProps> = ({
           <div className="flex items-center justify-center lg:justify-start gap-2 mb-3">
             <span className="text-2xl">🎲</span>
             <h2 className="text-2xl md:text-3xl font-bold text-white">
-              Can't Decide What to Watch?
+              Can&apos;t Decide What to Watch?
             </h2>
             <span className="text-2xl">🎮</span>
           </div>

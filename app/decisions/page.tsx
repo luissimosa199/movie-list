@@ -29,7 +29,7 @@ const DecisionsPage = () => {
             🎮 Movie Decision Games
           </h1>
           <p className="text-zinc-300 text-lg md:text-xl max-w-3xl mx-auto">
-            Can't decide what to watch? Let our interactive games help you
+            Can&apos;t decide what to watch? Let our interactive games help you
             discover your next favorite movie! Choose your adventure below.
           </p>
         </div>

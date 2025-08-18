@@ -185,7 +185,7 @@ const MovieSelector: React.FC<MovieSelectorProps> = ({
         animateMovieEntrance(movieElement, 100);
       }
     }
-  }, [selectedMovies.length]);
+  }, [selectedMovies.length, selectedMovies]);
 
   return (
     <div className={`space-y-6 ${className}`}>
@@ -282,7 +282,7 @@ const MovieSelector: React.FC<MovieSelectorProps> = ({
             !isLoading &&
             query.trim() && (
               <div className="absolute z-50 top-full left-0 w-full bg-zinc-900 border border-zinc-700 rounded-lg mt-1 shadow-lg p-4 text-center text-zinc-400">
-                No movies found for "{query}"
+                No movies found for &quot;{query}&quot;
               </div>
             )}
         </div>

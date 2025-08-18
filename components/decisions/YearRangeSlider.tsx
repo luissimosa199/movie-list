@@ -25,11 +25,6 @@ const YearRangeSlider: React.FC<YearRangeSliderProps> = ({
     return ((value - minYear) / (maxYear - minYear)) * 100;
   };
 
-  // Get value from percentage
-  const getValueFromPercentage = (percentage: number) => {
-    return Math.round(minYear + (percentage / 100) * (maxYear - minYear));
-  };
-
   const handleMinYearChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       if (disabled) return;

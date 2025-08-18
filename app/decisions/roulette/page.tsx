@@ -249,7 +249,6 @@ const RouletteGamePage = () => {
                 movies={selectedMovies}
                 isSpinning={isSpinning}
                 winner={winner}
-                onSpinComplete={handleSpinEnd}
                 className="mb-6"
               />
 
