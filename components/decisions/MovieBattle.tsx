@@ -69,16 +69,8 @@ const MovieBattle: React.FC<MovieBattleProps> = ({
       : "Unknown Year";
   };
 
-  const getGenres = (movie: TMDBMovie) => {
-    // This is a simplified version - in a real app you'd map genre_ids to names
-    return movie.genre_ids?.slice(0, 3).join(", ") || "Unknown";
-  };
-
   const roundName = getRoundName(battle.round, tournamentProgress.totalRounds);
   const battlePosition = battle.position + 1;
-  const totalBattlesInRound = Math.ceil(
-    tournamentProgress.totalBattles / tournamentProgress.totalRounds
-  );
 
   // Check if this is a bye battle (same movie vs same movie)
   const isByeBattle = battle.movie1.id === battle.movie2.id;
@@ -168,7 +160,6 @@ const MovieBattle: React.FC<MovieBattleProps> = ({
             disabled={loading || isConfirming}
             getPosterUrl={getPosterUrl}
             getReleaseYear={getReleaseYear}
-            getGenres={getGenres}
           />
 
           {/* Movie 2 */}
@@ -180,7 +171,6 @@ const MovieBattle: React.FC<MovieBattleProps> = ({
             disabled={loading || isConfirming}
             getPosterUrl={getPosterUrl}
             getReleaseYear={getReleaseYear}
-            getGenres={getGenres}
           />
         </div>
 
@@ -250,7 +240,6 @@ interface MovieCardProps {
   disabled: boolean;
   getPosterUrl: (movie: TMDBMovie) => string | null;
   getReleaseYear: (movie: TMDBMovie) => string | number;
-  getGenres: (movie: TMDBMovie) => string;
 }
 
 const MovieCard: React.FC<MovieCardProps> = ({
@@ -261,7 +250,6 @@ const MovieCard: React.FC<MovieCardProps> = ({
   disabled,
   getPosterUrl,
   getReleaseYear,
-  getGenres,
 }) => {
   const [imageLoading, setImageLoading] = useState(true);
   const [imageError, setImageError] = useState(false);

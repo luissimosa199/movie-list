@@ -8,7 +8,6 @@ import {
   SimpleTournament,
   createTournamentSummary,
   formatDuration,
-  TournamentSummary,
 } from "@/utils/simpleTournament";
 
 interface TournamentChampionProps {

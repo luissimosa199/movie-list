@@ -5,8 +5,8 @@ import {
   SimpleTournament,
   getRoundBattles,
   getRoundName,
+  BattleMatch,
 } from "@/utils/simpleTournament";
-import { TMDBMovie } from "@/types";
 
 interface TournamentProgressProps {
   tournament: SimpleTournament;
@@ -70,7 +70,7 @@ const TournamentProgress: React.FC<TournamentProgressProps> = ({
 interface RoundDisplayProps {
   round: number;
   roundName: string;
-  battles: any[];
+  battles: BattleMatch[];
   isCurrentRound: boolean;
   isCompleted: boolean;
 }
@@ -140,7 +140,7 @@ const RoundDisplay: React.FC<RoundDisplayProps> = ({
 };
 
 interface BattleDisplayProps {
-  battle: any;
+  battle: BattleMatch;
   battleNumber: number;
   isCurrentBattle: boolean;
 }
