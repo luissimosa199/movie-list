@@ -39,8 +39,11 @@ export async function addMovie(movie: TMDBMovie): Promise<Movie> {
       watched_at: null,
     });
 
-    // Revalidate the movies page
+    // Revalidate the movies page and profile pages
     revalidatePath("/movies");
+    revalidatePath(`/movies/${result.id}`);
+    revalidatePath("/profile/recently-added");
+    revalidatePath("/profile/latest-watched");
 
     return result;
   } catch (error) {
@@ -53,8 +56,11 @@ export async function removeMovie(id: number): Promise<Movie> {
   try {
     const result = await removeMovieFromList(id);
 
-    // Revalidate the movies page
+    // Revalidate the movies page and profile pages
     revalidatePath("/movies");
+    revalidatePath(`/movies/${id}`);
+    revalidatePath("/profile/recently-added");
+    revalidatePath("/profile/latest-watched");
 
     return result;
   } catch (error) {
@@ -106,6 +112,8 @@ export async function markMovieAsWatched(
     // Revalidate paths to update latest watched movies
     revalidatePath("/movies");
     revalidatePath(`/movies/${movieId}`);
+    revalidatePath("/profile/recently-added");
+    revalidatePath("/profile/latest-watched");
 
     return {
       movie: result,
@@ -138,6 +146,8 @@ export async function updateMovieScore(
     // Revalidate paths to update movie data
     revalidatePath("/movies");
     revalidatePath(`/movies/${movieId}`);
+    revalidatePath("/profile/recently-added");
+    revalidatePath("/profile/latest-watched");
 
     return result;
   } catch (error) {
@@ -177,7 +187,11 @@ export async function addSeries(series: TMDBSeries): Promise<SeriesType> {
       // For type safety, we only pass fields declared in CreateSeriesData here
     });
 
+    // Revalidate the series page and profile pages
     revalidatePath("/series");
+    revalidatePath(`/series/${result.id}`);
+    revalidatePath("/profile/recently-added");
+    revalidatePath("/profile/latest-watched");
 
     return result;
   } catch (error) {
@@ -189,7 +203,13 @@ export async function addSeries(series: TMDBSeries): Promise<SeriesType> {
 export async function removeSeries(id: number): Promise<SeriesType> {
   try {
     const result = await removeSeriesFromList(id);
+
+    // Revalidate the series page and profile pages
     revalidatePath("/series");
+    revalidatePath(`/series/${id}`);
+    revalidatePath("/profile/recently-added");
+    revalidatePath("/profile/latest-watched");
+
     return result;
   } catch (error) {
     console.error("Failed to remove series:", error);
@@ -245,8 +265,11 @@ export async function markSeriesAsWatched(
       )) as SeriesType;
     }
 
+    // Revalidate the series page and profile pages
     revalidatePath("/series");
     revalidatePath(`/series/${seriesId}`);
+    revalidatePath("/profile/recently-added");
+    revalidatePath("/profile/latest-watched");
 
     return { series: result, shouldShowRating: true };
   } catch (error) {
@@ -261,8 +284,13 @@ export async function updateSeriesScore(
 ): Promise<SeriesType> {
   try {
     const result = await dbUpdateSeriesScore(seriesId, score);
+
+    // Revalidate the series page and profile pages
     revalidatePath("/series");
     revalidatePath(`/series/${seriesId}`);
+    revalidatePath("/profile/recently-added");
+    revalidatePath("/profile/latest-watched");
+
     return result;
   } catch (error) {
     console.error("Failed to update series score:", error);
