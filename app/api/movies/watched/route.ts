@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { markMovieAsWatched, getMovieByTmdbId } from "@/api/db";
 import { getMovieDetails } from "@/api/tmdb";
 import type { TMDBMovie } from "@/types";
@@ -24,6 +25,13 @@ export async function PATCH(request: Request) {
       // id might be a TMDB id if coming from a TMDB page; resolve DB id when available
       const dbId = (await getMovieByTmdbId(id))?.id ?? id;
       const result = await markMovieAsWatched({ id: dbId }, new Date(now), true);
+
+      // Revalidate cache for affected pages
+      revalidatePath("/movies");
+      revalidatePath(`/movies/${dbId}`);
+      revalidatePath("/profile/recently-added");
+      revalidatePath("/profile/latest-watched");
+
       return NextResponse.json(result);
     }
 
@@ -45,6 +53,13 @@ export async function PATCH(request: Request) {
       new Date(now),
       false
     );
+
+    // Revalidate cache for affected pages
+    revalidatePath("/movies");
+    revalidatePath(`/movies/${result.id}`);
+    revalidatePath("/profile/recently-added");
+    revalidatePath("/profile/latest-watched");
+
     return NextResponse.json(result);
   } catch (error) {
     console.error("Error marking movie as watched:", error);

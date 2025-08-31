@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import prisma from "@/lib/prisma";
 import type { Movie } from "@/types";
 
@@ -13,6 +14,12 @@ export async function PATCH(request: Request) {
       where: { id },
       data: { score },
     })) as Movie;
+
+    // Revalidate cache for affected pages
+    revalidatePath("/movies");
+    revalidatePath(`/movies/${id}`);
+    revalidatePath("/profile/recently-added");
+    revalidatePath("/profile/latest-watched");
 
     return NextResponse.json(result);
   } catch (error) {

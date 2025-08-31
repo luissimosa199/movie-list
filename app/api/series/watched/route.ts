@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { markSeriesAsWatched, getSeriesByTmdbId } from "@/api/db";
 import { getSeriesDetails } from "@/api/tmdb";
 import type { TMDBSeries } from "@/types";
@@ -21,6 +22,13 @@ export async function PATCH(request: Request) {
         if (isSeriesInDb) {
             const dbId = (await getSeriesByTmdbId(id))?.id ?? id;
             const result = await markSeriesAsWatched({ id: dbId }, new Date(now), true);
+
+            // Revalidate cache for affected pages
+            revalidatePath("/series");
+            revalidatePath(`/series/${dbId}`);
+            revalidatePath("/profile/recently-added");
+            revalidatePath("/profile/latest-watched");
+
             return NextResponse.json(result);
         }
 
@@ -45,6 +53,13 @@ export async function PATCH(request: Request) {
             new Date(now),
             false
         );
+
+        // Revalidate cache for affected pages
+        revalidatePath("/series");
+        revalidatePath(`/series/${result.id}`);
+        revalidatePath("/profile/recently-added");
+        revalidatePath("/profile/latest-watched");
+
         return NextResponse.json(result);
     } catch (error) {
         console.error("Error marking series as watched:", error);

@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { addMovieToList, removeMovieFromList } from "@/api/db";
 import type { TMDBMovie } from "@/types";
 import { getMovieDetails, searchMovies } from "@/api/tmdb";
@@ -34,6 +35,12 @@ export async function POST(request: Request) {
       watched_at: null,
     });
 
+    // Revalidate cache for affected pages
+    revalidatePath("/movies");
+    revalidatePath(`/movies/${result.id}`);
+    revalidatePath("/profile/recently-added");
+    revalidatePath("/profile/latest-watched");
+
     return NextResponse.json(result);
   } catch (error) {
     console.error("Error adding movie:", error);
@@ -63,6 +70,13 @@ export async function DELETE(request: Request) {
   try {
     const { id } = await request.json();
     const result = await removeMovieFromList(id);
+
+    // Revalidate cache for affected pages
+    revalidatePath("/movies");
+    revalidatePath(`/movies/${id}`);
+    revalidatePath("/profile/recently-added");
+    revalidatePath("/profile/latest-watched");
+
     return NextResponse.json(result);
   } catch (error) {
     console.error("Error removing movie:", error);
