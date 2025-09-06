@@ -1,5 +1,6 @@
 import Link from "next/link";
 import MovieCard from "@/components/MovieCard";
+import ClientGridWrapper from "@/components/ClientGridWrapper";
 import {
   getFavoriteGenres,
   getRecentActivity,
@@ -92,15 +93,17 @@ export default async function Home() {
               </Link>
             </div>
             {recentActivity.latestWatched.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              <ClientGridWrapper>
                 {recentActivity.latestWatched.map((movie) => (
                   <MovieCard
                     key={movie.id}
                     movie={movie}
                     source="db"
+                    isMovieInDb={movie.id}
+                    watchedMovie={null}
                   />
                 ))}
-              </div>
+              </ClientGridWrapper>
             ) : (
               <p className="text-zinc-400">No watched movies yet.</p>
             )}
@@ -119,15 +122,17 @@ export default async function Home() {
               </Link>
             </div>
             {recentActivity.recentlyAdded.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              <ClientGridWrapper>
                 {recentActivity.recentlyAdded.map((movie) => (
                   <MovieCard
                     key={movie.id}
                     movie={movie}
                     source="db"
+                    isMovieInDb={movie.id}
+                    watchedMovie={null}
                   />
                 ))}
-              </div>
+              </ClientGridWrapper>
             ) : (
               <p className="text-zinc-400">No movies in your list yet.</p>
             )}

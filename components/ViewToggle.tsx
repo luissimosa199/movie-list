@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { useViewStore, useViewMode, ViewMode } from "@/stores/viewStore";
+import { useViewStore, useViewMode } from "@/stores/viewStore";
 
 const ViewToggle = () => {
   const viewMode = useViewMode();
