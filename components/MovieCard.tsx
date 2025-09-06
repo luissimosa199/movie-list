@@ -39,8 +39,8 @@ const MovieCard: React.FC<MovieCardProps> = ({
       : (movie as TMDBMovie).release_date;
 
   const cardClasses = isCompact
-    ? "bg-zinc-900 rounded-lg overflow-hidden border border-zinc-800 transition-transform hover:scale-[1.02] hover:shadow-lg relative flex flex-row gap-4 p-4 h-32"
-    : "bg-zinc-900 rounded-lg overflow-hidden border border-zinc-800 transition-transform hover:scale-[1.02] hover:shadow-lg relative";
+    ? "bg-zinc-900 rounded-lg overflow-hidden border border-zinc-800 transition-transform hover:scale-[1.02] hover:shadow-lg relative flex flex-row gap-4 p-4 h-40"
+    : "bg-zinc-900 rounded-lg overflow-hidden border border-zinc-800 transition-transform hover:scale-[1.02] hover:shadow-lg relative min-h-[500px]";
 
   return (
     <div
@@ -67,7 +67,7 @@ const MovieCard: React.FC<MovieCardProps> = ({
       <div
         className={
           isCompact
-            ? "w-20 h-24 bg-zinc-800 relative rounded flex-shrink-0"
+            ? "w-24 h-32 bg-zinc-800 relative rounded flex-shrink-0"
             : "aspect-[2/3] bg-zinc-800 relative"
         }
       >
@@ -83,7 +83,7 @@ const MovieCard: React.FC<MovieCardProps> = ({
               fill
               sizes={
                 isCompact
-                  ? "80px"
+                  ? "96px"
                   : "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               }
               className={isCompact ? "object-cover rounded" : "object-cover"}
@@ -104,8 +104,8 @@ const MovieCard: React.FC<MovieCardProps> = ({
       <div
         className={
           isCompact
-            ? "flex-1 flex flex-col justify-between py-0"
-            : "p-4 flex flex-col justify-between"
+            ? "flex-1 flex flex-col justify-between py-2"
+            : "p-6 flex flex-col justify-between h-full"
         }
       >
         <div>
@@ -113,38 +113,44 @@ const MovieCard: React.FC<MovieCardProps> = ({
             className={
               isCompact
                 ? "text-sm font-semibold mb-1 line-clamp-1"
-                : "text-lg font-semibold mb-2 line-clamp-1"
+                : "text-lg font-semibold mb-3 line-clamp-1"
             }
           >
             {movie.title}
           </h2>
-          <p className="text-xs text-zinc-400 mb-2">
+          <p
+            className={
+              isCompact
+                ? "text-xs text-zinc-400 mb-2"
+                : "text-sm text-zinc-400 mb-3"
+            }
+          >
             Released: {getFormattedDate(releaseDate, source)}
           </p>
 
           {!isCompact && (
             <>
               {source === "tmdb" ? (
-                <p className="text-sm text-zinc-300 mb-3 line-clamp-2">
+                <p className="text-sm text-zinc-300 mb-4 line-clamp-3">
                   {(movie as TMDBMovie).overview}
                 </p>
               ) : (
                 (movie as Movie).overview && (
-                  <p className="text-sm text-zinc-300 mb-3 line-clamp-2">
+                  <p className="text-sm text-zinc-300 mb-4 line-clamp-3">
                     {(movie as Movie).overview}
                   </p>
                 )
               )}
 
               {genres && (
-                <p className="text-xs text-zinc-400 mb-1 h-7">
+                <p className="text-sm text-zinc-400 mb-2 h-8">
                   <span className="text-zinc-500">Genres:</span>{" "}
                   {genres.join(", ")}
                 </p>
               )}
 
               {source === "db" && (movie as Movie).runtime && (
-                <p className="text-xs text-zinc-400 mb-1">
+                <p className="text-sm text-zinc-400 mb-2">
                   <span className="text-zinc-500">Runtime:</span>{" "}
                   {(movie as Movie).runtime} minutes
                 </p>
@@ -155,14 +161,26 @@ const MovieCard: React.FC<MovieCardProps> = ({
           {/* Show score for watched movies regardless of source */}
           {((source === "db" && (movie as Movie).score) ||
             (source === "tmdb" && watchedMovie?.score)) && (
-            <p className="text-xs text-zinc-400 mb-2">
+            <p
+              className={
+                isCompact
+                  ? "text-xs text-zinc-400 mb-2"
+                  : "text-sm text-zinc-400 mb-3"
+              }
+            >
               <span className="text-zinc-500">Your Score:</span>{" "}
               {source === "db" ? (movie as Movie).score : watchedMovie?.score}
             </p>
           )}
 
           {source === "tmdb" && !watchedMovie?.score && (
-            <p className="text-xs text-zinc-400 mb-2">
+            <p
+              className={
+                isCompact
+                  ? "text-xs text-zinc-400 mb-2"
+                  : "text-sm text-zinc-400 mb-3"
+              }
+            >
               <span className="text-zinc-500">Rating:</span>{" "}
               {(movie as TMDBMovie).vote_average.toFixed(1)} (
               {(movie as TMDBMovie).vote_count} votes)
@@ -170,7 +188,7 @@ const MovieCard: React.FC<MovieCardProps> = ({
           )}
         </div>
 
-        <div className="mt-auto">
+        <div className={isCompact ? "mt-auto" : "mt-auto pt-4"}>
           <MovieCardButtonsSection
             movie={movie}
             isMovieInDb={isMovieInDb}
@@ -180,14 +198,16 @@ const MovieCard: React.FC<MovieCardProps> = ({
           {/* Show star rating for watched movies regardless of source */}
           {((source === "db" && (movie as Movie).watched_at) ||
             (source === "tmdb" && watchedMovie?.watched_at)) && (
-            <StarRating
-              movieId={source === "db" ? movie.id : watchedMovie!.id}
-              initialScore={
-                source === "db"
-                  ? (movie as Movie).score || 0
-                  : watchedMovie?.score || 0
-              }
-            />
+            <div className={isCompact ? "mt-2" : "mt-3"}>
+              <StarRating
+                movieId={source === "db" ? movie.id : watchedMovie!.id}
+                initialScore={
+                  source === "db"
+                    ? (movie as Movie).score || 0
+                    : watchedMovie?.score || 0
+                }
+              />
+            </div>
           )}
         </div>
       </div>

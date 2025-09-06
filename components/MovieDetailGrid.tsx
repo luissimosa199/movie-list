@@ -50,18 +50,31 @@ const MovieDetailGrid = ({
           <h3 className="text-sm font-medium text-zinc-500 mb-1">
             TMDB Rating
           </h3>
-          <p className="text-zinc-300">
-            {(movie as FullDetailTMDBMovie).vote_average.toFixed(1)} / 10
-            <span className="text-zinc-500 ml-2">
-              ({(movie as FullDetailTMDBMovie).vote_count} votes)
+          <div className="flex items-center space-x-2">
+            <div className="flex items-center">
+              <span className="text-yellow-400 text-lg">★</span>
+              <span className="text-zinc-300 ml-1 font-medium">
+                {(movie as FullDetailTMDBMovie).vote_average.toFixed(1)}
+              </span>
+              <span className="text-zinc-500 ml-1">/10</span>
+            </div>
+            <span className="text-zinc-500 text-sm">
+              ({(movie as FullDetailTMDBMovie).vote_count.toLocaleString()}{" "}
+              votes)
             </span>
-          </p>
+          </div>
         </div>
       ) : (
         (movie as Movie).score && (
           <div>
             <h3 className="text-sm font-medium text-zinc-500 mb-1">Score</h3>
-            <p className="text-zinc-300">{(movie as Movie).score} / 5</p>
+            <div className="flex items-center">
+              <span className="text-yellow-400 text-lg">★</span>
+              <span className="text-zinc-300 ml-1 font-medium">
+                {(movie as Movie).score}
+              </span>
+              <span className="text-zinc-500 ml-1">/5</span>
+            </div>
           </div>
         )
       )}
@@ -69,15 +82,31 @@ const MovieDetailGrid = ({
       {/* External References */}
       {movie.imdb_id && (
         <div>
-          <h3 className="text-sm font-medium text-zinc-500 mb-1">IMDB</h3>
+          <h3 className="text-sm font-medium text-zinc-500 mb-1">IMDb</h3>
           <a
             href={`https://www.imdb.com/title/${movie.imdb_id}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-primary hover:text-primary/80 transition-colors"
+            className="inline-flex items-center space-x-2 text-primary hover:text-primary/80 transition-colors bg-zinc-800 px-3 py-2 rounded-lg text-sm"
           >
-            View on IMDB
+            <span>View on IMDb</span>
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+              />
+            </svg>
           </a>
+          <p className="text-xs text-zinc-500 mt-1">
+            IMDb ratings not available via TMDB API
+          </p>
         </div>
       )}
 

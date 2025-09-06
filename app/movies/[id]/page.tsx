@@ -7,6 +7,7 @@ import { getMovieDetails } from "@/api/tmdb";
 import { FullDetailTMDBMovie } from "@/types";
 import { getPosterUrl } from "@/utils";
 import MovieCardButtonsSection from "@/components/MovieCardButtonsSection";
+import CastSection from "@/components/CastSection";
 
 interface PageProps {
   params: Promise<{
@@ -212,15 +213,15 @@ export default async function MoviePage({ params, searchParams }: PageProps) {
               {movie.title}
             </h1>
 
-            {isTmdb && (movie as FullDetailTMDBMovie).tagline && (
-              <p className="text-xl text-zinc-400 mb-4 italic">
-                {(movie as FullDetailTMDBMovie).tagline}
+            {movie.release_date && (
+              <p className="text-zinc-400 mb-4 text-lg">
+                {new Date(movie.release_date).getFullYear()}
               </p>
             )}
 
-            {movie.release_date && (
-              <p className="text-zinc-400 mb-6">
-                Released: {new Date(movie.release_date).toLocaleDateString()}
+            {isTmdb && (movie as FullDetailTMDBMovie).tagline && (
+              <p className="text-xl text-zinc-400 mb-4 italic">
+                {(movie as FullDetailTMDBMovie).tagline}
               </p>
             )}
 
@@ -230,6 +231,48 @@ export default async function MoviePage({ params, searchParams }: PageProps) {
                 <p className="text-zinc-300 leading-relaxed">
                   {movie.overview}
                 </p>
+              </div>
+            )}
+
+            {/* Cast and Crew Information */}
+            {isTmdb && (movie as FullDetailTMDBMovie).credits && (
+              <div className="mb-8">
+                {/* Director */}
+                {(() => {
+                  const credits = (movie as FullDetailTMDBMovie).credits;
+                  const directors =
+                    credits?.crew
+                      ?.filter((member) => member.job === "Director")
+                      .slice(0, 3) || [];
+
+                  if (directors.length === 0) return null;
+
+                  return (
+                    <div className="mb-6">
+                      <h2 className="text-xl font-semibold mb-3">
+                        {directors.length === 1 ? "Director" : "Directors"}
+                      </h2>
+                      <div className="flex flex-wrap gap-2">
+                        {directors.map((director) => (
+                          <span
+                            key={director.id}
+                            className="text-zinc-300 bg-zinc-800 px-3 py-1 rounded-full text-sm"
+                          >
+                            {director.name}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })()}
+
+                {/* Cast */}
+                {(() => {
+                  const credits = (movie as FullDetailTMDBMovie).credits;
+                  const cast = credits?.cast?.slice(0, 9) || [];
+                  
+                  return <CastSection cast={cast} />;
+                })()}
               </div>
             )}
 
