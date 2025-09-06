@@ -36,7 +36,12 @@ export const getFormattedDate = (
   const parsedDate =
     source === "db" ? new Date(date as Date) : new Date(date as string);
 
-  return parsedDate.toLocaleDateString();
+  // Use consistent date format to avoid hydration mismatches
+  return parsedDate.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  });
 };
 
 // Helper function to get the first air date for TV series
@@ -49,7 +54,12 @@ export const getFormattedAirDate = (
   const parsedDate =
     source === "db" ? new Date(date as Date) : new Date(date as string);
 
-  return parsedDate.toLocaleDateString();
+  // Use consistent date format to avoid hydration mismatches
+  return parsedDate.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  });
 };
 
 export const formatCardDate = (date: string) => {

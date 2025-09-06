@@ -1,4 +1,5 @@
-import MovieCard from "@/components/MovieCard";
+import MovieCardWrapper from "@/components/MovieCardWrapper";
+import ClientGridWrapper from "@/components/ClientGridWrapper";
 import {
   getPopularMovies,
   getTopRatedMovies,
@@ -24,45 +25,45 @@ export default async function Movies() {
         <h1 className="text-3xl md:text-4xl font-bold mb-10 tracking-tight">
           Popular Movies
         </h1>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <ClientGridWrapper>
           {popularMovies.results.map((movie) => (
-            <MovieCard
+            <MovieCardWrapper
               key={movie.id}
               movie={movie}
               source="tmdb"
             />
           ))}
-        </div>
+        </ClientGridWrapper>
       </div>
 
       <div className="container mx-auto py-4">
         <h1 className="text-3xl md:text-4xl font-bold mb-10 tracking-tight">
           Top Rated Movies
         </h1>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <ClientGridWrapper>
           {topRatedMovies.results.map((movie) => (
-            <MovieCard
+            <MovieCardWrapper
               key={movie.id}
               movie={movie}
               source="tmdb"
             />
           ))}
-        </div>
+        </ClientGridWrapper>
       </div>
 
       <div className="container mx-auto py-4">
         <h1 className="text-3xl md:text-4xl font-bold mb-10 tracking-tight">
           Upcoming Movies
         </h1>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <ClientGridWrapper>
           {upcomingMovies.results.map((movie) => (
-            <MovieCard
+            <MovieCardWrapper
               key={movie.id}
               movie={movie}
               source="tmdb"
             />
           ))}
-        </div>
+        </ClientGridWrapper>
       </div>
       {/*  */}
     </main>

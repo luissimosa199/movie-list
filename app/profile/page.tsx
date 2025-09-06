@@ -1,4 +1,5 @@
 import MovieCard from "@/components/MovieCard";
+import ClientGridWrapper from "@/components/ClientGridWrapper";
 import { getLatestWatchedMovies, getRecentlyAddedMovies } from "@/api/db";
 import Link from "next/link";
 
@@ -29,15 +30,17 @@ export default async function ProfilePage() {
           </Link>
 
           {latestWatchedMovies.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <ClientGridWrapper>
               {latestWatchedMovies.map((movie) => (
                 <MovieCard
                   key={movie.id}
                   movie={movie}
                   source="db"
+                  isMovieInDb={movie.id}
+                  watchedMovie={null}
                 />
               ))}
-            </div>
+            </ClientGridWrapper>
           ) : (
             <div className="bg-zinc-900 rounded-lg p-8 text-center border border-zinc-800">
               <p className="text-zinc-400 text-lg">No watched movies yet</p>
@@ -63,15 +66,17 @@ export default async function ProfilePage() {
           </Link>
 
           {recentlyAddedMovies.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <ClientGridWrapper>
               {recentlyAddedMovies.map((movie) => (
                 <MovieCard
                   key={movie.id}
                   movie={movie}
                   source="db"
+                  isMovieInDb={movie.id}
+                  watchedMovie={null}
                 />
               ))}
-            </div>
+            </ClientGridWrapper>
           ) : (
             <div className="bg-zinc-900 rounded-lg p-8 text-center border border-zinc-800">
               <p className="text-zinc-400 text-lg">

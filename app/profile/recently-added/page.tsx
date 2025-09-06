@@ -1,4 +1,5 @@
 import MovieCard from "@/components/MovieCard";
+import ClientGridWrapper from "@/components/ClientGridWrapper";
 import { getRecentlyAddedMovies } from "@/api/db";
 import Link from "next/link";
 
@@ -41,15 +42,17 @@ export default async function RecentlyAddedPage() {
             <p className="text-zinc-400 mb-8">
               Showing {recentlyAddedMovies.length} most recently added movies
             </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <ClientGridWrapper>
               {recentlyAddedMovies.map((movie) => (
                 <MovieCard
                   key={movie.id}
                   movie={movie}
                   source="db"
+                  isMovieInDb={movie.id}
+                  watchedMovie={null}
                 />
               ))}
-            </div>
+            </ClientGridWrapper>
           </>
         ) : (
           <div className="bg-zinc-900 rounded-lg p-12 text-center border border-zinc-800">

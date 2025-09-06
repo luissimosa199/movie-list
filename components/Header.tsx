@@ -1,40 +1,44 @@
 import Link from "next/link";
+import ViewToggle from "./ViewToggle";
 
 export default function Header() {
   return (
     <header className="bg-black text-white border-b border-zinc-800">
       <div className="container mx-auto px-4">
-        <nav className="flex justify-center md:justify-start items-center gap-6 py-5">
-          <Link
-            href="/"
-            className="text-sm font-medium tracking-wide hover:text-primary transition-colors duration-200"
-          >
-            Home
-          </Link>
-          <Link
-            href="/series"
-            className="text-sm font-medium tracking-wide hover:text-primary transition-colors duration-200"
-          >
-            Series
-          </Link>
-          <Link
-            href="/movies"
-            className="text-sm font-medium tracking-wide hover:text-primary transition-colors duration-200"
-          >
-            Movies
-          </Link>
-          <Link
-            href="/profile"
-            className="text-sm font-medium tracking-wide hover:text-primary transition-colors duration-200"
-          >
-            Profile
-          </Link>
-          <Link
-            href="/about"
-            className="text-sm font-medium tracking-wide hover:text-primary transition-colors duration-200"
-          >
-            About
-          </Link>
+        <nav className="flex justify-between items-center py-5">
+          <div className="flex justify-center md:justify-start items-center gap-6">
+            <Link
+              href="/"
+              className="text-sm font-medium tracking-wide hover:text-primary transition-colors duration-200"
+            >
+              Home
+            </Link>
+            <Link
+              href="/series"
+              className="text-sm font-medium tracking-wide hover:text-primary transition-colors duration-200"
+            >
+              Series
+            </Link>
+            <Link
+              href="/movies"
+              className="text-sm font-medium tracking-wide hover:text-primary transition-colors duration-200"
+            >
+              Movies
+            </Link>
+            <Link
+              href="/profile"
+              className="text-sm font-medium tracking-wide hover:text-primary transition-colors duration-200"
+            >
+              Profile
+            </Link>
+            <Link
+              href="/about"
+              className="text-sm font-medium tracking-wide hover:text-primary transition-colors duration-200"
+            >
+              About
+            </Link>
+          </div>
+          <ViewToggle />
         </nav>
       </div>
     </header>

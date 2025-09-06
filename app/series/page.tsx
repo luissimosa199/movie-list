@@ -1,4 +1,5 @@
-import SeriesCard from "@/components/SeriesCard";
+import SeriesCardWrapper from "@/components/SeriesCardWrapper";
+import ClientGridWrapper from "@/components/ClientGridWrapper";
 import { getPopularSeries } from "@/api/tmdb";
 import SeriesSearchBar from "@/components/SeriesSearchBar";
 
@@ -17,15 +18,15 @@ export default async function SeriesPage() {
           <h2 className="text-2xl md:text-3xl font-bold mb-6 tracking-tight">
             Popular TV Series
           </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          <ClientGridWrapper>
             {popularSeries.results.map((series) => (
-              <SeriesCard
+              <SeriesCardWrapper
                 key={series.id}
                 series={series}
                 source="tmdb"
               />
             ))}
-          </div>
+          </ClientGridWrapper>
         </div>
       </div>
     </main>
