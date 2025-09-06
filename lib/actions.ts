@@ -42,6 +42,8 @@ export async function addMovie(movie: TMDBMovie): Promise<Movie> {
     // Revalidate the movies page and profile pages
     revalidatePath("/movies");
     revalidatePath(`/movies/${result.id}`);
+    revalidatePath("/");
+    revalidatePath("/profile");
     revalidatePath("/profile/recently-added");
     revalidatePath("/profile/latest-watched");
 
@@ -59,6 +61,8 @@ export async function removeMovie(id: number): Promise<Movie> {
     // Revalidate the movies page and profile pages
     revalidatePath("/movies");
     revalidatePath(`/movies/${id}`);
+    revalidatePath("/");
+    revalidatePath("/profile");
     revalidatePath("/profile/recently-added");
     revalidatePath("/profile/latest-watched");
 
@@ -112,6 +116,8 @@ export async function markMovieAsWatched(
     // Revalidate paths to update latest watched movies
     revalidatePath("/movies");
     revalidatePath(`/movies/${movieId}`);
+    revalidatePath("/");
+    revalidatePath("/profile");
     revalidatePath("/profile/recently-added");
     revalidatePath("/profile/latest-watched");
 
@@ -146,6 +152,8 @@ export async function updateMovieScore(
     // Revalidate paths to update movie data
     revalidatePath("/movies");
     revalidatePath(`/movies/${movieId}`);
+    revalidatePath("/");
+    revalidatePath("/profile");
     revalidatePath("/profile/recently-added");
     revalidatePath("/profile/latest-watched");
 
@@ -190,6 +198,8 @@ export async function addSeries(series: TMDBSeries): Promise<SeriesType> {
     // Revalidate the series page and profile pages
     revalidatePath("/series");
     revalidatePath(`/series/${result.id}`);
+    revalidatePath("/");
+    revalidatePath("/profile");
     revalidatePath("/profile/recently-added");
     revalidatePath("/profile/latest-watched");
 
@@ -207,6 +217,8 @@ export async function removeSeries(id: number): Promise<SeriesType> {
     // Revalidate the series page and profile pages
     revalidatePath("/series");
     revalidatePath(`/series/${id}`);
+    revalidatePath("/");
+    revalidatePath("/profile");
     revalidatePath("/profile/recently-added");
     revalidatePath("/profile/latest-watched");
 
@@ -268,6 +280,8 @@ export async function markSeriesAsWatched(
     // Revalidate the series page and profile pages
     revalidatePath("/series");
     revalidatePath(`/series/${seriesId}`);
+    revalidatePath("/");
+    revalidatePath("/profile");
     revalidatePath("/profile/recently-added");
     revalidatePath("/profile/latest-watched");
 
@@ -288,6 +302,8 @@ export async function updateSeriesScore(
     // Revalidate the series page and profile pages
     revalidatePath("/series");
     revalidatePath(`/series/${seriesId}`);
+    revalidatePath("/");
+    revalidatePath("/profile");
     revalidatePath("/profile/recently-added");
     revalidatePath("/profile/latest-watched");
 
