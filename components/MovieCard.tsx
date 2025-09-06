@@ -39,7 +39,7 @@ const MovieCard: React.FC<MovieCardProps> = ({
       : (movie as TMDBMovie).release_date;
 
   const cardClasses = isCompact
-    ? "bg-zinc-900 rounded-lg overflow-hidden border border-zinc-800 transition-transform hover:scale-[1.02] hover:shadow-lg relative flex flex-row gap-4 p-4 h-40"
+    ? "bg-zinc-900 rounded-lg overflow-hidden border border-zinc-800 transition-transform hover:scale-[1.02] hover:shadow-lg relative flex flex-row gap-4 p-4 h-48 min-[270px]:h-64 min-[420px]:h-64"
     : "bg-zinc-900 rounded-lg overflow-hidden border border-zinc-800 transition-transform hover:scale-[1.02] hover:shadow-lg relative min-h-[500px]";
 
   return (
@@ -67,7 +67,7 @@ const MovieCard: React.FC<MovieCardProps> = ({
       <div
         className={
           isCompact
-            ? "w-24 h-32 bg-zinc-800 relative rounded flex-shrink-0"
+            ? "w-28 h-40 min-[270px]:h-44 min-[420px]:h-48 bg-zinc-800 relative rounded flex-shrink-0"
             : "aspect-[2/3] bg-zinc-800 relative"
         }
       >
@@ -83,7 +83,7 @@ const MovieCard: React.FC<MovieCardProps> = ({
               fill
               sizes={
                 isCompact
-                  ? "96px"
+                  ? "112px"
                   : "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               }
               className={isCompact ? "object-cover rounded" : "object-cover"}
@@ -104,7 +104,7 @@ const MovieCard: React.FC<MovieCardProps> = ({
       <div
         className={
           isCompact
-            ? "flex-1 flex flex-col justify-between py-2"
+            ? "flex-1 flex flex-col justify-between py-3 px-1 min-[270px]:py-4 min-[420px]:py-5"
             : "p-6 flex flex-col justify-between h-full"
         }
       >
@@ -195,7 +195,7 @@ const MovieCard: React.FC<MovieCardProps> = ({
           )}
         </div>
 
-        <div className={isCompact ? "mt-auto" : "mt-auto pt-4"}>
+        <div className={isCompact ? "mt-auto pt-2" : "mt-auto pt-4"}>
           <MovieCardButtonsSection
             movie={movie}
             isMovieInDb={isMovieInDb}
