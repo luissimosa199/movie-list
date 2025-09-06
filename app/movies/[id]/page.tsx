@@ -184,6 +184,16 @@ export default async function MoviePage({ params, searchParams }: PageProps) {
   // Check if movie is in database
   const isMovieInDb = isTmdb ? await movieExistsInDb(movieId) : movie.id;
 
+  // For database movies, fetch TMDB data for cast/crew information
+  let tmdbData: FullDetailTMDBMovie | null = null;
+  if (!isTmdb && "tmdb_id" in movie && movie.tmdb_id) {
+    try {
+      tmdbData = await getMovieDetails(movie.tmdb_id);
+    } catch (error) {
+      console.error("Failed to fetch TMDB data for cast/crew:", error);
+    }
+  }
+
   const posterUrl = getPosterUrl(movie, isTmdb ? "tmdb" : "db");
 
   return (
@@ -235,46 +245,53 @@ export default async function MoviePage({ params, searchParams }: PageProps) {
             )}
 
             {/* Cast and Crew Information */}
-            {isTmdb && (movie as FullDetailTMDBMovie).credits && (
-              <div className="mb-8">
-                {/* Director */}
-                {(() => {
-                  const credits = (movie as FullDetailTMDBMovie).credits;
-                  const directors =
-                    credits?.crew
-                      ?.filter((member) => member.job === "Director")
-                      .slice(0, 3) || [];
+            {(() => {
+              // Get credits from either TMDB movie or fetched TMDB data
+              const credits = isTmdb
+                ? (movie as FullDetailTMDBMovie).credits
+                : tmdbData?.credits;
 
-                  if (directors.length === 0) return null;
+              if (!credits) return null;
 
-                  return (
-                    <div className="mb-6">
-                      <h2 className="text-xl font-semibold mb-3">
-                        {directors.length === 1 ? "Director" : "Directors"}
-                      </h2>
-                      <div className="flex flex-wrap gap-2">
-                        {directors.map((director) => (
-                          <span
-                            key={director.id}
-                            className="text-zinc-300 bg-zinc-800 px-3 py-1 rounded-full text-sm"
-                          >
-                            {director.name}
-                          </span>
-                        ))}
+              return (
+                <div className="mb-8">
+                  {/* Director */}
+                  {(() => {
+                    const directors =
+                      credits?.crew
+                        ?.filter((member) => member.job === "Director")
+                        .slice(0, 3) || [];
+
+                    if (directors.length === 0) return null;
+
+                    return (
+                      <div className="mb-6">
+                        <h2 className="text-xl font-semibold mb-3">
+                          {directors.length === 1 ? "Director" : "Directors"}
+                        </h2>
+                        <div className="flex flex-wrap gap-2">
+                          {directors.map((director) => (
+                            <span
+                              key={director.id}
+                              className="text-zinc-300 bg-zinc-800 px-3 py-1 rounded-full text-sm"
+                            >
+                              {director.name}
+                            </span>
+                          ))}
+                        </div>
                       </div>
-                    </div>
-                  );
-                })()}
+                    );
+                  })()}
 
-                {/* Cast */}
-                {(() => {
-                  const credits = (movie as FullDetailTMDBMovie).credits;
-                  const cast = credits?.cast?.slice(0, 9) || [];
-                  
-                  return <CastSection cast={cast} />;
-                })()}
-              </div>
-            )}
+                  {/* Cast */}
+                  {(() => {
+                    const cast = credits?.cast?.slice(0, 9) || [];
+
+                    return <CastSection cast={cast} />;
+                  })()}
+                </div>
+              );
+            })()}
 
             <MovieDetailGrid
               movie={movie}
