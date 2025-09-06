@@ -116,7 +116,14 @@ const MovieCard: React.FC<MovieCardProps> = ({
                 : "text-lg font-semibold mb-3 line-clamp-1"
             }
           >
-            {movie.title}
+            <Link
+              href={`/movies/${isMovieInDb || movie.id}${
+                !isMovieInDb ? "?tmdb=true" : ""
+              }`}
+              className="hover:text-primary transition-colors"
+            >
+              {movie.title}
+            </Link>
           </h2>
           <p
             className={

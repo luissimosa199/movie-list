@@ -97,9 +97,16 @@ const SeriesCard: React.FC<SeriesCardProps> = ({
                 : "text-lg font-semibold mb-2 line-clamp-1"
             }
           >
-            {source === "db"
-              ? (series as Series).name
-              : (series as TMDBSeries).name}
+            <Link
+              href={`/series/${series.id}${
+                source === "tmdb" ? "?tmdb=true" : ""
+              }`}
+              className="hover:text-primary transition-colors"
+            >
+              {source === "db"
+                ? (series as Series).name
+                : (series as TMDBSeries).name}
+            </Link>
           </h2>
           <p className="text-xs text-zinc-400 mb-2">
             First Aired: {getFormattedAirDate(firstAirDate, source)}
