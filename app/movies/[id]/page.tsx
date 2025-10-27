@@ -8,6 +8,7 @@ import { FullDetailTMDBMovie } from "@/types";
 import { getPosterUrl } from "@/utils";
 import MovieCardButtonsSection from "@/components/MovieCardButtonsSection";
 import CastSection from "@/components/CastSection";
+import { getMovieWatchedStatus } from "@/lib/actions";
 
 interface PageProps {
   params: Promise<{
@@ -184,6 +185,9 @@ export default async function MoviePage({ params, searchParams }: PageProps) {
   // Check if movie is in database
   const isMovieInDb = isTmdb ? await movieExistsInDb(movieId) : movie.id;
 
+  // For TMDB movies, check if they have been watched by the user
+  const watchedMovie = isTmdb ? await getMovieWatchedStatus(movieId) : null;
+
   // For database movies, fetch TMDB data for cast/crew information
   let tmdbData: FullDetailTMDBMovie | null = null;
   if (!isTmdb && "tmdb_id" in movie && movie.tmdb_id) {
@@ -303,6 +307,7 @@ export default async function MoviePage({ params, searchParams }: PageProps) {
             <MovieCardButtonsSection
               movie={movie}
               isMovieInDb={isMovieInDb}
+              watchedMovie={watchedMovie}
             />
 
             {/* <div className="flex flex-col sm:flex-row gap-4 mt-auto">

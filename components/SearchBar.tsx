@@ -3,12 +3,12 @@
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { TMDBMovie } from "@/types";
+import { TMDBMovie, TMDBMovieWithDbStatus } from "@/types";
 import { useDebounce } from "@/hooks/useDebounce";
 
 interface TMDBResponse {
   page: number;
-  results: TMDBMovie[];
+  results: TMDBMovieWithDbStatus[];
   total_pages: number;
   total_results: number;
 }
@@ -19,7 +19,9 @@ interface SearchBarProps {
 
 export default function SearchBar({ className = "" }: SearchBarProps) {
   const [query, setQuery] = useState("");
-  const [searchResults, setSearchResults] = useState<TMDBMovie[]>([]);
+  const [searchResults, setSearchResults] = useState<TMDBMovieWithDbStatus[]>(
+    []
+  );
   const [isLoading, setIsLoading] = useState(false);
   const [showResults, setShowResults] = useState(false);
   const [lastQueryWithResults, setLastQueryWithResults] = useState("");
@@ -111,13 +113,13 @@ export default function SearchBar({ className = "" }: SearchBarProps) {
     inputRef.current?.blur();
   };
 
-  const getPosterUrl = (movie: TMDBMovie) => {
+  const getPosterUrl = (movie: TMDBMovieWithDbStatus) => {
     return movie.poster_path
       ? `https://image.tmdb.org/t/p/w92${movie.poster_path}`
       : null;
   };
 
-  const getReleaseYear = (movie: TMDBMovie) => {
+  const getReleaseYear = (movie: TMDBMovieWithDbStatus) => {
     return movie.release_date
       ? new Date(movie.release_date).getFullYear()
       : null;
@@ -151,7 +153,11 @@ export default function SearchBar({ className = "" }: SearchBarProps) {
           {searchResults.map((result) => (
             <Link
               key={result.id}
-              href={`/movies/${result.id}?tmdb=true`}
+              href={
+                result.inDb
+                  ? `/movies/${result.dbId}`
+                  : `/movies/${result.id}?tmdb=true`
+              }
               onClick={handleResultClick}
               className="flex items-center p-3 hover:bg-zinc-800 transition-colors border-b border-zinc-700 last:border-b-0"
             >

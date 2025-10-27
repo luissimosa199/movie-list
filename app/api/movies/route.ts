@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
-import { addMovieToList, removeMovieFromList } from "@/api/db";
+import { addMovieToList, removeMovieFromList, movieExistsInDb } from "@/api/db";
 import type { TMDBMovie } from "@/types";
 import { getMovieDetails, searchMovies } from "@/api/tmdb";
 
@@ -56,7 +56,23 @@ export async function GET(request: Request) {
     const limit = parseInt(searchParams.get("limit") || "10");
 
     const movies = await searchMovies(query, page, limit);
-    return NextResponse.json(movies);
+
+    // Add database status to each movie result
+    const moviesWithDbStatus = await Promise.all(
+      movies.results.map(async (movie) => {
+        const dbId = await movieExistsInDb(movie.id);
+        return {
+          ...movie,
+          dbId: dbId || null,
+          inDb: !!dbId
+        };
+      })
+    );
+
+    return NextResponse.json({
+      ...movies,
+      results: moviesWithDbStatus
+    });
   } catch (error) {
     console.error("Error searching movies:", error);
     return NextResponse.json(

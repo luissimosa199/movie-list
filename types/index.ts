@@ -15,6 +15,11 @@ export interface TMDBMovie {
   vote_count: number;
 }
 
+export interface TMDBMovieWithDbStatus extends TMDBMovie {
+  dbId: number | null;
+  inDb: boolean;
+}
+
 export interface FullDetailTMDBMovie extends TMDBMovie {
   belongs_to_collection: null | {
     id: number;
