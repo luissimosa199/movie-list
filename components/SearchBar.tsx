@@ -127,7 +127,7 @@ export default function SearchBar({ className = "" }: SearchBarProps) {
 
   return (
     <div
-      className={`relative ${className}`}
+      className={`relative z-[70] ${className}`}
       ref={searchContainerRef}
     >
       <div className="flex flex-col gap-2">
@@ -149,7 +149,7 @@ export default function SearchBar({ className = "" }: SearchBarProps) {
       )}
 
       {showResults && searchResults.length > 0 && (
-        <div className="absolute z-50 top-full left-0 w-full bg-zinc-900 border border-zinc-700 rounded-md mt-1 shadow-lg overflow-hidden">
+        <div className="absolute left-0 top-full z-[80] mt-1 w-full overflow-hidden rounded-md border border-zinc-700 bg-zinc-900 shadow-2xl shadow-black/40">
           {searchResults.map((result) => (
             <Link
               key={result.id}

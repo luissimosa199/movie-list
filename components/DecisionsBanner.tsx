@@ -10,11 +10,16 @@ const DecisionsBanner: React.FC<DecisionsBannerProps> = ({
 }) => {
   return (
     <div
-      className={`relative bg-gradient-to-r from-zinc-900 via-zinc-800 to-zinc-900 rounded-lg border border-zinc-700 p-6 md:p-8 transition-all duration-300 hover:scale-[1.01] hover:shadow-xl hover:border-zinc-600 overflow-hidden ${className}`}
+      className={`relative overflow-hidden rounded-[1.75rem] border border-white/10 bg-[linear-gradient(135deg,rgba(17,24,39,0.94),rgba(20,25,38,0.9))] p-6 shadow-2xl shadow-black/25 transition-all duration-300 hover:border-white/16 hover:shadow-black/40 md:p-8 ${className}`}
     >
-      {/* Background gaming pattern */}
-      <div className="absolute inset-0 opacity-5">
-        <div className="flex flex-wrap gap-8 transform rotate-12 scale-150">
+      <div className="absolute inset-0">
+        <div className="absolute -right-16 top-0 h-40 w-40 rounded-full bg-fuchsia-500/15 blur-3xl" />
+        <div className="absolute left-0 top-0 h-44 w-44 rounded-full bg-blue-500/12 blur-3xl" />
+        <div className="absolute inset-x-0 bottom-0 h-px bg-white/8" />
+      </div>
+
+      <div className="absolute inset-0 opacity-[0.06]">
+        <div className="flex rotate-12 scale-150 flex-wrap gap-8">
           <div className="text-4xl">🎲</div>
           <div className="text-4xl">🆚</div>
           <div className="text-4xl">🎮</div>
@@ -24,52 +29,51 @@ const DecisionsBanner: React.FC<DecisionsBannerProps> = ({
         </div>
       </div>
 
-      {/* Content */}
-      <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-6">
-        {/* Left side - Text content */}
+      <div className="relative z-10 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
         <div className="flex-1 text-center lg:text-left">
-          <div className="flex items-center justify-center lg:justify-start gap-2 mb-3">
+          <p className="mb-3 text-[0.68rem] font-medium uppercase tracking-[0.32em] text-zinc-500">
+            Decision Mode
+          </p>
+
+          <div className="mb-4 flex items-center justify-center gap-2 lg:justify-start">
             <span className="text-2xl">🎲</span>
-            <h2 className="text-2xl md:text-3xl font-bold text-white">
+            <h2 className="text-2xl font-semibold tracking-tight text-white md:text-[2rem]">
               Can&apos;t Decide What to Watch?
             </h2>
             <span className="text-2xl">🎮</span>
           </div>
 
-          <p className="text-zinc-300 text-sm md:text-base mb-4 max-w-2xl">
-            Try our movie decision games! Battle movies head-to-head, get random
-            recommendations, or spin the roulette to discover your next favorite
-            film.
+          <p className="max-w-2xl text-sm leading-7 text-zinc-300 md:text-base">
+            Break the deadlock fast. Compare contenders, draw a random pick, or
+            let roulette make the call when the queue gets too crowded.
           </p>
 
-          {/* Feature highlights */}
-          <div className="flex flex-wrap justify-center lg:justify-start gap-4 text-xs md:text-sm text-zinc-400">
-            <div className="flex items-center gap-1">
+          <div className="mt-5 flex flex-wrap justify-center gap-3 text-xs text-zinc-300 md:text-sm lg:justify-start">
+            <div className="rounded-full border border-white/10 bg-white/6 px-3 py-1.5">
               <span>🆚</span>
-              <span>VS Battles</span>
+              <span className="ml-2">VS Battles</span>
             </div>
-            <div className="flex items-center gap-1">
+            <div className="rounded-full border border-white/10 bg-white/6 px-3 py-1.5">
               <span>🎯</span>
-              <span>Random Picks</span>
+              <span className="ml-2">Random Picks</span>
             </div>
-            <div className="flex items-center gap-1">
+            <div className="rounded-full border border-white/10 bg-white/6 px-3 py-1.5">
               <span>🎪</span>
-              <span>Movie Roulette</span>
+              <span className="ml-2">Movie Roulette</span>
             </div>
           </div>
         </div>
 
-        {/* Right side - CTA Button */}
         <div className="flex-shrink-0">
           <Link
             href="/decisions"
-            className="group relative inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-semibold px-6 py-3 rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-lg"
+            className="group inline-flex items-center gap-3 rounded-2xl border border-blue-400/20 bg-gradient-to-r from-blue-600 via-blue-500 to-fuchsia-500 px-6 py-3.5 text-sm font-semibold text-white shadow-lg shadow-blue-950/30 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-blue-950/45 md:text-base"
             aria-label="Start using movie decision games"
           >
             <span className="text-lg">🎲</span>
-            <span className="text-sm md:text-base">Start Deciding</span>
+            <span>Start Deciding</span>
             <svg
-              className="w-4 h-4 transition-transform group-hover:translate-x-1"
+              className="h-4 w-4 transition-transform group-hover:translate-x-1"
               fill="currentColor"
               viewBox="0 0 20 20"
             >
@@ -80,21 +84,6 @@ const DecisionsBanner: React.FC<DecisionsBannerProps> = ({
               />
             </svg>
           </Link>
-        </div>
-      </div>
-
-      {/* Decorative elements */}
-      <div className="absolute top-4 right-4 opacity-20">
-        <div className="flex gap-2">
-          <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-          <div
-            className="w-2 h-2 bg-purple-500 rounded-full animate-pulse"
-            style={{ animationDelay: "0.5s" }}
-          ></div>
-          <div
-            className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"
-            style={{ animationDelay: "1s" }}
-          ></div>
         </div>
       </div>
     </div>
