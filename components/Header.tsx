@@ -1,7 +1,11 @@
 import Link from "next/link";
 import ViewToggle from "./ViewToggle";
+import AuthButtons from "./AuthButtons";
+import { getServerSession } from "@/lib/auth-session";
 
-export default function Header() {
+export default async function Header() {
+  const session = await getServerSession();
+
   return (
     <header className="bg-black text-white border-b border-zinc-800">
       <div className="container mx-auto px-4">
@@ -26,19 +30,16 @@ export default function Header() {
               Movies
             </Link>
             <Link
-              href="/profile"
-              className="text-sm font-medium tracking-wide hover:text-primary transition-colors duration-200"
-            >
-              Profile
-            </Link>
-            <Link
               href="/about"
               className="text-sm font-medium tracking-wide hover:text-primary transition-colors duration-200"
             >
               About
             </Link>
           </div>
-          <ViewToggle />
+          <div className="flex items-center gap-6">
+            <AuthButtons isSignedIn={Boolean(session)} />
+            <ViewToggle />
+          </div>
         </nav>
       </div>
     </header>

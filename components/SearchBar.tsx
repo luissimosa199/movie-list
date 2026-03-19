@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { TMDBMovie, TMDBMovieWithDbStatus } from "@/types";
+import { TMDBMovieWithDbStatus } from "@/types";
 import { useDebounce } from "@/hooks/useDebounce";
 
 interface TMDBResponse {

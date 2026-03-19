@@ -161,7 +161,7 @@ export function determineWinner(
  * Generate easing function for CSS animation
  * Creates realistic deceleration curve
  */
-export function generateEasingCurve(duration: number): string {
+export function generateEasingCurve(): string {
     // Custom cubic-bezier for realistic physics
     // Starts fast, gradually slows down with slight bounce at end
     return "cubic-bezier(0.25, 0.46, 0.45, 0.94)";

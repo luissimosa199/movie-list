@@ -1,0 +1,140 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_DATABASE_URL")
+}
+
+model User {
+  id            String    @id
+  name          String
+  email         String
+  emailVerified Boolean   @default(false)
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  sessions      Session[]
+  accounts      Account[]
+
+  @@unique([email])
+  @@map("user")
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([token])
+  @@index([userId])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@index([userId])
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
+  @@map("verification")
+}
+
+model movies {
+  id           Int                  @id @default(autoincrement())
+  created_at   DateTime             @default(now()) @db.Timestamp(6)
+  updated_at   DateTime             @default(now()) @db.Timestamp(6)
+  watched_at   DateTime?            @db.Timestamp(6)
+  title        String
+  overview     String?
+  release_date DateTime?            @db.Date
+  runtime      Int?
+  genres       String[]
+  poster_url   String?              @unique
+  score        Int?
+  tmdb_id      Int?                 @unique
+  imdb_id      String?              @unique
+  watch_events movie_watch_events[]
+}
+
+model movie_watch_events {
+  id         Int      @id @default(autoincrement())
+  movie_id   Int
+  watched_at DateTime @db.Timestamp(6)
+  created_at DateTime @default(now()) @db.Timestamp(6)
+  movie      movies   @relation(fields: [movie_id], references: [id], onDelete: Cascade)
+
+  @@index([movie_id, watched_at(sort: Desc)])
+  @@index([watched_at(sort: Desc)])
+}
+
+// TV Series
+enum WatchStatus {
+  plan_to_watch
+  watching
+  completed
+  dropped
+  on_hold
+}
+
+model series {
+  id               Int       @id @default(autoincrement())
+  created_at       DateTime  @default(now()) @db.Timestamp(6)
+  updated_at       DateTime  @default(now()) @db.Timestamp(6)
+  watched_at       DateTime? @db.Timestamp(6)
+  added_to_list_at DateTime? @db.Timestamp(6)
+
+  tmdb_id  Int     @unique
+  name     String
+  overview String?
+
+  // Store a fully qualified URL for UI parity with movies
+  poster_url String?
+
+  first_air_date    DateTime? @db.Date
+  last_air_date     DateTime? @db.Date
+  status            String?
+  original_language String?
+  origin_country    String[]  @default([])
+
+  // Genres as simple names array for UI consumption (aligns with types)
+  genres String[] @default([])
+
+  number_of_episodes Int?
+  number_of_seasons  Int?
+
+  score        Int?
+  watch_status WatchStatus?
+}

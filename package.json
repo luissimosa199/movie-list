@@ -6,12 +6,14 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint . --ignore-pattern .next --ignore-pattern generated --ignore-pattern node_modules",
     "postinstall": "prisma generate",
     "restore:movies": "tsx scripts/restoreMoviesFromCsv.ts movies.csv"
   },
   "dependencies": {
+    "@better-auth/prisma-adapter": "^1.5.5",
     "@prisma/extension-accelerate": "^1.2.2",
+    "better-auth": "^1.5.5",
     "csv-parse": "^5.5.6",
     "next": "^16.0.7",
     "react": "^19.0.0",

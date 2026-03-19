@@ -215,7 +215,7 @@ function advanceToNextRound(tournament: SimpleTournament): SimpleTournament {
     const nextRoundBattles: BattleMatch[] = [];
 
     // Handle odd number of winners (one gets a bye)
-    let processedWinners = [...winners];
+    const processedWinners = [...winners];
     if (winners.length % 2 !== 0) {
         // Last winner gets a bye to the next round
         const byeWinner = processedWinners.pop()!;

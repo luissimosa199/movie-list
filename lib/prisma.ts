@@ -1,12 +1,10 @@
-import { PrismaClient } from "@prisma/client";
-import { withAccelerate } from "@prisma/extension-accelerate";
+import { PrismaClient } from "@/generated/prisma";
 
-// @ts-expect-error - Circular reference is expected here
-const globalForPrisma = global as unknown as { prisma: typeof prisma };
+const globalForPrisma = global as typeof global & {
+  prisma?: PrismaClient;
+};
 
-// @ts-expect-error - Circular reference is expected here
-const prisma =
-  globalForPrisma.prisma || new PrismaClient().$extends(withAccelerate());
+const prisma = globalForPrisma.prisma || new PrismaClient();
 
 if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
 

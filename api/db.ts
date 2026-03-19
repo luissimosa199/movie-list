@@ -263,7 +263,7 @@ export async function markMovieAsWatched<T extends boolean>(
     updated_at: now,
   };
 
-  const createdMovieId = await prisma.$transaction(async (tx: typeof prisma) => {
+  const createdMovieId = await prisma.$transaction(async (tx) => {
     const movie = await tx.movies.upsert({
       where: { tmdb_id: mappedMovieData.tmdb_id },
       update: mappedMovieData,
