@@ -330,6 +330,7 @@ export default async function MoviePage({ params, searchParams }: PageProps) {
               movie={movie}
               isMovieInDb={isMovieInDb}
               watchedMovie={watchedMovie}
+              className="sm:max-w-lg sm:grid-cols-2"
             />
 
             {/* <div className="flex flex-col sm:flex-row gap-4 mt-auto">

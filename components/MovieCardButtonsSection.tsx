@@ -10,15 +10,17 @@ const MovieCardButtonsSection = ({
   movie,
   isMovieInDb,
   watchedMovie,
+  className = "",
 }: {
   movie: Movie | TMDBMovie;
   isMovieInDb: number | false;
   watchedMovie?: Movie | null;
+  className?: string;
 }) => {
   const [movieDbId, setMovieDbId] = useState<number | false>(isMovieInDb);
 
   return (
-    <div className="grid gap-2">
+    <div className={`grid gap-2 ${className}`.trim()}>
       <MarkMovieAsWatchedButton
         movie={movie}
         isMovieInDb={!!movieDbId}

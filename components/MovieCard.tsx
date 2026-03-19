@@ -217,6 +217,11 @@ const MovieCard: React.FC<MovieCardProps> = ({
             <MovieCardButtonsSection
               movie={movie}
               isMovieInDb={isMovieInDb}
+              className={
+                isCompact
+                  ? "min-[980px]:max-w-sm min-[980px]:grid-cols-2"
+                  : ""
+              }
               {...(source === "tmdb" && { watchedMovie })}
             />
 

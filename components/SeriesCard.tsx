@@ -197,6 +197,11 @@ const SeriesCard: React.FC<SeriesCardProps> = ({
                 series={series as TMDBSeries}
                 initialSeriesDbId={seriesInDb?.id || false}
                 watchedSeries={seriesInDb as Series | null}
+                className={
+                  isCompact
+                    ? "min-[980px]:max-w-sm min-[980px]:grid-cols-2"
+                    : ""
+                }
               />
             )}
 
