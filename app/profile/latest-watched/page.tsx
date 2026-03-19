@@ -2,10 +2,12 @@ import MovieCard from "@/components/MovieCard";
 import ClientGridWrapper from "@/components/ClientGridWrapper";
 import { getLatestWatchedMovies } from "@/api/db";
 import Link from "next/link";
+import { requireUser } from "@/lib/auth-session";
 
 export default async function LatestWatchedPage() {
+  const user = await requireUser("/profile/latest-watched");
   // Get the last 50 watched movies
-  const latestWatchedMovies = await getLatestWatchedMovies(50);
+  const latestWatchedMovies = await getLatestWatchedMovies(user.id, 50);
 
   return (
     <main className="bg-black text-white min-h-screen py-12 px-4">

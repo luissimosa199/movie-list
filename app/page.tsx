@@ -8,8 +8,10 @@ import {
   getMoviesWatchedThisMonthCount,
   getMoviesWatchedThisYearCount,
 } from "@/api/db";
+import { requireUser } from "@/lib/auth-session";
 
 export default async function Home() {
+  const user = await requireUser("/");
   const [
     totalWatched,
     favoriteGenres,
@@ -17,11 +19,11 @@ export default async function Home() {
     recentActivity,
     watchedThisYear,
   ] = await Promise.all([
-    getTotalWatchedCount(),
-    getFavoriteGenres(3),
-    getMoviesWatchedThisMonthCount(),
-    getRecentActivity(4),
-    getMoviesWatchedThisYearCount(),
+    getTotalWatchedCount(user.id),
+    getFavoriteGenres(user.id, 3),
+    getMoviesWatchedThisMonthCount(user.id),
+    getRecentActivity(user.id, 4),
+    getMoviesWatchedThisYearCount(user.id),
   ]);
 
   return (

@@ -3,6 +3,7 @@ import { revalidatePath } from "next/cache";
 import { addMovieToList, removeMovieFromList, movieExistsInDb } from "@/api/db";
 import type { TMDBMovie } from "@/types";
 import { getMovieDetails, searchMovies } from "@/api/tmdb";
+import { getRequestUser } from "@/lib/auth-session";
 
 interface TMDBMovieDetails extends TMDBMovie {
   imdb_id: string;
@@ -15,11 +16,16 @@ interface TMDBMovieDetails extends TMDBMovie {
 
 export async function POST(request: Request) {
   try {
+    const user = await getRequestUser(request);
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const movie = (await request.json()) as TMDBMovie;
     const movieData = (await getMovieDetails(movie.id)) as TMDBMovieDetails;
 
     const now = new Date();
-    const result = await addMovieToList({
+    const result = await addMovieToList(user.id, {
       tmdb_id: movieData.id,
       imdb_id: movieData.imdb_id,
       title: movieData.title,
@@ -50,6 +56,7 @@ export async function POST(request: Request) {
 
 export async function GET(request: Request) {
   try {
+    const user = await getRequestUser(request);
     const { searchParams } = new URL(request.url);
     const query = searchParams.get("query") || "";
     const page = parseInt(searchParams.get("page") || "1");
@@ -60,7 +67,7 @@ export async function GET(request: Request) {
     // Add database status to each movie result
     const moviesWithDbStatus = await Promise.all(
       movies.results.map(async (movie) => {
-        const dbId = await movieExistsInDb(movie.id);
+        const dbId = user ? await movieExistsInDb(user.id, movie.id) : false;
         return {
           ...movie,
           dbId: dbId || null,
@@ -84,8 +91,13 @@ export async function GET(request: Request) {
 
 export async function DELETE(request: Request) {
   try {
+    const user = await getRequestUser(request);
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const { id } = await request.json();
-    const result = await removeMovieFromList(id);
+    const result = await removeMovieFromList(user.id, id);
 
     // Revalidate cache for affected pages
     revalidatePath("/movies");

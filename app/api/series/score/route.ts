@@ -1,19 +1,21 @@
 import { NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
-import prisma from "@/lib/prisma";
-import type { Series } from "@/types";
+import { updateSeriesScore } from "@/api/db";
+import { getRequestUser } from "@/lib/auth-session";
 
 export async function PATCH(request: Request) {
     try {
+        const user = await getRequestUser(request);
+        if (!user) {
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        }
+
         const { id, score } = (await request.json()) as {
             id: number;
             score: number;
         };
 
-        const result = (await prisma.series.update({
-            where: { id },
-            data: { score },
-        })) as Series;
+        const result = await updateSeriesScore(user.id, id, score);
 
         // Revalidate cache for affected pages
         revalidatePath("/series");
@@ -30,5 +32,4 @@ export async function PATCH(request: Request) {
         );
     }
 }
-
 

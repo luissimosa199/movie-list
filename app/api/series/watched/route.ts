@@ -3,6 +3,7 @@ import { revalidatePath } from "next/cache";
 import { markSeriesAsWatched, getSeriesByTmdbId } from "@/api/db";
 import { getSeriesDetails } from "@/api/tmdb";
 import type { TMDBSeries } from "@/types";
+import { getRequestUser } from "@/lib/auth-session";
 
 interface TMDBSeriesDetails extends TMDBSeries {
     genres: Array<{ id: number; name: string }>;
@@ -13,6 +14,11 @@ interface TMDBSeriesDetails extends TMDBSeries {
 
 export async function PATCH(request: Request) {
     try {
+        const user = await getRequestUser(request);
+        if (!user) {
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        }
+
         const { id, now, isSeriesInDb } = (await request.json()) as {
             id: number;
             now: Date;
@@ -20,8 +26,8 @@ export async function PATCH(request: Request) {
         };
 
         if (isSeriesInDb) {
-            const dbId = (await getSeriesByTmdbId(id))?.id ?? id;
-            const result = await markSeriesAsWatched({ id: dbId }, new Date(now), true);
+            const dbId = (await getSeriesByTmdbId(user.id, id))?.id ?? id;
+            const result = await markSeriesAsWatched(user.id, { id: dbId }, new Date(now), true);
 
             // Revalidate cache for affected pages
             revalidatePath("/series");
@@ -35,6 +41,7 @@ export async function PATCH(request: Request) {
         const seriesData = (await getSeriesDetails(id)) as TMDBSeriesDetails;
 
         const result = await markSeriesAsWatched(
+            user.id,
             {
                 id: seriesData.id,
                 name: seriesData.name,
@@ -69,5 +76,4 @@ export async function PATCH(request: Request) {
         );
     }
 }
-
 

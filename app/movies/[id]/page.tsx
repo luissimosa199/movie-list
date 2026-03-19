@@ -9,6 +9,7 @@ import { getPosterUrl } from "@/utils";
 import MovieCardButtonsSection from "@/components/MovieCardButtonsSection";
 import CastSection from "@/components/CastSection";
 import { getMovieWatchedStatus } from "@/lib/actions";
+import { getCurrentUser, requireUser } from "@/lib/auth-session";
 
 interface PageProps {
   params: Promise<{
@@ -37,9 +38,22 @@ export async function generateMetadata({
   const isTmdb = resolvedSearchParams.tmdb === "true";
 
   try {
-    const movie = isTmdb
-      ? ((await getMovieDetails(movieId)) as FullDetailTMDBMovie)
-      : await getMovie(movieId);
+    const user = await getCurrentUser();
+    const userId = user?.id ?? null;
+
+    if (!isTmdb && !userId) {
+      return {
+        title: "Movie Details",
+        description: "Sign in to view your saved movie details.",
+      };
+    }
+
+    let movie: FullDetailTMDBMovie | Awaited<ReturnType<typeof getMovie>>;
+    if (isTmdb) {
+      movie = (await getMovieDetails(movieId)) as FullDetailTMDBMovie;
+    } else {
+      movie = await getMovie(userId!, movieId);
+    }
 
     if (!movie) {
       return {
@@ -173,20 +187,28 @@ export default async function MoviePage({ params, searchParams }: PageProps) {
 
   const movieId = Number(resolvedParams.id);
   const isTmdb = resolvedSearchParams.tmdb === "true";
+  const user = isTmdb ? await getCurrentUser() : await requireUser(`/movies/${movieId}`);
 
-  const movie = isTmdb
-    ? ((await getMovieDetails(movieId)) as FullDetailTMDBMovie)
-    : await getMovie(movieId);
+  let movie: FullDetailTMDBMovie | Awaited<ReturnType<typeof getMovie>>;
+  if (isTmdb) {
+    movie = (await getMovieDetails(movieId)) as FullDetailTMDBMovie;
+  } else {
+    movie = await getMovie(user!.id, movieId);
+  }
 
   if (!movie) {
     notFound();
   }
 
   // Check if movie is in database
-  const isMovieInDb = isTmdb ? await movieExistsInDb(movieId) : movie.id;
+  const isMovieInDb = isTmdb
+    ? user
+      ? await movieExistsInDb(user.id, movieId)
+      : false
+    : movie.id;
 
   // For TMDB movies, check if they have been watched by the user
-  const watchedMovie = isTmdb ? await getMovieWatchedStatus(movieId) : null;
+  const watchedMovie = isTmdb && user ? await getMovieWatchedStatus(movieId) : null;
 
   // For database movies, fetch TMDB data for cast/crew information
   let tmdbData: FullDetailTMDBMovie | null = null;

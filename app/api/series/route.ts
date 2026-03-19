@@ -2,7 +2,8 @@ import { NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 import type { TMDBSeries } from "@/types";
 import { getSeriesDetails, searchSeries } from "@/api/tmdb";
-import { markSeriesAsWatched } from "@/api/db";
+import { getSeriesByTmdbId, markSeriesAsWatched } from "@/api/db";
+import { getRequestUser } from "@/lib/auth-session";
 
 // interface TMDBSeriesDetails extends TMDBSeries {
 //   episode_run_time: number[];
@@ -42,6 +43,11 @@ interface TMDBSeriesDetails extends TMDBSeries {
 
 export async function PATCH(request: Request) {
   try {
+    const user = await getRequestUser(request);
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const { id, now, isSeriesInDb } = (await request.json()) as {
       id: number;
       now: Date;
@@ -49,11 +55,17 @@ export async function PATCH(request: Request) {
     };
 
     if (isSeriesInDb) {
-      const result = await markSeriesAsWatched({ id }, new Date(now), true);
+      const dbId = (await getSeriesByTmdbId(user.id, id))?.id ?? id;
+      const result = await markSeriesAsWatched(
+        user.id,
+        { id: dbId },
+        new Date(now),
+        true
+      );
 
       // Revalidate cache for affected pages
       revalidatePath("/series");
-      revalidatePath(`/series/${id}`);
+      revalidatePath(`/series/${dbId}`);
       revalidatePath("/profile/recently-added");
       revalidatePath("/profile/latest-watched");
 
@@ -63,6 +75,7 @@ export async function PATCH(request: Request) {
     const seriesData = (await getSeriesDetails(id)) as TMDBSeriesDetails;
 
     const result = await markSeriesAsWatched(
+      user.id,
       {
         id: seriesData.id,
         name: seriesData.name,

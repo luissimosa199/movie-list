@@ -2,11 +2,13 @@ import MovieCard from "@/components/MovieCard";
 import ClientGridWrapper from "@/components/ClientGridWrapper";
 import { getLatestWatchedMovies, getRecentlyAddedMovies } from "@/api/db";
 import Link from "next/link";
+import { requireUser } from "@/lib/auth-session";
 
 export default async function ProfilePage() {
+  const user = await requireUser("/profile");
   // Get a subset of movies for preview (5 each)
-  const latestWatchedMovies = await getLatestWatchedMovies(4);
-  const recentlyAddedMovies = await getRecentlyAddedMovies(4);
+  const latestWatchedMovies = await getLatestWatchedMovies(user.id, 4);
+  const recentlyAddedMovies = await getRecentlyAddedMovies(user.id, 4);
 
   return (
     <main className="bg-black text-white min-h-screen py-12 px-4">

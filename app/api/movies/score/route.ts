@@ -1,19 +1,21 @@
 import { NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
-import prisma from "@/lib/prisma";
-import type { Movie } from "@/types";
+import { updateMovieScore } from "@/api/db";
+import { getRequestUser } from "@/lib/auth-session";
 
 export async function PATCH(request: Request) {
   try {
+    const user = await getRequestUser(request);
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const { id, score } = (await request.json()) as {
       id: number;
       score: number;
     };
 
-    const result = (await prisma.movies.update({
-      where: { id },
-      data: { score },
-    })) as Movie;
+    const result = await updateMovieScore(user.id, id, score);
 
     // Revalidate cache for affected pages
     revalidatePath("/movies");

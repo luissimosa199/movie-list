@@ -15,15 +15,28 @@ import {
 } from "@/api/db";
 import { getMovieDetails, getSeriesDetails } from "@/api/tmdb";
 import { Movie, TMDBMovie, Series as SeriesType, TMDBSeries } from "@/types";
+import { getCurrentUser, requireUser } from "@/lib/auth-session";
 
-
+function isDynamicServerUsageError(error: unknown) {
+  return (
+    error instanceof Error &&
+    ("digest" in error || "description" in error) &&
+    (
+      String((error as { digest?: string }).digest) === "DYNAMIC_SERVER_USAGE" ||
+      String((error as { description?: string }).description).includes(
+        "Dynamic server usage"
+      )
+    )
+  );
+}
 
 export async function addMovie(movie: TMDBMovie): Promise<Movie> {
   try {
+    const user = await requireUser(`/movies/${movie.id}?tmdb=true`);
     const movieData = await getMovieDetails(movie.id);
 
     const now = new Date();
-    const result = await addMovieToList({
+    const result = await addMovieToList(user.id, {
       tmdb_id: movieData.id,
       imdb_id: movieData.imdb_id,
       title: movieData.title,
@@ -56,7 +69,8 @@ export async function addMovie(movie: TMDBMovie): Promise<Movie> {
 
 export async function removeMovie(id: number): Promise<Movie> {
   try {
-    const result = await removeMovieFromList(id);
+    const user = await requireUser("/movies");
+    const result = await removeMovieFromList(user.id, id);
 
     // Revalidate the movies page and profile pages
     revalidatePath("/movies");
@@ -82,10 +96,12 @@ export async function markMovieAsWatched(
   isMovieInDb: boolean
 ): Promise<{ movie: Movie; shouldShowRating: boolean }> {
   try {
+    const user = await requireUser(`/movies/${params.tmdbMovieId}?tmdb=true`);
     let result: Movie;
 
     if (isMovieInDb && params.dbMovieId) {
       result = await dbMarkMovieAsWatched(
+        user.id,
         { id: params.dbMovieId },
         watchedAt,
         true
@@ -94,6 +110,7 @@ export async function markMovieAsWatched(
       const movieData = await getMovieDetails(params.tmdbMovieId);
 
       result = await dbMarkMovieAsWatched(
+        user.id,
         {
           id: movieData.id,
           imdb_id: movieData.imdb_id,
@@ -134,8 +151,15 @@ export async function getMovieWatchedStatus(
   tmdbId: number
 ): Promise<Movie | null> {
   try {
-    return await getMovieByTmdbId(tmdbId);
+    const user = await getCurrentUser();
+    if (!user) {
+      return null;
+    }
+    return await getMovieByTmdbId(user.id, tmdbId);
   } catch (error) {
+    if (isDynamicServerUsageError(error)) {
+      return null;
+    }
     console.error("Failed to get movie watched status:", error);
     return null;
   }
@@ -146,7 +170,8 @@ export async function updateMovieScore(
   score: number
 ): Promise<Movie> {
   try {
-    const result = await dbUpdateMovieScore(movieId, score);
+    const user = await requireUser(`/movies/${movieId}`);
+    const result = await dbUpdateMovieScore(user.id, movieId, score);
 
     // Revalidate paths to update movie data
     revalidatePath("/movies");
@@ -169,10 +194,11 @@ export async function updateMovieScore(
 // === Series actions ===
 export async function addSeries(series: TMDBSeries): Promise<SeriesType> {
   try {
+    const user = await requireUser(`/series/${series.id}?tmdb=true`);
     const details = await getSeriesDetails(series.id);
     const now = new Date();
 
-    const result = await addSeriesToList({
+    const result = await addSeriesToList(user.id, {
       tmdb_id: details.id,
       name: details.name,
       overview: details.overview,
@@ -214,7 +240,8 @@ export async function addSeries(series: TMDBSeries): Promise<SeriesType> {
 
 export async function removeSeries(id: number): Promise<SeriesType> {
   try {
-    const result = await removeSeriesFromList(id);
+    const user = await requireUser("/series");
+    const result = await removeSeriesFromList(user.id, id);
 
     // Revalidate the series page and profile pages
     revalidatePath("/series");
@@ -235,8 +262,15 @@ export async function getSeriesInDbStatus(
   tmdbId: number
 ): Promise<SeriesType | null> {
   try {
-    return await getSeriesByTmdbId(tmdbId);
+    const user = await getCurrentUser();
+    if (!user) {
+      return null;
+    }
+    return await getSeriesByTmdbId(user.id, tmdbId);
   } catch (error) {
+    if (isDynamicServerUsageError(error)) {
+      return null;
+    }
     console.error("Failed to get series status:", error);
     return null;
   }
@@ -248,17 +282,24 @@ export async function markSeriesAsWatched(
   isSeriesInDb: boolean
 ): Promise<{ series: SeriesType; shouldShowRating: boolean }> {
   try {
+    const user = await requireUser(`/series/${seriesId}?tmdb=true`);
     let result: SeriesType;
 
     if (isSeriesInDb) {
       // if coming from TMDB, resolve DB id first
       let idToUse = seriesId;
-      const dbSeries = await getSeriesByTmdbId(seriesId);
+      const dbSeries = await getSeriesByTmdbId(user.id, seriesId);
       if (dbSeries?.id) idToUse = dbSeries.id;
-      result = (await dbMarkSeriesAsWatched({ id: idToUse }, watchedAt, true)) as SeriesType;
+      result = (await dbMarkSeriesAsWatched(
+        user.id,
+        { id: idToUse },
+        watchedAt,
+        true
+      )) as SeriesType;
     } else {
       const details = await getSeriesDetails(seriesId);
       result = (await dbMarkSeriesAsWatched(
+        user.id,
         {
           id: details.id,
           name: details.name,
@@ -299,7 +340,8 @@ export async function updateSeriesScore(
   score: number
 ): Promise<SeriesType> {
   try {
-    const result = await dbUpdateSeriesScore(seriesId, score);
+    const user = await requireUser(`/series/${seriesId}`);
+    const result = await dbUpdateSeriesScore(user.id, seriesId, score);
 
     // Revalidate the series page and profile pages
     revalidatePath("/series");

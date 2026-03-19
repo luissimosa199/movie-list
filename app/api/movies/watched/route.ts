@@ -3,6 +3,7 @@ import { revalidatePath } from "next/cache";
 import { markMovieAsWatched } from "@/api/db";
 import { getMovieDetails } from "@/api/tmdb";
 import type { TMDBMovie } from "@/types";
+import { getRequestUser } from "@/lib/auth-session";
 
 interface TMDBMovieDetails extends TMDBMovie {
   imdb_id: string;
@@ -15,6 +16,11 @@ interface TMDBMovieDetails extends TMDBMovie {
 
 export async function PATCH(request: Request) {
   try {
+    const user = await getRequestUser(request);
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const { dbMovieId, tmdbMovieId, now, isMovieInDb } = (await request.json()) as {
       dbMovieId?: number | null;
       tmdbMovieId: number;
@@ -24,6 +30,7 @@ export async function PATCH(request: Request) {
 
     if (isMovieInDb && dbMovieId) {
       const result = await markMovieAsWatched(
+        user.id,
         { id: dbMovieId },
         new Date(now),
         true
@@ -41,6 +48,7 @@ export async function PATCH(request: Request) {
     const movieData = (await getMovieDetails(tmdbMovieId)) as TMDBMovieDetails;
 
     const result = await markMovieAsWatched(
+      user.id,
       {
         id: movieData.id,
         imdb_id: movieData.imdb_id,

@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { requireSession } from "@/lib/auth-session";
+import { requireUser } from "@/lib/auth-session";
 
 type ProfileLayoutProps = {
   children: ReactNode;
@@ -8,7 +8,7 @@ type ProfileLayoutProps = {
 export default async function ProfileLayout({
   children,
 }: ProfileLayoutProps) {
-  await requireSession("/profile");
+  await requireUser("/profile");
 
   return children;
 }
