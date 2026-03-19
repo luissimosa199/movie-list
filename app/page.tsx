@@ -5,7 +5,7 @@ import {
   getFavoriteGenres,
   getRecentActivity,
   getTotalWatchedCount,
-  getWatchingStreak,
+  getMoviesWatchedThisMonthCount,
   getMoviesWatchedThisYearCount,
 } from "@/api/db";
 
@@ -13,13 +13,13 @@ export default async function Home() {
   const [
     totalWatched,
     favoriteGenres,
-    streak,
+    watchedThisMonth,
     recentActivity,
     watchedThisYear,
   ] = await Promise.all([
     getTotalWatchedCount(),
     getFavoriteGenres(3),
-    getWatchingStreak(),
+    getMoviesWatchedThisMonthCount(),
     getRecentActivity(4),
     getMoviesWatchedThisYearCount(),
   ]);
@@ -37,13 +37,8 @@ export default async function Home() {
               <div className="text-3xl font-semibold mt-2">{totalWatched}</div>
             </div>
             <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-6">
-              <div className="text-zinc-400 text-sm">Current streak</div>
-              <div className="text-3xl font-semibold mt-2">
-                {streak.currentStreakDays} days
-              </div>
-              <div className="text-zinc-500 text-xs mt-1">
-                Longest: {streak.longestStreakDays} days
-              </div>
+              <div className="text-zinc-400 text-sm">Movies watched this month</div>
+              <div className="text-3xl font-semibold mt-2">{watchedThisMonth}</div>
             </div>
             <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-6">
               <div className="text-zinc-400 text-sm">

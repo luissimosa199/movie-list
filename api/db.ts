@@ -409,6 +409,25 @@ export async function getMoviesWatchedThisYearCount(): Promise<number> {
   });
 }
 
+export async function getMoviesWatchedThisMonthCount(): Promise<number> {
+  const now = new Date();
+  const startOfMonthUTC = new Date(
+    Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1, 0, 0, 0)
+  );
+  const startOfNextMonthUTC = new Date(
+    Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 1, 0, 0, 0)
+  );
+
+  return prisma.movie_watch_events.count({
+    where: {
+      watched_at: {
+        gte: startOfMonthUTC,
+        lt: startOfNextMonthUTC,
+      },
+    },
+  });
+}
+
 export async function getFavoriteGenres(
   limit: number = 3
 ): Promise<Array<{ genre: string; count: number }>> {
