@@ -1,6 +1,6 @@
 "use client";
 
-import { Movie } from "@/types";
+import { Movie, TMDBMovie } from "@/types";
 import { useState } from "react";
 import { markMovieAsWatched } from "@/lib/actions";
 import { formatCardDate } from "@/utils";
@@ -13,14 +13,17 @@ export default function MarkMovieAsWatchedButton({
   watchedMovie,
   onAddedToDb,
 }: {
-  movie: Movie;
+  movie: Movie | TMDBMovie;
   isMovieInDb: boolean;
   setIsInDb: (isInDb: boolean) => void;
   watchedMovie?: Movie | null;
   onAddedToDb?: (id: number) => void;
 }) {
-  // Determine initial watched status from either the movie itself (if from DB) or watchedMovie (if from TMDB)
-  const initialWatchedAt = movie.watched_at || watchedMovie?.watched_at;
+  const dbMovieId =
+    watchedMovie?.id ?? ("tmdb_id" in movie ? movie.id : null);
+  const tmdbMovieId = "tmdb_id" in movie ? movie.tmdb_id : movie.id;
+  const initialWatchedAt =
+    ("watched_at" in movie ? movie.watched_at : null) || watchedMovie?.watched_at;
 
   const [isWatched, setIsWatched] = useState<string | null>(() => {
     if (!initialWatchedAt) return null;
@@ -30,8 +33,8 @@ export default function MarkMovieAsWatchedButton({
   });
   const [showRating, setShowRating] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [dbMovieId, setDbMovieId] = useState<number | null>(
-    watchedMovie?.id || (isMovieInDb ? movie.id : null)
+  const [resolvedDbMovieId, setResolvedDbMovieId] = useState<number | null>(
+    dbMovieId
   );
 
   const handleClick = async () => {
@@ -42,10 +45,17 @@ export default function MarkMovieAsWatchedButton({
       setIsWatched(now.toISOString());
       setIsInDb(true);
 
-      const result = await markMovieAsWatched(movie.id, now, isMovieInDb);
+      const result = await markMovieAsWatched(
+        {
+          dbMovieId,
+          tmdbMovieId,
+        },
+        now,
+        isMovieInDb
+      );
 
       if (result.shouldShowRating) {
-        setDbMovieId(result.movie.id); // Store the database ID
+        setResolvedDbMovieId(result.movie.id);
         setShowRating(true);
       }
 
@@ -62,15 +72,15 @@ export default function MarkMovieAsWatchedButton({
     }
   };
 
-  if (showRating && isWatched && dbMovieId) {
+  if (showRating && isWatched && resolvedDbMovieId) {
     return (
       <div className="flex flex-col gap-2">
         <div className="bg-primary/20 text-white text-sm py-2 px-4 rounded-md text-center">
           Watched on {formatCardDate(isWatched)}
         </div>
         <StarRating
-          movieId={dbMovieId} // Use the database ID
-          initialScore={movie.score || watchedMovie?.score || 0}
+          movieId={resolvedDbMovieId}
+          initialScore={("score" in movie ? movie.score : 0) || watchedMovie?.score || 0}
         />
       </div>
     );
@@ -78,7 +88,7 @@ export default function MarkMovieAsWatchedButton({
 
   return (
     <button
-      disabled={!!isWatched || isLoading}
+      disabled={isLoading}
       onClick={handleClick}
       className="bg-primary hover:bg-primary/90 disabled:bg-primary/60 text-white text-sm py-2 px-4 rounded-md transition-all flex-1 cursor-pointer hover:scale-105 hover:shadow-sm hover:shadow-zinc-800 disabled:cursor-not-allowed disabled:scale-100"
     >
@@ -88,7 +98,7 @@ export default function MarkMovieAsWatchedButton({
           Marking as watched...
         </div>
       ) : isWatched ? (
-        `Watched on ${formatCardDate(isWatched)}`
+        `Rewatch • Last watched ${formatCardDate(isWatched)}`
       ) : (
         "Mark as Watched"
       )}

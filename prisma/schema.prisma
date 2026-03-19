@@ -22,6 +22,18 @@ model movies {
   score        Int?
   tmdb_id      Int?      @unique
   imdb_id      String?   @unique
+  watch_events movie_watch_events[]
+}
+
+model movie_watch_events {
+  id         Int      @id @default(autoincrement())
+  movie_id   Int
+  watched_at DateTime @db.Timestamp(6)
+  created_at DateTime @default(now()) @db.Timestamp(6)
+  movie      movies   @relation(fields: [movie_id], references: [id], onDelete: Cascade)
+
+  @@index([movie_id, watched_at(sort: Desc)])
+  @@index([watched_at(sort: Desc)])
 }
 
 // TV Series

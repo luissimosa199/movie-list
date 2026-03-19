@@ -33,7 +33,7 @@ export default async function ProfilePage() {
             <ClientGridWrapper>
               {latestWatchedMovies.map((movie) => (
                 <MovieCard
-                  key={movie.id}
+                  key={movie.watch_event_id}
                   movie={movie}
                   source="db"
                   isMovieInDb={movie.id}

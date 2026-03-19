@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
-import { markMovieAsWatched, getMovieByTmdbId } from "@/api/db";
+import { markMovieAsWatched } from "@/api/db";
 import { getMovieDetails } from "@/api/tmdb";
 import type { TMDBMovie } from "@/types";
 
@@ -15,27 +15,30 @@ interface TMDBMovieDetails extends TMDBMovie {
 
 export async function PATCH(request: Request) {
   try {
-    const { id, now, isMovieInDb } = (await request.json()) as {
-      id: number;
+    const { dbMovieId, tmdbMovieId, now, isMovieInDb } = (await request.json()) as {
+      dbMovieId?: number | null;
+      tmdbMovieId: number;
       now: Date;
       isMovieInDb: boolean;
     };
 
-    if (isMovieInDb) {
-      // id might be a TMDB id if coming from a TMDB page; resolve DB id when available
-      const dbId = (await getMovieByTmdbId(id))?.id ?? id;
-      const result = await markMovieAsWatched({ id: dbId }, new Date(now), true);
+    if (isMovieInDb && dbMovieId) {
+      const result = await markMovieAsWatched(
+        { id: dbMovieId },
+        new Date(now),
+        true
+      );
 
       // Revalidate cache for affected pages
       revalidatePath("/movies");
-      revalidatePath(`/movies/${dbId}`);
+      revalidatePath(`/movies/${dbMovieId}`);
       revalidatePath("/profile/recently-added");
       revalidatePath("/profile/latest-watched");
 
       return NextResponse.json(result);
     }
 
-    const movieData = (await getMovieDetails(id)) as TMDBMovieDetails;
+    const movieData = (await getMovieDetails(tmdbMovieId)) as TMDBMovieDetails;
 
     const result = await markMovieAsWatched(
       {

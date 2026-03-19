@@ -20,7 +20,7 @@ const MovieCardButtonsSection = ({
   return (
     <div className="flex gap-4 mt-4">
       <MarkMovieAsWatchedButton
-        movie={movie as Movie}
+        movie={movie}
         isMovieInDb={!!movieDbId}
         setIsInDb={(inDb: boolean) => {
           if (!inDb) {

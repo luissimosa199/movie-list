@@ -105,6 +105,7 @@ export interface Movie {
   created_at: Date;
   updated_at: Date;
   watched_at?: Date | null;
+  watch_count?: number;
   title: string;
   overview?: string | null;
   release_date: Date;
@@ -112,6 +113,19 @@ export interface Movie {
   genres?: string[] | null;
   poster_url?: string | null;
   score?: number | null;
+}
+
+export interface MovieWatchEvent {
+  id: number;
+  movie_id: number;
+  watched_at: Date;
+  created_at: Date;
+}
+
+export interface WatchedMovie extends Movie {
+  watch_event_id: number;
+  watch_count: number;
+  watched_at: Date;
 }
 
 export interface CreateMovieData {

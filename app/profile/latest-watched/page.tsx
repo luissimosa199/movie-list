@@ -40,12 +40,12 @@ export default async function LatestWatchedPage() {
         {latestWatchedMovies.length > 0 ? (
           <>
             <p className="text-zinc-400 mb-8">
-              Showing {latestWatchedMovies.length} most recently watched movies
+              Showing {latestWatchedMovies.length} most recent watch entries
             </p>
             <ClientGridWrapper>
               {latestWatchedMovies.map((movie) => (
                 <MovieCard
-                  key={movie.id}
+                  key={movie.watch_event_id}
                   movie={movie}
                   source="db"
                   isMovieInDb={movie.id}

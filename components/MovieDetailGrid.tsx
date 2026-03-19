@@ -115,7 +115,11 @@ const MovieDetailGrid = ({
         <h3 className="text-sm font-medium text-zinc-500 mb-1">Watch Status</h3>
         <p className="text-zinc-300">
           {!isTMDBMovie && "watched_at" in movie && movie.watched_at
-            ? `Watched on ${new Date(movie.watched_at).toLocaleDateString()}`
+            ? `Last watched on ${new Date(movie.watched_at).toLocaleDateString()}${
+                "watch_count" in movie && movie.watch_count
+                  ? ` • ${movie.watch_count} watch${movie.watch_count === 1 ? "" : "es"}`
+                  : ""
+              }`
             : "Not watched yet"}
         </p>
       </div>

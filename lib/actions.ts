@@ -74,26 +74,24 @@ export async function removeMovie(id: number): Promise<Movie> {
 }
 
 export async function markMovieAsWatched(
-  movieId: number,
+  params: {
+    dbMovieId?: number | null;
+    tmdbMovieId: number;
+  },
   watchedAt: Date,
   isMovieInDb: boolean
 ): Promise<{ movie: Movie; shouldShowRating: boolean }> {
   try {
     let result: Movie;
 
-    if (isMovieInDb) {
-      // Movie is already in database, but movieId may be a TMDB id when coming from a TMDB page.
-      // Resolve the actual database id if possible.
-      let idToUse = movieId;
-      const dbMovie = await getMovieByTmdbId(movieId);
-      if (dbMovie?.id) {
-        idToUse = dbMovie.id;
-      }
-
-      result = await dbMarkMovieAsWatched({ id: idToUse }, watchedAt, true);
+    if (isMovieInDb && params.dbMovieId) {
+      result = await dbMarkMovieAsWatched(
+        { id: params.dbMovieId },
+        watchedAt,
+        true
+      );
     } else {
-      // Movie is from TMDB, need to add to database and mark as watched
-      const movieData = await getMovieDetails(movieId);
+      const movieData = await getMovieDetails(params.tmdbMovieId);
 
       result = await dbMarkMovieAsWatched(
         {
@@ -115,7 +113,8 @@ export async function markMovieAsWatched(
 
     // Revalidate paths to update latest watched movies
     revalidatePath("/movies");
-    revalidatePath(`/movies/${movieId}`);
+    revalidatePath(`/movies/${result.id}`);
+    revalidatePath(`/movies/${params.tmdbMovieId}?tmdb=true`);
     revalidatePath("/");
     revalidatePath("/profile");
     revalidatePath("/profile/recently-added");
@@ -152,6 +151,9 @@ export async function updateMovieScore(
     // Revalidate paths to update movie data
     revalidatePath("/movies");
     revalidatePath(`/movies/${movieId}`);
+    if (result.tmdb_id) {
+      revalidatePath(`/movies/${result.tmdb_id}?tmdb=true`);
+    }
     revalidatePath("/");
     revalidatePath("/profile");
     revalidatePath("/profile/recently-added");

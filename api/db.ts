@@ -1,56 +1,194 @@
 import prisma from "@/lib/prisma";
-import { CreateMovieData, Movie, CreateSeriesData, Series as SeriesType } from "@/types";
+import {
+  CreateMovieData,
+  CreateSeriesData,
+  Movie,
+  Series as SeriesType,
+  WatchedMovie,
+} from "@/types";
+
+type MovieWithWatchStatsRecord = Movie & {
+  watch_events: Array<{
+    id: number;
+    watched_at: Date;
+  }>;
+  _count: {
+    watch_events: number;
+  };
+};
+
+type MovieWatchEventRecord = {
+  id: number;
+  watched_at: Date;
+  movie: Movie & {
+    _count: {
+      watch_events: number;
+    };
+  };
+};
+
+function mapMovieWithWatchStats(movie: MovieWithWatchStatsRecord): Movie {
+  const latestWatch = movie.watch_events[0] ?? null;
+
+  return {
+    ...movie,
+    watched_at: latestWatch?.watched_at ?? null,
+    watch_count: movie._count.watch_events,
+  };
+}
+
+function mapWatchedMovie(event: MovieWatchEventRecord): WatchedMovie {
+  return {
+    ...event.movie,
+    watch_event_id: event.id,
+    watched_at: event.watched_at,
+    watch_count: event.movie._count.watch_events,
+  };
+}
+
+async function getMovieWithWatchStatsByWhere(where: {
+  id?: number;
+  tmdb_id?: number;
+}): Promise<Movie | null> {
+  const movie = (await prisma.movies.findFirst({
+    where,
+    include: {
+      watch_events: {
+        select: {
+          id: true,
+          watched_at: true,
+        },
+        orderBy: {
+          watched_at: "desc",
+        },
+        take: 1,
+      },
+      _count: {
+        select: {
+          watch_events: true,
+        },
+      },
+    },
+  })) as MovieWithWatchStatsRecord | null;
+
+  return movie ? mapMovieWithWatchStats(movie) : null;
+}
 
 export async function getLatestWatchedMovies(
   limit: number = 10,
   offset: number = 0
-) {
-  return (await prisma.movies.findMany({
+): Promise<WatchedMovie[]> {
+  const events = (await prisma.movie_watch_events.findMany({
     take: limit,
     skip: offset,
-    orderBy: {
-      watched_at: "desc",
-    },
-    where: {
-      watched_at: {
-        not: null,
+    orderBy: [{ watched_at: "desc" }, { id: "desc" }],
+    include: {
+      movie: {
+        include: {
+          _count: {
+            select: {
+              watch_events: true,
+            },
+          },
+        },
       },
     },
-  })) as Movie[];
+  })) as MovieWatchEventRecord[];
+
+  return events.map(mapWatchedMovie);
 }
 
 export async function getRecentlyAddedMovies(
   limit: number = 10,
   offset: number = 0
-) {
-  return (await prisma.movies.findMany({
+): Promise<Movie[]> {
+  const movies = (await prisma.movies.findMany({
     take: limit,
     skip: offset,
     orderBy: {
       created_at: "desc",
     },
     where: {
-      watched_at: null,
+      watch_events: {
+        none: {},
+      },
     },
-  })) as Movie[];
+    include: {
+      watch_events: {
+        select: {
+          id: true,
+          watched_at: true,
+        },
+        orderBy: {
+          watched_at: "desc",
+        },
+        take: 1,
+      },
+      _count: {
+        select: {
+          watch_events: true,
+        },
+      },
+    },
+  })) as MovieWithWatchStatsRecord[];
+
+  return movies.map(mapMovieWithWatchStats);
 }
 
-export async function getMovie(id: number) {
-  return (await prisma.movies.findUnique({ where: { id } })) as Movie;
+export async function getMovie(id: number): Promise<Movie | null> {
+  return getMovieWithWatchStatsByWhere({ id });
 }
 
 export async function addMovieToList(
   movieData: CreateMovieData
 ): Promise<Movie> {
-  return (await prisma.movies.create({
+  const movie = (await prisma.movies.create({
     data: movieData,
-  })) as Movie;
+    include: {
+      watch_events: {
+        select: {
+          id: true,
+          watched_at: true,
+        },
+        orderBy: {
+          watched_at: "desc",
+        },
+        take: 1,
+      },
+      _count: {
+        select: {
+          watch_events: true,
+        },
+      },
+    },
+  })) as MovieWithWatchStatsRecord;
+
+  return mapMovieWithWatchStats(movie);
 }
 
 export async function removeMovieFromList(id: number): Promise<Movie> {
-  return (await prisma.movies.delete({
+  const movie = (await prisma.movies.delete({
     where: { id },
-  })) as Movie;
+    include: {
+      watch_events: {
+        select: {
+          id: true,
+          watched_at: true,
+        },
+        orderBy: {
+          watched_at: "desc",
+        },
+        take: 1,
+      },
+      _count: {
+        select: {
+          watch_events: true,
+        },
+      },
+    },
+  })) as MovieWithWatchStatsRecord;
+
+  return mapMovieWithWatchStats(movie);
 }
 
 export async function movieExistsInDb(
@@ -58,7 +196,7 @@ export async function movieExistsInDb(
 ): Promise<number | false> {
   const movie = await prisma.movies.findFirst({
     where: {
-      tmdb_id: tmdb_id,
+      tmdb_id,
     },
     select: {
       id: true,
@@ -80,62 +218,90 @@ type NewMovieData = {
   runtime: number | null;
   genres: string[] | null;
   poster_path: string | null;
-  imdb_id: string;
+  imdb_id: string | null;
 };
 
 export async function markMovieAsWatched<T extends boolean>(
   movieData: T extends true ? ExistingMovieData : NewMovieData,
   now: Date,
   isMovieInDb: T
-) {
+): Promise<Movie> {
   if (isMovieInDb) {
-    console.log("@", { movieData });
-    return (await prisma.movies.update({
-      where: { id: movieData.id },
-      data: { watched_at: now },
-    })) as Movie;
-  } else {
-    const mappedMovieData = {
-      tmdb_id: movieData.id,
-      imdb_id: (movieData as NewMovieData).imdb_id,
-      title: (movieData as NewMovieData).title,
-      overview: (movieData as NewMovieData).overview || null,
-      release_date: (movieData as NewMovieData).release_date,
-      runtime: (movieData as NewMovieData).runtime || null,
-      genres: (movieData as NewMovieData).genres || [],
-      poster_url: (movieData as NewMovieData).poster_path
-        ? `https://image.tmdb.org/t/p/original${(movieData as NewMovieData).poster_path
-        }`
-        : null,
-    };
+    const movieId = (movieData as ExistingMovieData).id;
 
-    return (await prisma.movies.upsert({
+    await prisma.$transaction([
+      prisma.movies.update({
+        where: { id: movieId },
+        data: {
+          watched_at: now,
+          updated_at: now,
+        },
+      }),
+      prisma.movie_watch_events.create({
+        data: {
+          movie_id: movieId,
+          watched_at: now,
+        },
+      }),
+    ]);
+
+    return (await getMovie(movieId)) as Movie;
+  }
+
+  const mappedMovieData = {
+    tmdb_id: (movieData as NewMovieData).id,
+    imdb_id: (movieData as NewMovieData).imdb_id,
+    title: (movieData as NewMovieData).title,
+    overview: (movieData as NewMovieData).overview || null,
+    release_date: (movieData as NewMovieData).release_date,
+    runtime: (movieData as NewMovieData).runtime || null,
+    genres: (movieData as NewMovieData).genres || [],
+    poster_url: (movieData as NewMovieData).poster_path
+      ? `https://image.tmdb.org/t/p/original${(movieData as NewMovieData).poster_path}`
+      : null,
+    watched_at: now,
+    updated_at: now,
+  };
+
+  const createdMovieId = await prisma.$transaction(async (tx: typeof prisma) => {
+    const movie = await tx.movies.upsert({
       where: { tmdb_id: mappedMovieData.tmdb_id },
-      update: { watched_at: now },
+      update: mappedMovieData,
       create: {
         ...mappedMovieData,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    await tx.movie_watch_events.create({
+      data: {
+        movie_id: movie.id,
         watched_at: now,
       },
-    })) as Movie;
-  }
+    });
+
+    return movie.id;
+  });
+
+  return (await getMovie(createdMovieId)) as Movie;
 }
 
 export async function updateMovieScore(
   movieId: number,
   score: number
 ): Promise<Movie> {
-  return (await prisma.movies.update({
+  await prisma.movies.update({
     where: { id: movieId },
     data: { score },
-  })) as Movie;
+  });
+
+  return (await getMovie(movieId)) as Movie;
 }
 
 export async function getMovieByTmdbId(tmdb_id: number): Promise<Movie | null> {
-  return (await prisma.movies.findFirst({
-    where: {
-      tmdb_id: tmdb_id,
-    },
-  })) as Movie | null;
+  return getMovieWithWatchStatsByWhere({ tmdb_id });
 }
 
 // === Series DB helpers ===
@@ -164,7 +330,7 @@ type ExistingSeriesData = {
 };
 
 type NewSeriesData = {
-  id: number; // tmdb id
+  id: number;
   name: string;
   overview: string | null;
   first_air_date: Date | null;
@@ -185,30 +351,30 @@ export async function markSeriesAsWatched<T extends boolean>(
       where: { id: (seriesData as ExistingSeriesData).id },
       data: { watched_at: now },
     })) as SeriesType;
-  } else {
-    const mappedSeriesData = {
-      tmdb_id: (seriesData as NewSeriesData).id,
-      name: (seriesData as NewSeriesData).name,
-      overview: (seriesData as NewSeriesData).overview || null,
-      first_air_date: (seriesData as NewSeriesData).first_air_date,
-      last_air_date: (seriesData as NewSeriesData).last_air_date,
-      number_of_episodes: (seriesData as NewSeriesData).number_of_episodes,
-      number_of_seasons: (seriesData as NewSeriesData).number_of_seasons,
-      genres: (seriesData as NewSeriesData).genres || [],
-      poster_url: (seriesData as NewSeriesData).poster_path
-        ? `https://image.tmdb.org/t/p/original${(seriesData as NewSeriesData).poster_path}`
-        : null,
-    };
-
-    return (await prisma.series.upsert({
-      where: { tmdb_id: mappedSeriesData.tmdb_id },
-      update: { watched_at: now },
-      create: {
-        ...mappedSeriesData,
-        watched_at: now,
-      },
-    })) as SeriesType;
   }
+
+  const mappedSeriesData = {
+    tmdb_id: (seriesData as NewSeriesData).id,
+    name: (seriesData as NewSeriesData).name,
+    overview: (seriesData as NewSeriesData).overview || null,
+    first_air_date: (seriesData as NewSeriesData).first_air_date,
+    last_air_date: (seriesData as NewSeriesData).last_air_date,
+    number_of_episodes: (seriesData as NewSeriesData).number_of_episodes,
+    number_of_seasons: (seriesData as NewSeriesData).number_of_seasons,
+    genres: (seriesData as NewSeriesData).genres || [],
+    poster_url: (seriesData as NewSeriesData).poster_path
+      ? `https://image.tmdb.org/t/p/original${(seriesData as NewSeriesData).poster_path}`
+      : null,
+  };
+
+  return (await prisma.series.upsert({
+    where: { tmdb_id: mappedSeriesData.tmdb_id },
+    update: { watched_at: now },
+    create: {
+      ...mappedSeriesData,
+      watched_at: now,
+    },
+  })) as SeriesType;
 }
 
 export async function updateSeriesScore(
@@ -222,15 +388,8 @@ export async function updateSeriesScore(
 }
 
 // Stats and dashboard helpers
-
 export async function getTotalWatchedCount(): Promise<number> {
-  return prisma.movies.count({
-    where: {
-      watched_at: {
-        not: null,
-      },
-    },
-  });
+  return prisma.movie_watch_events.count();
 }
 
 export async function getMoviesWatchedThisYearCount(): Promise<number> {
@@ -239,7 +398,8 @@ export async function getMoviesWatchedThisYearCount(): Promise<number> {
   const startOfNextYearUTC = new Date(
     Date.UTC(now.getUTCFullYear() + 1, 0, 1, 0, 0, 0)
   );
-  return prisma.movies.count({
+
+  return prisma.movie_watch_events.count({
     where: {
       watched_at: {
         gte: startOfYearUTC,
@@ -249,26 +409,22 @@ export async function getMoviesWatchedThisYearCount(): Promise<number> {
   });
 }
 
-export async function getFavoriteGenres(limit: number = 3): Promise<
-  Array<{ genre: string; count: number }>
-> {
-  const watchedWithGenres = await prisma.movies.findMany({
-    where: {
-      watched_at: {
-        not: null,
-      },
-      genres: {
-        isEmpty: false,
-      },
-    },
+export async function getFavoriteGenres(
+  limit: number = 3
+): Promise<Array<{ genre: string; count: number }>> {
+  const watchedWithGenres = await prisma.movie_watch_events.findMany({
     select: {
-      genres: true,
+      movie: {
+        select: {
+          genres: true,
+        },
+      },
     },
   });
 
   const genreToCount: Record<string, number> = {};
   for (const item of watchedWithGenres) {
-    const genres = (item.genres || []) as string[];
+    const genres = (item.movie.genres || []) as string[];
     for (const g of genres) {
       const key = g.trim();
       if (!key) continue;
@@ -295,12 +451,7 @@ export async function getWatchingStreak(): Promise<{
   lastWatchedAt: Date | null;
   watchedDaysThisYear: number;
 }> {
-  const watched = await prisma.movies.findMany({
-    where: {
-      watched_at: {
-        not: null,
-      },
-    },
+  const watched = await prisma.movie_watch_events.findMany({
     select: {
       watched_at: true,
     },
@@ -318,7 +469,6 @@ export async function getWatchingStreak(): Promise<{
 
   const daySet = new Set<string>();
   for (const w of watched) {
-    if (!w.watched_at) continue;
     daySet.add(toUTCDateString(w.watched_at));
   }
 
@@ -340,7 +490,6 @@ export async function getWatchingStreak(): Promise<{
     }
   }
 
-  // Compute current streak relative to today (UTC)
   const todayUTC = new Date();
   const todayKey = toUTCDateString(todayUTC);
   const yesterdayUTC = new Date(
@@ -354,8 +503,7 @@ export async function getWatchingStreak(): Promise<{
 
   let currentStreak = 0;
   if (daySet.has(todayKey) || daySet.has(yesterdayKey)) {
-    // Walk backwards from the most recent day
-    let cursor = new Date(daySet.has(todayKey) ? todayKey : yesterdayKey);
+    let cursor = new Date(daySet.has(todayKey) ? `${todayKey}T00:00:00.000Z` : `${yesterdayKey}T00:00:00.000Z`);
     while (daySet.has(toUTCDateString(cursor))) {
       currentStreak += 1;
       cursor = new Date(
@@ -368,7 +516,6 @@ export async function getWatchingStreak(): Promise<{
     }
   }
 
-  // Days watched this year (UTC)
   const year = todayUTC.getUTCFullYear();
   let watchedThisYear = 0;
   for (const key of daySet) {
@@ -384,12 +531,13 @@ export async function getWatchingStreak(): Promise<{
 }
 
 export async function getRecentActivity(limit: number = 4): Promise<{
-  latestWatched: Movie[];
+  latestWatched: WatchedMovie[];
   recentlyAdded: Movie[];
 }> {
   const [latestWatched, recentlyAdded] = await Promise.all([
     getLatestWatchedMovies(limit),
     getRecentlyAddedMovies(limit),
   ]);
+
   return { latestWatched, recentlyAdded };
 }

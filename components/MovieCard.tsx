@@ -132,8 +132,27 @@ const MovieCard: React.FC<MovieCardProps> = ({
                 : "text-sm text-zinc-400 mb-3"
             }
           >
-            Released: {getFormattedDate(releaseDate, source)}
+            {isWatched
+              ? `Last watched: ${getFormattedDate(
+                  source === "db" ? (movie as Movie).watched_at ?? null : watchedMovie?.watched_at ?? null,
+                  "db"
+                )}`
+              : `Released: ${getFormattedDate(releaseDate, source)}`}
           </p>
+
+          {source === "db" &&
+            !!(movie as Movie).watch_count &&
+            (movie as Movie).watch_count! > 1 && (
+              <p
+                className={
+                  isCompact
+                    ? "text-xs text-zinc-500 mb-2"
+                    : "text-sm text-zinc-500 mb-3"
+                }
+              >
+                {(movie as Movie).watch_count} watches logged
+              </p>
+            )}
 
           {!isCompact && (
             <>
