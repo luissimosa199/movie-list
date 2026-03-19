@@ -23,7 +23,8 @@ export default function MarkMovieAsWatchedButton({
     watchedMovie?.id ?? ("tmdb_id" in movie ? movie.id : null);
   const tmdbMovieId = "tmdb_id" in movie ? movie.tmdb_id : movie.id;
   const initialWatchedAt =
-    ("watched_at" in movie ? movie.watched_at : null) || watchedMovie?.watched_at;
+    ("watched_at" in movie ? movie.watched_at : null) ||
+    watchedMovie?.watched_at;
 
   const [isWatched, setIsWatched] = useState<string | null>(() => {
     if (!initialWatchedAt) return null;
@@ -59,7 +60,6 @@ export default function MarkMovieAsWatchedButton({
         setShowRating(true);
       }
 
-      // Ensure the movie is reflected as added to the watchlist (DB) in the parent state
       if (typeof onAddedToDb === "function") {
         onAddedToDb(result.movie.id);
       }
@@ -74,8 +74,8 @@ export default function MarkMovieAsWatchedButton({
 
   if (showRating && isWatched && resolvedDbMovieId) {
     return (
-      <div className="flex flex-col gap-2">
-        <div className="bg-primary/20 text-white text-sm py-2 px-4 rounded-md text-center">
+      <div className="space-y-2 rounded-xl border border-white/10 bg-white/5 p-3">
+        <div className="rounded-lg bg-primary/20 px-4 py-2 text-center text-sm text-white">
           Watched on {formatCardDate(isWatched)}
         </div>
         <StarRating
@@ -90,15 +90,20 @@ export default function MarkMovieAsWatchedButton({
     <button
       disabled={isLoading}
       onClick={handleClick}
-      className="bg-primary hover:bg-primary/90 disabled:bg-primary/60 text-white text-sm py-2 px-4 rounded-md transition-all flex-1 cursor-pointer hover:scale-105 hover:shadow-sm hover:shadow-zinc-800 disabled:cursor-not-allowed disabled:scale-100"
+      className="inline-flex w-full items-center justify-center rounded-xl bg-primary px-4 py-2.5 text-sm font-medium leading-tight text-white transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:bg-primary/60"
     >
       {isLoading ? (
         <div className="flex items-center justify-center gap-2">
-          <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+          <div className="h-4 w-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
           Marking as watched...
         </div>
       ) : isWatched ? (
-        `Rewatch • Last watched ${formatCardDate(isWatched)}`
+        <span className="flex flex-col items-center gap-0.5 text-center">
+          <span>Rewatch</span>
+          <span className="text-[0.72rem] font-normal text-white/75">
+            Last watched {formatCardDate(isWatched)}
+          </span>
+        </span>
       ) : (
         "Mark as Watched"
       )}

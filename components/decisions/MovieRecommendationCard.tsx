@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { TMDBMovie } from "@/types";
@@ -26,16 +26,21 @@ const MovieRecommendationCard: React.FC<MovieRecommendationCardProps> = ({
   const [imageLoading, setImageLoading] = useState(true);
   const [imageError, setImageError] = useState(false);
 
+  useEffect(() => {
+    setImageLoading(true);
+    setImageError(false);
+  }, [movie?.id]);
+
   if (loading) {
     return (
-      <div className="bg-zinc-900 rounded-lg border border-zinc-800 p-6">
+      <div className="rounded-[1.5rem] border border-white/10 bg-black/20 p-6">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-zinc-700 border-t-blue-500 rounded-full animate-spin mx-auto mb-4"></div>
-          <h3 className="text-lg font-semibold text-blue-200 mb-2">
-            Finding Your Movie...
+          <div className="mx-auto mb-4 h-16 w-16 animate-spin rounded-full border-4 border-zinc-700 border-t-blue-500" />
+          <h3 className="mb-2 text-lg font-semibold text-blue-200">
+            Finding your movie
           </h3>
-          <p className="text-zinc-400 text-sm">
-            Searching through thousands of movies to find the perfect match
+          <p className="text-sm text-zinc-400">
+            Searching through thousands of movies to find the right match.
           </p>
         </div>
       </div>
@@ -44,19 +49,18 @@ const MovieRecommendationCard: React.FC<MovieRecommendationCardProps> = ({
 
   if (error) {
     return (
-      <div className="bg-zinc-900 rounded-lg border border-red-800 p-6">
+      <div className="rounded-[1.5rem] border border-red-500/20 bg-red-500/10 p-6">
         <div className="text-center">
-          <div className="text-4xl mb-4">😞</div>
-          <h3 className="text-lg font-semibold text-red-200 mb-2">
-            Oops! Something went wrong
+          <h3 className="mb-2 text-lg font-semibold text-red-200">
+            Something went wrong
           </h3>
-          <p className="text-zinc-400 text-sm mb-4">{error}</p>
+          <p className="mb-4 text-sm text-zinc-300">{error}</p>
           <button
             onClick={onGetAnother}
             disabled={disabled}
-            className="bg-red-600 hover:bg-red-500 text-white px-4 py-2 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="rounded-2xl border border-red-500/20 bg-red-500/15 px-4 py-2 text-sm font-medium text-red-100 transition-colors hover:bg-red-500/25 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            Try Again
+            Try again
           </button>
         </div>
       </div>
@@ -65,17 +69,16 @@ const MovieRecommendationCard: React.FC<MovieRecommendationCardProps> = ({
 
   if (!movie) {
     return (
-      <div className="bg-zinc-900 rounded-lg border border-zinc-800 p-8">
+      <div className="rounded-[1.5rem] border border-white/10 bg-black/20 p-8">
         <div className="text-center">
-          <div className="text-6xl mb-4">🎬</div>
-          <h3 className="text-xl font-semibold text-blue-200 mb-2">
-            Ready to Discover?
+          <h3 className="mb-2 text-xl font-semibold text-blue-200">
+            Ready to discover?
           </h3>
-          <p className="text-zinc-400 mb-4">
-            Set your preferences and get a personalized movie recommendation
+          <p className="mb-4 text-zinc-400">
+            Set your preferences and get a personalized movie recommendation.
           </p>
           <div className="text-sm text-zinc-500">
-            Use the filters above to customize your recommendation
+            Use the filters above to shape the result.
           </div>
         </div>
       </div>
@@ -91,37 +94,35 @@ const MovieRecommendationCard: React.FC<MovieRecommendationCardProps> = ({
       try {
         await navigator.share({
           title: `Check out this movie: ${movie.title}`,
-          text: `I found this great movie recommendation: ${
-            movie.title
-          } (${new Date(releaseDate).getFullYear()})`,
+          text: `I found this great movie recommendation: ${movie.title} (${new Date(
+            releaseDate
+          ).getFullYear()})`,
           url: window.location.href,
         });
       } catch (err) {
         console.log("Error sharing:", err);
       }
-    } else {
-      // Fallback: copy to clipboard
-      const text = `Check out this movie: ${movie.title} (${new Date(
-        releaseDate
-      ).getFullYear()}) - ${movie.overview}`;
-      navigator.clipboard.writeText(text);
+      return;
     }
+
+    const text = `Check out this movie: ${movie.title} (${new Date(
+      releaseDate
+    ).getFullYear()}) - ${movie.overview}`;
+    navigator.clipboard.writeText(text);
   };
 
   return (
-    <div className="bg-zinc-900 rounded-lg border border-zinc-800 overflow-hidden">
-      {/* Movie Content */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-6">
-        {/* Poster */}
-        <div className="mx-auto md:mx-0">
-          <div className="aspect-[2/3] w-48 bg-zinc-800 rounded-lg overflow-hidden relative">
+    <div className="overflow-hidden rounded-[1.5rem] border border-white/10 bg-black/20">
+      <div className="grid gap-6 p-5 md:grid-cols-[14rem_minmax(0,1fr)] md:p-6">
+        <div className="mx-auto w-full max-w-[14rem] md:mx-0">
+          <div className="relative aspect-[2/3] overflow-hidden rounded-2xl border border-white/10 bg-zinc-800">
             <Link href={`/movies/${movie.id}?tmdb=true`}>
               {posterUrl && !imageError ? (
                 <Image
                   src={posterUrl}
                   alt={`${movie.title} poster`}
                   fill
-                  sizes="(max-width: 768px) 100vw, 200px"
+                  sizes="(max-width: 768px) 100vw, 224px"
                   className={`object-cover transition-opacity duration-300 ${
                     imageLoading ? "opacity-0" : "opacity-100"
                   }`}
@@ -132,113 +133,105 @@ const MovieRecommendationCard: React.FC<MovieRecommendationCardProps> = ({
                   }}
                 />
               ) : (
-                <div className="w-full h-full bg-zinc-800 flex items-center justify-center text-zinc-500 text-center text-sm">
-                  <div>
-                    <div className="text-2xl mb-2">🎬</div>
-                    No Poster Available
-                  </div>
+                <div className="flex h-full items-center justify-center text-center text-sm text-zinc-500">
+                  No poster available
                 </div>
               )}
-              {imageLoading && (
+              {imageLoading ? (
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="w-8 h-8 border-2 border-zinc-600 border-t-blue-500 rounded-full animate-spin"></div>
+                  <div className="h-8 w-8 animate-spin rounded-full border-2 border-zinc-600 border-t-blue-500" />
                 </div>
-              )}
+              ) : null}
             </Link>
           </div>
         </div>
 
-        {/* Movie Details */}
-        <div className="md:col-span-2 space-y-4">
-          <div>
+        <div className="min-w-0 space-y-4">
+          <div className="space-y-2">
             <Link href={`/movies/${movie.id}?tmdb=true`}>
-              <h2 className="text-2xl font-bold text-white hover:text-blue-200 transition-colors">
+              <h2 className="text-2xl font-semibold tracking-tight text-white transition-colors hover:text-blue-200">
                 {movie.title}
               </h2>
             </Link>
-            <p className="text-zinc-400 text-sm">
+            <p className="text-sm text-zinc-400">
               Released: {getFormattedDate(releaseDate, "tmdb")}
             </p>
           </div>
 
-          {movie.overview && (
-            <p className="text-zinc-300 leading-relaxed">{movie.overview}</p>
-          )}
+          {movie.overview ? (
+            <p className="max-w-3xl text-sm leading-7 text-zinc-300">
+              {movie.overview}
+            </p>
+          ) : null}
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
-            {genres && genres.length > 0 && (
-              <div>
-                <span className="text-zinc-500">Genres:</span>
-                <p className="text-zinc-300">{genres.join(", ")}</p>
+          <div className="grid gap-2 text-sm sm:grid-cols-3">
+            {genres && genres.length > 0 ? (
+              <div className="rounded-2xl border border-white/8 bg-white/4 px-3 py-3">
+                <div className="text-xs uppercase tracking-[0.24em] text-zinc-500">
+                  Genres
+                </div>
+                <p className="mt-1 text-zinc-200">{genres.join(", ")}</p>
               </div>
-            )}
+            ) : null}
 
-            <div>
-              <span className="text-zinc-500">Rating:</span>
-              <p className="text-zinc-300">
-                ⭐ {movie.vote_average.toFixed(1)}/10
-                <span className="text-zinc-500 ml-1">
+            <div className="rounded-2xl border border-white/8 bg-white/4 px-3 py-3">
+              <div className="text-xs uppercase tracking-[0.24em] text-zinc-500">
+                Rating
+              </div>
+              <p className="mt-1 text-zinc-200">
+                {movie.vote_average.toFixed(1)}/10
+                <span className="ml-1 text-zinc-500">
                   ({movie.vote_count} votes)
                 </span>
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-white/8 bg-white/4 px-3 py-3">
+              <div className="text-xs uppercase tracking-[0.24em] text-zinc-500">
+                Language
+              </div>
+              <p className="mt-1 text-zinc-200">
+                {movie.original_language.toUpperCase()}
               </p>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Action Buttons */}
-      <div className="border-t border-zinc-800 p-4">
-        <div className="flex flex-wrap gap-3 justify-center md:justify-start">
+      <div className="border-t border-white/8 p-4 md:p-5">
+        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
           <button
             onClick={onGetAnother}
             disabled={disabled}
-            className="bg-blue-600 hover:bg-blue-500 text-white px-6 py-2 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+            className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-blue-600 px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            <span>🎲</span>
-            Get Another
+            Get another
           </button>
 
-          {onAddToWatchlist && (
+          {onAddToWatchlist ? (
             <button
               onClick={() => onAddToWatchlist(movie)}
               disabled={disabled}
-              className="bg-green-600 hover:bg-green-500 text-white px-6 py-2 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-50"
             >
-              <span>➕</span>
-              Add to Watchlist
+              Add to watchlist
             </button>
-          )}
+          ) : null}
 
           <Link
             href={`/movies/${movie.id}?tmdb=true`}
-            className="bg-zinc-700 hover:bg-zinc-600 text-white px-6 py-2 rounded-lg transition-colors flex items-center gap-2"
+            className="inline-flex w-full items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/10"
           >
-            <span>ℹ️</span>
-            View Details
+            View details
           </Link>
 
           <button
             onClick={handleShare}
             disabled={disabled}
-            className="bg-zinc-700 hover:bg-zinc-600 text-white px-6 py-2 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+            className="inline-flex w-full items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-semibold text-zinc-200 transition-colors hover:bg-white/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
           >
-            <span>📤</span>
             Share
           </button>
-        </div>
-      </div>
-
-      {/* Movie Stats */}
-      <div className="border-t border-zinc-800 px-4 py-3 bg-zinc-800/50">
-        <div className="flex items-center justify-between text-xs text-zinc-400">
-          <span>Movie ID: {movie.id}</span>
-          <span>Language: {movie.original_language.toUpperCase()}</span>
-          <span className="flex items-center gap-1">
-            Popularity:
-            <span className="text-blue-400">
-              {Math.round(movie.popularity)}
-            </span>
-          </span>
         </div>
       </div>
     </div>

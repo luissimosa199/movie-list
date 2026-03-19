@@ -12,11 +12,11 @@ export default function StarRating(props: StarRatingProps) {
   const [score, setScore] = useState(initialScore);
   const [hoverScore, setHoverScore] = useState(0);
   const [isPending, startTransition] = useTransition();
+  const filledStar = "\u2605";
 
   const handleStarClick = async (index: number) => {
     const newScore = index + 1;
 
-    // Optimistic update
     setScore(newScore);
 
     startTransition(async () => {
@@ -27,7 +27,6 @@ export default function StarRating(props: StarRatingProps) {
           await updateSeriesScore(props.seriesId, newScore);
         }
       } catch (error) {
-        // Revert on error
         setScore(initialScore);
         console.error("Error updating score:", error);
       }
@@ -36,7 +35,7 @@ export default function StarRating(props: StarRatingProps) {
 
   return (
     <div
-      className="flex items-center justify-center gap-1 mt-2"
+      className="flex items-center justify-center gap-1"
       role="group"
       aria-label="Rating"
     >
@@ -52,20 +51,18 @@ export default function StarRating(props: StarRatingProps) {
             onClick={() => handleStarClick(index)}
             onMouseEnter={() => setHoverScore(starValue)}
             onMouseLeave={() => setHoverScore(0)}
-            className={`p-0.5 transition-colors duration-200 cursor-pointer text-2xl disabled:opacity-50 disabled:cursor-not-allowed`}
+            className="cursor-pointer rounded-sm p-0.5 text-lg transition-colors duration-200 disabled:cursor-not-allowed disabled:opacity-50"
             aria-label={`Rate ${starValue} out of 5 stars`}
           >
-            <span
-              className={`${isFilled ? "text-yellow-500" : "text-zinc-500"}`}
-            >
-              ★
+            <span className={isFilled ? "text-yellow-500" : "text-zinc-500"}>
+              {filledStar}
             </span>
           </button>
         );
       })}
       {isPending && (
         <div className="ml-2">
-          <div className="w-4 h-4 border-2 border-zinc-600 border-t-yellow-500 rounded-full animate-spin"></div>
+          <div className="h-4 w-4 rounded-full border-2 border-zinc-600 border-t-yellow-500 animate-spin" />
         </div>
       )}
     </div>

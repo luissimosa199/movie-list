@@ -60,10 +60,10 @@ const GenreFilter: React.FC<GenreFilterProps> = ({
   if (loading) {
     return (
       <div className="space-y-3">
-        <label className="text-blue-300 font-medium text-sm">Genres</label>
-        <div className="bg-zinc-800 rounded-lg p-4 border border-zinc-700">
+        <label className="text-sm font-medium text-blue-200">Genres</label>
+        <div className="rounded-[1.25rem] border border-white/10 bg-black/20 p-4">
           <div className="flex items-center justify-center h-20">
-            <div className="w-6 h-6 border-2 border-zinc-600 border-t-blue-500 rounded-full animate-spin"></div>
+            <div className="h-6 w-6 animate-spin rounded-full border-2 border-zinc-600 border-t-blue-500"></div>
           </div>
         </div>
       </div>
@@ -73,9 +73,9 @@ const GenreFilter: React.FC<GenreFilterProps> = ({
   if (error) {
     return (
       <div className="space-y-3">
-        <label className="text-blue-300 font-medium text-sm">Genres</label>
-        <div className="bg-zinc-800 rounded-lg p-4 border border-red-700">
-          <p className="text-red-400 text-sm text-center">{error}</p>
+        <label className="text-sm font-medium text-blue-200">Genres</label>
+        <div className="rounded-[1.25rem] border border-red-500/20 bg-red-500/10 p-4">
+          <p className="text-center text-sm text-red-200">{error}</p>
         </div>
       </div>
     );
@@ -86,41 +86,40 @@ const GenreFilter: React.FC<GenreFilterProps> = ({
 
   return (
     <div className="space-y-3">
-      <div className="flex items-center justify-between">
-        <label className="text-blue-300 font-medium text-sm">Genres</label>
-        <div className="flex gap-2">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <label className="text-sm font-medium text-blue-200">Genres</label>
+        <div className="flex flex-wrap gap-2">
           <button
             onClick={handleSelectAll}
             disabled={disabled || allSelected}
-            className="text-xs text-zinc-400 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-zinc-300 transition-colors hover:bg-white/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
           >
             Select All
           </button>
-          <span className="text-zinc-600">|</span>
           <button
             onClick={handleClearAll}
             disabled={disabled || noneSelected}
-            className="text-xs text-zinc-400 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-zinc-300 transition-colors hover:bg-white/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
           >
             Clear All
           </button>
         </div>
       </div>
 
-      <div className="bg-zinc-800 rounded-lg p-4 border border-zinc-700">
-        <div className="max-h-48 overflow-y-auto scrollbar-thin">
-          <div className="grid grid-cols-2 gap-3 pr-2">
+      <div className="rounded-[1.25rem] border border-white/10 bg-black/20 p-4">
+        <div className="max-h-80 overflow-y-auto pr-1 scrollbar-thin">
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 xl:grid-cols-3">
             {genres.map((genre) => {
               const isSelected = selectedGenres.includes(genre.id);
               return (
                 <label
                   key={genre.id}
-                  className={`flex items-center gap-3 p-3 rounded cursor-pointer transition-colors min-w-0 ${
-                    disabled
-                      ? "opacity-50 cursor-not-allowed"
-                      : "hover:bg-zinc-700"
+                  className={`flex min-w-0 cursor-pointer items-start gap-3 rounded-2xl border px-3 py-3 transition-colors ${
+                    disabled ? "opacity-50 cursor-not-allowed" : "hover:bg-white/5"
                   } ${
-                    isSelected ? "bg-blue-600/20 border border-blue-600/50" : ""
+                    isSelected
+                      ? "border-blue-500/30 bg-blue-500/10"
+                    : "border-white/10 bg-white/5"
                   }`}
                 >
                   <input
@@ -131,7 +130,7 @@ const GenreFilter: React.FC<GenreFilterProps> = ({
                     className="sr-only"
                   />
                   <div
-                    className={`w-4 h-4 border-2 rounded flex items-center justify-center flex-shrink-0 transition-colors ${
+                    className={`flex h-4 w-4 flex-shrink-0 items-center justify-center rounded border-2 transition-colors ${
                       isSelected
                         ? "border-blue-500 bg-blue-500"
                         : "border-zinc-500"
@@ -139,7 +138,7 @@ const GenreFilter: React.FC<GenreFilterProps> = ({
                   >
                     {isSelected && (
                       <svg
-                        className="w-3 h-3 text-white"
+                        className="h-3 w-3 text-white"
                         fill="currentColor"
                         viewBox="0 0 20 20"
                       >
@@ -152,7 +151,7 @@ const GenreFilter: React.FC<GenreFilterProps> = ({
                     )}
                   </div>
                   <span
-                    className={`text-sm leading-tight ${
+                    className={`min-w-0 text-sm leading-5 ${
                       isSelected ? "text-blue-200" : "text-zinc-300"
                     }`}
                   >
@@ -165,7 +164,7 @@ const GenreFilter: React.FC<GenreFilterProps> = ({
         </div>
 
         {selectedGenres.length > 0 && (
-          <div className="mt-3 pt-3 border-t border-zinc-700">
+          <div className="mt-4 border-t border-white/8 pt-3">
             <p className="text-xs text-zinc-400">
               Selected: {selectedGenres.length} genre
               {selectedGenres.length !== 1 ? "s" : ""}

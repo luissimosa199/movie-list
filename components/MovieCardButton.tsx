@@ -64,12 +64,12 @@ const MovieCardButton = ({
   return (
     <button
       disabled={isLoading}
-      className="bg-transparent border border-zinc-700 hover:border-zinc-600 disabled:border-zinc-800 text-white disabled:text-zinc-500 text-sm py-2 px-4 rounded-md transition-colors flex-1 cursor-pointer disabled:cursor-not-allowed"
+      className="inline-flex w-full items-center justify-center rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm font-medium leading-tight text-white transition-colors hover:border-white/20 hover:bg-white/8 disabled:cursor-not-allowed disabled:border-white/6 disabled:text-zinc-500"
       onClick={handleClick}
     >
       {isLoading ? (
         <div className="flex items-center justify-center gap-2">
-          <div className="w-3 h-3 border-2 border-zinc-600 border-t-white rounded-full animate-spin"></div>
+          <div className="h-3 w-3 rounded-full border-2 border-zinc-600 border-t-white animate-spin" />
           {pendingText}
         </div>
       ) : (

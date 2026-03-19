@@ -13,12 +13,16 @@ const RatingFilter: React.FC<RatingFilterProps> = ({
   onRatingChange,
   disabled = false,
 }) => {
+  const filledStar = "\u2605";
+  const emptyStar = "\u2606";
+
   const getStarCount = (rating: number) => {
-    return Math.round(rating / 2); // Convert 10-point scale to 5-star scale
+    return Math.round(rating / 2);
   };
 
   const renderStars = (rating: number) => {
     const starCount = getStarCount(rating);
+
     return (
       <div className="flex items-center gap-1">
         {[...Array(5)].map((_, index) => (
@@ -28,7 +32,7 @@ const RatingFilter: React.FC<RatingFilterProps> = ({
               index < starCount ? "text-yellow-500" : "text-zinc-600"
             }`}
           >
-            ★
+            {index < starCount ? filledStar : emptyStar}
           </span>
         ))}
       </div>
@@ -36,7 +40,7 @@ const RatingFilter: React.FC<RatingFilterProps> = ({
   };
 
   const presetRatings = [
-    { value: 0, label: "Any Rating", description: "Include all movies" },
+    { value: 0, label: "Any rating", description: "Include all movies" },
     { value: 6.0, label: "Good (6.0+)", description: "Well-received movies" },
     { value: 7.0, label: "Great (7.0+)", description: "Highly rated movies" },
     {
@@ -48,21 +52,25 @@ const RatingFilter: React.FC<RatingFilterProps> = ({
 
   return (
     <div className="space-y-3">
-      <label className="text-blue-300 font-medium text-sm">
-        Minimum Rating
-      </label>
+      <div className="space-y-1">
+        <label className="text-sm font-medium text-blue-200">
+          Minimum Rating
+        </label>
+        <p className="text-xs text-zinc-500">
+          Filter to stronger picks without overconstraining the result.
+        </p>
+      </div>
 
-      <div className="bg-zinc-800 rounded-lg p-4 border border-zinc-700">
-        {/* Current Rating Display */}
-        <div className="text-center mb-4">
-          <div className="text-2xl font-bold text-blue-200 mb-1">
+      <div className="rounded-[1.25rem] border border-white/10 bg-black/20 p-4">
+        <div className="mb-4 rounded-2xl border border-white/8 bg-white/4 p-4 text-center">
+          <div className="mb-1 text-2xl font-semibold text-blue-200">
             {minRating === 0 ? "Any" : minRating.toFixed(1)}
           </div>
-          {minRating > 0 && (
-            <div className="flex items-center justify-center mb-2">
+          {minRating > 0 ? (
+            <div className="mb-2 flex items-center justify-center">
               {renderStars(minRating)}
             </div>
-          )}
+          ) : null}
           <div className="text-xs text-zinc-400">
             {minRating === 0
               ? "No rating filter"
@@ -70,7 +78,6 @@ const RatingFilter: React.FC<RatingFilterProps> = ({
           </div>
         </div>
 
-        {/* Slider */}
         <div className="relative mb-4">
           <input
             type="range"
@@ -82,11 +89,10 @@ const RatingFilter: React.FC<RatingFilterProps> = ({
               !disabled && onRatingChange(parseFloat(e.target.value))
             }
             disabled={disabled}
-            className="w-full h-2 bg-zinc-700 rounded-lg appearance-none cursor-pointer focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+            className="h-2 w-full cursor-pointer appearance-none rounded-lg bg-zinc-700 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
           />
 
-          {/* Scale markers */}
-          <div className="flex justify-between text-xs text-zinc-500 mt-2">
+          <div className="mt-2 flex justify-between text-xs text-zinc-500">
             <span>0</span>
             <span>2.5</span>
             <span>5.0</span>
@@ -95,50 +101,49 @@ const RatingFilter: React.FC<RatingFilterProps> = ({
           </div>
         </div>
 
-        {/* Quick Preset Buttons */}
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid gap-2 sm:grid-cols-2">
           {presetRatings.map((preset) => {
             const isActive = minRating === preset.value;
+
             return (
               <button
                 key={preset.value}
                 onClick={() => !disabled && onRatingChange(preset.value)}
                 disabled={disabled}
-                className={`p-3 rounded-lg border text-left transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed ${
+                className={`rounded-2xl border px-3 py-3 text-left transition-all duration-200 disabled:cursor-not-allowed disabled:opacity-50 ${
                   isActive
-                    ? "border-blue-500 bg-blue-600/20 text-blue-200"
-                    : "border-zinc-600 bg-zinc-700/50 text-zinc-300 hover:border-zinc-500 hover:bg-zinc-700"
+                    ? "border-blue-500/30 bg-blue-500/10 text-blue-100"
+                    : "border-white/10 bg-white/5 text-zinc-200 hover:bg-white/10"
                 }`}
               >
-                <div className="font-medium text-sm mb-1">{preset.label}</div>
-                <div className="text-xs text-zinc-400">
+                <div className="text-sm font-medium">{preset.label}</div>
+                <div className="mt-1 text-xs text-zinc-400">
                   {preset.description}
                 </div>
-                {preset.value > 0 && (
+                {preset.value > 0 ? (
                   <div className="mt-2">{renderStars(preset.value)}</div>
-                )}
+                ) : null}
               </button>
             );
           })}
         </div>
 
-        {/* Rating Guide */}
-        <div className="mt-4 pt-4 border-t border-zinc-700">
-          <div className="text-xs text-zinc-400 space-y-1">
-            <div className="flex justify-between">
-              <span>8.0+ ★★★★★</span>
+        <div className="mt-4 border-t border-white/8 pt-4">
+          <div className="grid gap-2 text-xs text-zinc-400">
+            <div className="flex items-center justify-between gap-3 rounded-2xl border border-white/8 bg-white/4 px-3 py-2">
+              <span>{`8.0+ ${filledStar.repeat(5)}`}</span>
               <span>Masterpieces</span>
             </div>
-            <div className="flex justify-between">
-              <span>7.0+ ★★★★☆</span>
+            <div className="flex items-center justify-between gap-3 rounded-2xl border border-white/8 bg-white/4 px-3 py-2">
+              <span>{`7.0+ ${filledStar.repeat(4)}${emptyStar}`}</span>
               <span>Great movies</span>
             </div>
-            <div className="flex justify-between">
-              <span>6.0+ ★★★☆☆</span>
+            <div className="flex items-center justify-between gap-3 rounded-2xl border border-white/8 bg-white/4 px-3 py-2">
+              <span>{`6.0+ ${filledStar.repeat(3)}${emptyStar.repeat(2)}`}</span>
               <span>Good entertainment</span>
             </div>
-            <div className="flex justify-between">
-              <span>&lt;6.0 ★★☆☆☆</span>
+            <div className="flex items-center justify-between gap-3 rounded-2xl border border-white/8 bg-white/4 px-3 py-2">
+              <span>{`<6.0 ${filledStar.repeat(2)}${emptyStar.repeat(3)}`}</span>
               <span>Mixed reviews</span>
             </div>
           </div>

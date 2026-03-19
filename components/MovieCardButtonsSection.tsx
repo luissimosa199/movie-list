@@ -18,7 +18,7 @@ const MovieCardButtonsSection = ({
   const [movieDbId, setMovieDbId] = useState<number | false>(isMovieInDb);
 
   return (
-    <div className="flex gap-4 mt-4">
+    <div className="grid gap-2">
       <MarkMovieAsWatchedButton
         movie={movie}
         isMovieInDb={!!movieDbId}

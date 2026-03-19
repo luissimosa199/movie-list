@@ -90,13 +90,17 @@ const YearRangeSlider: React.FC<YearRangeSliderProps> = ({
 
   return (
     <div className="space-y-3">
-      <label className="text-blue-300 font-medium text-sm">Year Range</label>
+      <div className="space-y-1">
+        <label className="text-sm font-medium text-blue-200">Year Range</label>
+        <p className="text-xs text-zinc-500">
+          Drag the range or use a preset.
+        </p>
+      </div>
 
-      <div className="bg-zinc-800 rounded-lg p-4 border border-zinc-700">
-        {/* Year Input Fields */}
-        <div className="flex justify-between items-center mb-4">
-          <div className="flex flex-col">
-            <label className="text-xs text-zinc-400 mb-1">From</label>
+      <div className="rounded-[1.25rem] border border-white/10 bg-black/20 p-4">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <div className="flex flex-col gap-1.5">
+            <label className="text-xs text-zinc-500">From</label>
             <input
               type="number"
               min={minYear}
@@ -104,12 +108,12 @@ const YearRangeSlider: React.FC<YearRangeSliderProps> = ({
               value={tempRange[0]}
               onChange={(e) => handleInputChange("min", e.target.value)}
               disabled={disabled}
-              className="w-20 px-2 py-1 text-sm bg-zinc-700 border border-zinc-600 rounded text-white focus:border-blue-500 focus:outline-none disabled:opacity-50"
+              className="w-full rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-white outline-none focus:border-blue-500/40 focus:bg-white/10 disabled:opacity-50"
             />
           </div>
 
-          <div className="flex flex-col">
-            <label className="text-xs text-zinc-400 mb-1">To</label>
+          <div className="flex flex-col gap-1.5">
+            <label className="text-xs text-zinc-500">To</label>
             <input
               type="number"
               min={minYear}
@@ -117,26 +121,22 @@ const YearRangeSlider: React.FC<YearRangeSliderProps> = ({
               value={tempRange[1]}
               onChange={(e) => handleInputChange("max", e.target.value)}
               disabled={disabled}
-              className="w-20 px-2 py-1 text-sm bg-zinc-700 border border-zinc-600 rounded text-white focus:border-blue-500 focus:outline-none disabled:opacity-50"
+              className="w-full rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-white outline-none focus:border-blue-500/40 focus:bg-white/10 disabled:opacity-50"
             />
           </div>
         </div>
 
-        {/* Dual Range Slider */}
-        <div className="relative h-6 mb-3">
-          {/* Track */}
-          <div className="absolute top-1/2 transform -translate-y-1/2 w-full h-2 bg-zinc-700 rounded-full"></div>
+        <div className="relative mb-3 mt-4 h-6">
+          <div className="absolute top-1/2 h-2 w-full -translate-y-1/2 rounded-full bg-zinc-700"></div>
 
-          {/* Active Track */}
           <div
-            className="absolute top-1/2 transform -translate-y-1/2 h-2 bg-blue-500 rounded-full"
+            className="absolute top-1/2 h-2 -translate-y-1/2 rounded-full bg-blue-500"
             style={{
               left: `${minPercentage}%`,
               width: `${maxPercentage - minPercentage}%`,
             }}
           ></div>
 
-          {/* Min Slider */}
           <input
             type="range"
             min={minYear}
@@ -154,7 +154,6 @@ const YearRangeSlider: React.FC<YearRangeSliderProps> = ({
             }}
           />
 
-          {/* Max Slider */}
           <input
             type="range"
             min={minYear}
@@ -173,10 +172,9 @@ const YearRangeSlider: React.FC<YearRangeSliderProps> = ({
           />
         </div>
 
-        {/* Range Display */}
-        <div className="flex justify-between text-xs text-zinc-400">
+        <div className="flex items-center justify-between gap-3 text-xs text-zinc-400">
           <span>{minYear}</span>
-          <span className="text-blue-300 font-medium">
+          <span className="font-medium text-blue-200">
             {tempRange[0] === tempRange[1]
               ? tempRange[0]
               : `${tempRange[0]} - ${tempRange[1]}`}
@@ -184,40 +182,39 @@ const YearRangeSlider: React.FC<YearRangeSliderProps> = ({
           <span>{maxYear}</span>
         </div>
 
-        {/* Quick Presets */}
-        <div className="mt-4 flex flex-wrap gap-2">
+        <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3 xl:grid-cols-5">
           <button
             onClick={() => !disabled && onYearRangeChange([2020, currentYear])}
             disabled={disabled}
-            className="px-3 py-1 text-xs bg-zinc-700 hover:bg-zinc-600 text-zinc-300 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs text-zinc-300 transition-colors hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-50"
           >
             Recent (2020+)
           </button>
           <button
             onClick={() => !disabled && onYearRangeChange([2010, 2019])}
             disabled={disabled}
-            className="px-3 py-1 text-xs bg-zinc-700 hover:bg-zinc-600 text-zinc-300 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs text-zinc-300 transition-colors hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-50"
           >
             2010s
           </button>
           <button
             onClick={() => !disabled && onYearRangeChange([2000, 2009])}
             disabled={disabled}
-            className="px-3 py-1 text-xs bg-zinc-700 hover:bg-zinc-600 text-zinc-300 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs text-zinc-300 transition-colors hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-50"
           >
             2000s
           </button>
           <button
             onClick={() => !disabled && onYearRangeChange([1990, 1999])}
             disabled={disabled}
-            className="px-3 py-1 text-xs bg-zinc-700 hover:bg-zinc-600 text-zinc-300 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs text-zinc-300 transition-colors hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-50"
           >
             90s
           </button>
           <button
             onClick={() => !disabled && onYearRangeChange([minYear, maxYear])}
             disabled={disabled}
-            className="px-3 py-1 text-xs bg-zinc-700 hover:bg-zinc-600 text-zinc-300 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs text-zinc-300 transition-colors hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-50"
           >
             All Years
           </button>

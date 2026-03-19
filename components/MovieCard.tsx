@@ -37,207 +37,206 @@ const MovieCard: React.FC<MovieCardProps> = ({
     source === "db"
       ? (movie as Movie).release_date
       : (movie as TMDBMovie).release_date;
+  const watchedAt =
+    source === "db"
+      ? (movie as Movie).watched_at ?? null
+      : watchedMovie?.watched_at ?? null;
 
   const cardClasses = isCompact
-    ? "bg-zinc-900 rounded-lg overflow-hidden border border-zinc-800 transition-transform hover:scale-[1.02] hover:shadow-lg relative flex flex-row gap-4 p-4 h-48 min-[270px]:h-64 min-[420px]:h-64"
-    : "bg-zinc-900 rounded-lg overflow-hidden border border-zinc-800 transition-transform hover:scale-[1.02] hover:shadow-lg relative min-h-[500px]";
+    ? "relative flex h-full flex-col overflow-hidden rounded-[1.5rem] border border-white/10 bg-[linear-gradient(180deg,rgba(15,23,42,0.96),rgba(9,12,18,0.98))] shadow-[0_20px_60px_rgba(0,0,0,0.22)] transition-transform duration-200 hover:-translate-y-0.5 hover:border-white/15 hover:shadow-[0_26px_70px_rgba(0,0,0,0.3)]"
+    : "relative flex h-full flex-col overflow-hidden rounded-[1.5rem] border border-white/10 bg-[linear-gradient(180deg,rgba(15,23,42,0.96),rgba(9,12,18,0.98))] shadow-[0_24px_70px_rgba(0,0,0,0.24)] transition-transform duration-200 hover:-translate-y-1 hover:border-white/15 hover:shadow-[0_30px_80px_rgba(0,0,0,0.34)]";
 
   return (
-    <div
-      key={movie.id}
-      className={cardClasses}
-    >
-      {/* Watched indicator overlay */}
-      {isWatched && (
-        <div className="absolute top-2 right-2 z-10 bg-primary rounded-full p-1">
-          <svg
-            className="w-4 h-4 text-white"
-            fill="currentColor"
-            viewBox="0 0 20 20"
-          >
-            <path
-              fillRule="evenodd"
-              d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-              clipRule="evenodd"
-            />
-          </svg>
-        </div>
-      )}
-
+    <article className={cardClasses}>
       <div
         className={
           isCompact
-            ? "w-28 h-40 min-[270px]:h-44 min-[420px]:h-48 bg-zinc-800 relative rounded flex-shrink-0"
-            : "aspect-[2/3] bg-zinc-800 relative"
+            ? "flex items-start gap-4 p-4"
+            : "flex h-full flex-col"
         }
       >
-        <Link
-          href={`/movies/${isMovieInDb || movie.id}${
-            !isMovieInDb ? "?tmdb=true" : ""
-          }`}
+        <div
+          className={
+            isCompact
+              ? "relative aspect-[2/3] w-20 flex-shrink-0 overflow-hidden rounded-[1rem] border border-white/10 bg-zinc-800 min-[420px]:w-24"
+              : "relative aspect-[2/3] overflow-hidden border-b border-white/10 bg-zinc-800"
+          }
         >
-          {posterUrl ? (
-            <Image
-              src={posterUrl}
-              alt={`${movie.title} poster`}
-              fill
-              sizes={
-                isCompact
-                  ? "112px"
-                  : "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              }
-              className={isCompact ? "object-cover rounded" : "object-cover"}
-              priority={false}
-            />
-          ) : (
-            <div
-              className={`w-full h-full bg-zinc-800 text-center flex items-center justify-center text-zinc-500 ${
-                isCompact ? "rounded text-xs" : ""
-              }`}
-            >
-              {isCompact ? "No Poster" : "No Poster Available"}
+          <Link
+            href={`/movies/${isMovieInDb || movie.id}${
+              !isMovieInDb ? "?tmdb=true" : ""
+            }`}
+            className="block h-full w-full"
+          >
+            {posterUrl ? (
+              <Image
+                src={posterUrl}
+                alt={`${movie.title} poster`}
+                fill
+                sizes={
+                  isCompact
+                    ? "(max-width: 640px) 96px"
+                    : "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+                }
+                className="object-cover"
+                priority={false}
+              />
+            ) : (
+              <div className="flex h-full items-center justify-center text-center text-zinc-500">
+                <span className={isCompact ? "text-xs" : "text-sm"}>
+                  {isCompact ? "No Poster" : "No Poster Available"}
+                </span>
+              </div>
+            )}
+          </Link>
+
+          {!isCompact && (
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-transparent" />
+          )}
+
+          {isWatched && (
+            <div className="absolute right-3 top-3 z-10 rounded-full border border-white/10 bg-black/55 px-2.5 py-1 text-[0.68rem] font-medium uppercase tracking-[0.28em] text-white/85 backdrop-blur">
+              Watched
             </div>
           )}
-        </Link>
-      </div>
+        </div>
 
-      <div
-        className={
-          isCompact
-            ? "flex-1 flex flex-col justify-between py-3 px-1 min-[270px]:py-4 min-[420px]:py-5"
-            : "p-6 flex flex-col justify-between h-full"
-        }
-      >
-        <div>
-          <h2
-            className={
-              isCompact
-                ? "text-sm font-semibold mb-1 line-clamp-1"
-                : "text-lg font-semibold mb-3 line-clamp-1"
-            }
-          >
-            <Link
-              href={`/movies/${isMovieInDb || movie.id}${
-                !isMovieInDb ? "?tmdb=true" : ""
-              }`}
-              className="hover:text-primary transition-colors"
+        <div
+          className={
+            isCompact
+              ? "flex min-w-0 flex-1 flex-col gap-3 py-1"
+              : "flex min-h-0 flex-1 flex-col p-5"
+          }
+        >
+          <div className="space-y-3">
+            <div className="flex items-start justify-between gap-3">
+              <h2
+                className={
+                  isCompact
+                    ? "min-w-0 text-base font-semibold tracking-tight text-white line-clamp-2"
+                    : "min-w-0 text-xl font-semibold tracking-tight text-white line-clamp-2"
+                }
+              >
+                <Link
+                  href={`/movies/${isMovieInDb || movie.id}${
+                    !isMovieInDb ? "?tmdb=true" : ""
+                  }`}
+                  className="transition-colors hover:text-primary"
+                >
+                  {movie.title}
+                </Link>
+              </h2>
+            </div>
+
+            <p
+              className={
+                isCompact
+                  ? "text-xs leading-5 text-zinc-400"
+                  : "text-sm leading-6 text-zinc-400"
+              }
             >
-              {movie.title}
-            </Link>
-          </h2>
-          <p
-            className={
-              isCompact
-                ? "text-xs text-zinc-400 mb-2"
-                : "text-sm text-zinc-400 mb-3"
-            }
-          >
-            {isWatched
-              ? `Last watched: ${getFormattedDate(
-                  source === "db" ? (movie as Movie).watched_at ?? null : watchedMovie?.watched_at ?? null,
-                  "db"
-                )}`
-              : `Released: ${getFormattedDate(releaseDate, source)}`}
-          </p>
+              {isWatched
+                ? `Last watched: ${getFormattedDate(watchedAt, "db")}`
+                : `Released: ${getFormattedDate(releaseDate, source)}`}
+            </p>
 
-          {source === "db" &&
-            !!(movie as Movie).watch_count &&
-            (movie as Movie).watch_count! > 1 && (
+            {source === "db" &&
+              !!(movie as Movie).watch_count &&
+              (movie as Movie).watch_count! > 1 && (
+                <p
+                  className={
+                    isCompact
+                      ? "text-xs text-zinc-500"
+                      : "text-sm text-zinc-500"
+                  }
+                >
+                  {(movie as Movie).watch_count} watches logged
+                </p>
+              )}
+
+            {!isCompact && (
+              <>
+                {source === "tmdb" ? (
+                  <p className="line-clamp-3 text-sm leading-6 text-zinc-300">
+                    {(movie as TMDBMovie).overview}
+                  </p>
+                ) : (
+                  (movie as Movie).overview && (
+                    <p className="line-clamp-3 text-sm leading-6 text-zinc-300">
+                      {(movie as Movie).overview}
+                    </p>
+                  )
+                )}
+              </>
+            )}
+
+            {!isCompact && genres && (
               <p
                 className={
                   isCompact
-                    ? "text-xs text-zinc-500 mb-2"
-                    : "text-sm text-zinc-500 mb-3"
+                    ? "text-xs leading-5 text-zinc-400"
+                    : "text-sm leading-6 text-zinc-400"
                 }
               >
-                {(movie as Movie).watch_count} watches logged
+                <span className="text-zinc-500">Genres:</span> {genres.join(", ")}
               </p>
             )}
 
-          {!isCompact && (
-            <>
-              {source === "tmdb" ? (
-                <p className="text-sm text-zinc-300 mb-4 line-clamp-3">
-                  {(movie as TMDBMovie).overview}
-                </p>
-              ) : (
-                (movie as Movie).overview && (
-                  <p className="text-sm text-zinc-300 mb-4 line-clamp-3">
-                    {(movie as Movie).overview}
-                  </p>
-                )
-              )}
-
-              {genres && (
-                <p className="text-sm text-zinc-400 mb-2 h-8">
-                  <span className="text-zinc-500">Genres:</span>{" "}
-                  {genres.join(", ")}
-                </p>
-              )}
-
-              {source === "db" && (movie as Movie).runtime && (
-                <p className="text-sm text-zinc-400 mb-2">
-                  <span className="text-zinc-500">Runtime:</span>{" "}
-                  {(movie as Movie).runtime} minutes
-                </p>
-              )}
-            </>
-          )}
-
-          {/* Show score for watched movies regardless of source */}
-          {((source === "db" && (movie as Movie).score) ||
-            (source === "tmdb" && watchedMovie?.score)) && (
-            <p
-              className={
-                isCompact
-                  ? "text-xs text-zinc-400 mb-2"
-                  : "text-sm text-zinc-400 mb-3"
-              }
-            >
-              <span className="text-zinc-500">Your Score:</span>{" "}
-              {source === "db" ? (movie as Movie).score : watchedMovie?.score}
-            </p>
-          )}
-
-          {source === "tmdb" && !watchedMovie?.score && (
-            <p
-              className={
-                isCompact
-                  ? "text-xs text-zinc-400 mb-2"
-                  : "text-sm text-zinc-400 mb-3"
-              }
-            >
-              <span className="text-zinc-500">Rating:</span>{" "}
-              {(movie as TMDBMovie).vote_average.toFixed(1)} (
-              {(movie as TMDBMovie).vote_count} votes)
-            </p>
-          )}
-        </div>
-
-        <div className={isCompact ? "mt-auto pt-2" : "mt-auto pt-4"}>
-          <MovieCardButtonsSection
-            movie={movie}
-            isMovieInDb={isMovieInDb}
-            {...(source === "tmdb" && { watchedMovie })}
-          />
-
-          {/* Show star rating for watched movies regardless of source */}
-          {((source === "db" && (movie as Movie).watched_at) ||
-            (source === "tmdb" && watchedMovie?.watched_at)) && (
-            <div className={isCompact ? "mt-2" : "mt-3"}>
-              <StarRating
-                movieId={source === "db" ? movie.id : watchedMovie!.id}
-                initialScore={
-                  source === "db"
-                    ? (movie as Movie).score || 0
-                    : watchedMovie?.score || 0
+            {!isCompact && source === "db" && (movie as Movie).runtime && (
+              <p
+                className={
+                  isCompact
+                    ? "text-xs leading-5 text-zinc-400"
+                    : "text-sm leading-6 text-zinc-400"
                 }
-              />
+              >
+                <span className="text-zinc-500">Runtime:</span>{" "}
+                {(movie as Movie).runtime} minutes
+              </p>
+            )}
+
+            <div className="flex flex-wrap gap-2 text-xs text-zinc-300">
+              {((source === "db" && (movie as Movie).score) ||
+                (source === "tmdb" && watchedMovie?.score)) && (
+                <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1">
+                  <span className="text-zinc-500">Your Score:</span>{" "}
+                  {source === "db" ? (movie as Movie).score : watchedMovie?.score}
+                </span>
+              )}
+
+              {source === "tmdb" && !watchedMovie?.score && (
+                <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1">
+                  <span className="text-zinc-500">TMDB Rating:</span>{" "}
+                  {(movie as TMDBMovie).vote_average.toFixed(1)} / 10
+                </span>
+              )}
             </div>
-          )}
+          </div>
+
+          <div className="mt-auto space-y-3 pt-4">
+            <MovieCardButtonsSection
+              movie={movie}
+              isMovieInDb={isMovieInDb}
+              {...(source === "tmdb" && { watchedMovie })}
+            />
+
+            {((source === "db" && (movie as Movie).watched_at) ||
+              (source === "tmdb" && watchedMovie?.watched_at)) && (
+              <div className="rounded-xl border border-white/10 bg-white/5 p-3">
+                <StarRating
+                  movieId={source === "db" ? movie.id : watchedMovie!.id}
+                  initialScore={
+                    source === "db"
+                      ? (movie as Movie).score || 0
+                      : watchedMovie?.score || 0
+                  }
+                />
+              </div>
+            )}
+          </div>
         </div>
       </div>
-    </div>
+    </article>
   );
 };
 

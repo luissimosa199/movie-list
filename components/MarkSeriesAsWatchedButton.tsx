@@ -45,7 +45,6 @@ export default function MarkSeriesAsWatchedButton({
         setShowRating(true);
       }
 
-      // Notify parent/state manager so the other button flips to "Remove from Watchlist"
       if (typeof onAddedToDb === "function") {
         onAddedToDb(result.series.id);
       }
@@ -59,14 +58,11 @@ export default function MarkSeriesAsWatchedButton({
 
   if (showRating && isWatched && dbSeriesId)
     return (
-      <div className="flex flex-col gap-2 flex-1">
-        <div className="bg-primary/20 text-white text-sm py-2 px-4 rounded-md text-center">
+      <div className="space-y-2 rounded-xl border border-white/10 bg-white/5 p-3">
+        <div className="rounded-lg bg-primary/20 px-4 py-2 text-center text-sm text-white">
           Watched on {formatCardDate(isWatched)}
         </div>
-        <StarRating
-          seriesId={dbSeriesId}
-          initialScore={watchedSeries?.score || 0}
-        />
+        <StarRating seriesId={dbSeriesId} initialScore={watchedSeries?.score || 0} />
       </div>
     );
 
@@ -74,15 +70,20 @@ export default function MarkSeriesAsWatchedButton({
     <button
       disabled={!!isWatched || isLoading}
       onClick={handleClick}
-      className="bg-primary hover:bg-primary/90 disabled:bg-primary/60 text-white text-sm py-2 px-4 rounded-md transition-all flex-1 cursor-pointer hover:scale-105 hover:shadow-sm hover:shadow-zinc-800 disabled:cursor-not-allowed disabled:scale-100"
+      className="inline-flex w-full items-center justify-center rounded-xl bg-primary px-4 py-2.5 text-sm font-medium leading-tight text-white transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:bg-primary/60"
     >
       {isLoading ? (
         <div className="flex items-center justify-center gap-2">
-          <div className="inline-block w-4 aspect-square shrink-0 border-[3px] border-white/30 border-t-white rounded-full animate-spin"></div>
+          <div className="inline-block h-4 w-4 shrink-0 rounded-full border-[3px] border-white/30 border-t-white animate-spin" />
           Marking as watched...
         </div>
       ) : isWatched ? (
-        `Watched on ${formatCardDate(isWatched)}`
+        <span className="flex flex-col items-center gap-0.5 text-center">
+          <span>Watched</span>
+          <span className="text-[0.72rem] font-normal text-white/75">
+            {formatCardDate(isWatched)}
+          </span>
+        </span>
       ) : (
         "Mark as Watched"
       )}

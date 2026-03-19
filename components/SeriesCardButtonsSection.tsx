@@ -19,7 +19,7 @@ export default function SeriesCardButtonsSection({
   );
 
   return (
-    <div className="flex gap-4 mt-4">
+    <div className="grid gap-2">
       <MarkSeriesAsWatchedButton
         series={series as TMDBSeries}
         isSeriesInDb={!!seriesDbId}

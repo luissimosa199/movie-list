@@ -121,7 +121,7 @@ const RandomRecommendationPage = () => {
 
         <div className="grid gap-8 xl:grid-cols-[minmax(0,1.05fr)_minmax(22rem,0.95fr)]">
           <section className="rounded-[1.75rem] border border-white/10 bg-panel/70 p-5 shadow-2xl shadow-black/15 md:p-6">
-            <div className="mb-5 flex items-center justify-between gap-4">
+            <div className="mb-5 flex items-start justify-between gap-4">
               <div>
                 <p className="text-[0.68rem] font-medium uppercase tracking-[0.28em] text-zinc-500">
                   Filter Stack
@@ -129,6 +129,9 @@ const RandomRecommendationPage = () => {
                 <h2 className="mt-2 text-2xl font-semibold text-white">
                   Customize your discovery
                 </h2>
+                <p className="mt-2 max-w-xl text-sm leading-6 text-zinc-400">
+                  Narrow the field with a few deliberate controls instead of a crowded control panel.
+                </p>
               </div>
 
               <button
@@ -140,62 +143,66 @@ const RandomRecommendationPage = () => {
             </div>
 
             <div className={`${showFilters ? "block" : "hidden md:block"}`}>
-              <div className="rounded-[1.5rem] border border-blue-500/20 bg-gradient-to-br from-blue-950/25 to-cyan-950/20 p-5">
-                <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+              <div className="rounded-[1.5rem] border border-blue-500/20 bg-gradient-to-br from-blue-950/25 to-cyan-950/20 p-4 md:p-5">
+                <div className="space-y-5">
                   <GenreFilter
                     selectedGenres={filters.genres}
                     onGenreChange={handleFilterChange.genres}
                     disabled={loading}
                   />
 
-                  <YearRangeSlider
-                    yearRange={filters.yearRange}
-                    onYearRangeChange={handleFilterChange.yearRange}
-                    disabled={loading}
-                  />
+                  <div className="grid gap-5 lg:grid-cols-2">
+                    <YearRangeSlider
+                      yearRange={filters.yearRange}
+                      onYearRangeChange={handleFilterChange.yearRange}
+                      disabled={loading}
+                    />
 
-                  <RatingFilter
-                    minRating={filters.minRating}
-                    onRatingChange={handleFilterChange.minRating}
-                    disabled={loading}
-                  />
-                </div>
-
-                <div className="mt-6 flex flex-wrap gap-3">
-                  <button
-                    onClick={() => handleGetRecommendation(true)}
-                    disabled={loading}
-                    className="rounded-2xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-50"
-                  >
-                    🎲 Get Random Movie
-                  </button>
-
-                  <button
-                    onClick={() => handleGetRecommendation(false)}
-                    disabled={loading}
-                    className="rounded-2xl bg-cyan-600 px-5 py-3 text-sm font-semibold text-white hover:bg-cyan-500 disabled:cursor-not-allowed disabled:opacity-50"
-                  >
-                    ✨ Surprise Me
-                  </button>
-
-                  <button
-                    onClick={handleResetFilters}
-                    disabled={loading}
-                    className="rounded-2xl border border-white/10 bg-white/6 px-5 py-3 text-sm font-medium text-zinc-200 hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-50"
-                  >
-                    Reset Filters
-                  </button>
-                </div>
-
-                {(filters.genres.length > 0 ||
-                  filters.minRating > 0 ||
-                  filters.yearRange[0] !== 1990 ||
-                  filters.yearRange[1] !== new Date().getFullYear()) && (
-                  <div className="mt-5 rounded-2xl border border-white/8 bg-black/20 px-4 py-3 text-sm text-zinc-300">
-                    <span className="font-medium text-blue-200">Active filters:</span>{" "}
-                    {buildFilterSummary(filters, [])}
+                    <RatingFilter
+                      minRating={filters.minRating}
+                      onRatingChange={handleFilterChange.minRating}
+                      disabled={loading}
+                    />
                   </div>
-                )}
+
+                  <div className="flex flex-wrap gap-3 border-t border-white/8 pt-5">
+                    <button
+                      onClick={() => handleGetRecommendation(true)}
+                      disabled={loading}
+                      className="rounded-2xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      Get random movie
+                    </button>
+
+                    <button
+                      onClick={() => handleGetRecommendation(false)}
+                      disabled={loading}
+                      className="rounded-2xl bg-cyan-600 px-5 py-3 text-sm font-semibold text-white hover:bg-cyan-500 disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      Surprise me
+                    </button>
+
+                    <button
+                      onClick={handleResetFilters}
+                      disabled={loading}
+                      className="rounded-2xl border border-white/10 bg-white/6 px-5 py-3 text-sm font-medium text-zinc-200 hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      Reset filters
+                    </button>
+                  </div>
+
+                  {(filters.genres.length > 0 ||
+                    filters.minRating > 0 ||
+                    filters.yearRange[0] !== 1990 ||
+                    filters.yearRange[1] !== new Date().getFullYear()) && (
+                    <div className="rounded-2xl border border-white/8 bg-black/20 px-4 py-3 text-sm leading-6 text-zinc-300">
+                      <span className="font-medium text-blue-200">
+                        Active filters:
+                      </span>{" "}
+                      {buildFilterSummary(filters, [])}
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </section>
