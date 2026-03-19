@@ -1,239 +1,160 @@
 import React from "react";
 import Link from "next/link";
+import DecisionBreadcrumbs from "@/components/decisions/DecisionBreadcrumbs";
+import DecisionHero from "@/components/decisions/DecisionHero";
 
-const DecisionsPage = () => {
+const gameCards = [
+  {
+    href: "/decisions/vs",
+    icon: "⚔️",
+    title: "Movie Battles",
+    description:
+      "Build a bracket, run head-to-head matchups, and let one favorite survive the tournament.",
+    bullets: ["Tournament brackets", "1v1 battles", "Champion reveal"],
+    accent:
+      "from-red-950/60 via-red-900/30 to-orange-900/30 border-red-700/40 text-red-200",
+    button:
+      "from-red-600 to-orange-600 hover:from-red-500 hover:to-orange-500",
+    eyebrow: "Competitive",
+    cta: "Start Battle",
+  },
+  {
+    href: "/decisions/random",
+    icon: "🎲",
+    title: "Random Discovery",
+    description:
+      "Use filters when you want more control, or hit surprise mode when you want a clean wildcard.",
+    bullets: ["Genre filters", "Year range", "Rating minimum"],
+    accent:
+      "from-blue-950/60 via-blue-900/30 to-cyan-900/30 border-blue-700/40 text-blue-200",
+    button:
+      "from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500",
+    eyebrow: "Curated Chaos",
+    cta: "Surprise Me",
+  },
+  {
+    href: "/decisions/roulette",
+    icon: "🎪",
+    title: "Movie Roulette",
+    description:
+      "Load a wheel with contenders, charge the spin, and let the room settle the choice in one move.",
+    bullets: ["Interactive wheel", "Spin mechanics", "Recent winners"],
+    accent:
+      "from-purple-950/60 via-purple-900/30 to-pink-900/30 border-purple-700/40 text-purple-200",
+    button:
+      "from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500",
+    eyebrow: "Group Pick",
+    cta: "Spin the Wheel",
+  },
+];
+
+export default function DecisionsPage() {
   return (
-    <main className="bg-black text-white min-h-screen py-12 px-4">
-      {/* Header with back navigation */}
-      <div className="container mx-auto mb-8">
-        <Link
-          href="/movies"
-          className="inline-flex items-center gap-2 text-zinc-400 hover:text-white transition-colors mb-6"
+    <main className="min-h-screen py-8 text-white md:py-12">
+      <div className="page-frame space-y-8 md:space-y-12">
+        <DecisionBreadcrumbs
+          items={[
+            { href: "/movies", label: "Movies" },
+            { label: "Decisions", active: true },
+          ]}
+          accentClassName="text-blue-300"
+        />
+
+        <DecisionHero
+          icon="🎮"
+          eyebrow="Decision Hub"
+          title="Movie Decision Games"
+          description="Stop drifting between tabs. Pick a mode, narrow the field, and let the app handle the final decision with more style than a generic randomizer."
+          accent="purple"
         >
-          <svg
-            className="w-4 h-4"
-            fill="currentColor"
-            viewBox="0 0 20 20"
-          >
-            <path
-              fillRule="evenodd"
-              d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
-              clipRule="evenodd"
-            />
-          </svg>
-          Back to Movies
-        </Link>
+          <div className="rounded-[1.5rem] border border-white/10 bg-black/20 p-4 md:p-5">
+            <p className="text-[0.68rem] font-medium uppercase tracking-[0.3em] text-zinc-500">
+              Quick Modes
+            </p>
+            <div className="mt-4 grid gap-3 sm:grid-cols-3">
+              <div className="rounded-2xl border border-white/10 bg-white/6 px-4 py-3 text-sm text-zinc-200">
+                <div className="font-semibold text-white">Battle</div>
+                <div className="mt-1 text-zinc-400">Bracket-style elimination</div>
+              </div>
+              <div className="rounded-2xl border border-white/10 bg-white/6 px-4 py-3 text-sm text-zinc-200">
+                <div className="font-semibold text-white">Discover</div>
+                <div className="mt-1 text-zinc-400">Filter and randomize fast</div>
+              </div>
+              <div className="rounded-2xl border border-white/10 bg-white/6 px-4 py-3 text-sm text-zinc-200">
+                <div className="font-semibold text-white">Roulette</div>
+                <div className="mt-1 text-zinc-400">Wheel-based group choice</div>
+              </div>
+            </div>
+          </div>
+        </DecisionHero>
 
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 tracking-tight">
-            🎮 Movie Decision Games
-          </h1>
-          <p className="text-zinc-300 text-lg md:text-xl max-w-3xl mx-auto">
-            Can&apos;t decide what to watch? Let our interactive games help you
-            discover your next favorite movie! Choose your adventure below.
-          </p>
+        <section className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+          {gameCards.map((card) => (
+            <div
+              key={card.href}
+              className={`relative overflow-hidden rounded-[1.75rem] border bg-gradient-to-br p-6 shadow-2xl shadow-black/20 ${card.accent}`}
+            >
+              <div className="absolute inset-0 opacity-[0.07]">
+                <div className="flex rotate-12 scale-150 flex-wrap gap-5 text-3xl">
+                  <div>{card.icon}</div>
+                  <div>🎬</div>
+                  <div>✨</div>
+                </div>
+              </div>
+
+              <div className="relative z-10 flex h-full flex-col">
+                <p className="text-[0.68rem] font-medium uppercase tracking-[0.28em] text-zinc-400">
+                  {card.eyebrow}
+                </p>
+                <div className="mt-4 text-5xl">{card.icon}</div>
+                <h2 className="mt-5 text-3xl font-semibold tracking-tight text-white">
+                  {card.title}
+                </h2>
+                <p className="mt-4 text-sm leading-7 text-zinc-300">
+                  {card.description}
+                </p>
+
+                <div className="mt-6 space-y-2 text-sm text-zinc-300">
+                  {card.bullets.map((bullet) => (
+                    <div key={bullet} className="flex items-center gap-2">
+                      <span className="text-white/80">•</span>
+                      <span>{bullet}</span>
+                    </div>
+                  ))}
+                </div>
+
+                <Link
+                  href={card.href}
+                  className={`group mt-8 inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r px-5 py-3.5 text-sm font-semibold text-white shadow-lg shadow-black/20 ${card.button}`}
+                >
+                  <span>{card.cta}</span>
+                  <svg
+                    className="h-4 w-4 transition-transform group-hover:translate-x-1"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </Link>
+              </div>
+            </div>
+          ))}
+        </section>
+
+        <div className="text-center text-sm text-zinc-500">
+          More decision tools can plug into this hub later without changing the shell.
         </div>
-      </div>
-
-      {/* Game Cards Grid */}
-      <div className="container mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
-          {/* VS Tournament Card */}
-          <div className="bg-gradient-to-br from-red-900/30 to-orange-900/30 border border-red-800/50 rounded-lg p-6 transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:border-red-600/70 relative overflow-hidden">
-            {/* Background pattern */}
-            <div className="absolute inset-0 opacity-5">
-              <div className="flex flex-wrap gap-4 transform rotate-12 scale-150">
-                <div className="text-3xl">⚔️</div>
-                <div className="text-3xl">🥊</div>
-                <div className="text-3xl">🏆</div>
-              </div>
-            </div>
-
-            <div className="relative z-10">
-              <div className="text-center mb-4">
-                <div className="text-5xl mb-3">⚔️</div>
-                <h2 className="text-2xl font-bold text-red-200 mb-2">
-                  Movie Battles
-                </h2>
-                <div className="w-16 h-1 bg-red-500 rounded mx-auto mb-4"></div>
-              </div>
-
-              <p className="text-zinc-300 text-sm mb-6 text-center leading-relaxed">
-                Select movies and battle them head-to-head in epic tournament
-                brackets until one champion emerges victorious!
-              </p>
-
-              <div className="space-y-2 mb-6">
-                <div className="flex items-center gap-2 text-xs text-red-300">
-                  <span>🏆</span>
-                  <span>Tournament brackets</span>
-                </div>
-                <div className="flex items-center gap-2 text-xs text-red-300">
-                  <span>⚡</span>
-                  <span>1v1 battles</span>
-                </div>
-                <div className="flex items-center gap-2 text-xs text-red-300">
-                  <span>👑</span>
-                  <span>Crown the champion</span>
-                </div>
-              </div>
-
-              <Link
-                href="/decisions/vs"
-                className="group w-full bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-500 hover:to-orange-500 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-2"
-              >
-                <span>Start Battle</span>
-                <svg
-                  className="w-4 h-4 transition-transform group-hover:translate-x-1"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-              </Link>
-            </div>
-          </div>
-
-          {/* Random Recommendation Card */}
-          <div className="bg-gradient-to-br from-blue-900/30 to-cyan-900/30 border border-blue-800/50 rounded-lg p-6 transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:border-blue-600/70 relative overflow-hidden">
-            {/* Background pattern */}
-            <div className="absolute inset-0 opacity-5">
-              <div className="flex flex-wrap gap-4 transform -rotate-12 scale-150">
-                <div className="text-3xl">🎲</div>
-                <div className="text-3xl">🎯</div>
-                <div className="text-3xl">✨</div>
-              </div>
-            </div>
-
-            <div className="relative z-10">
-              <div className="text-center mb-4">
-                <div className="text-5xl mb-3">🎲</div>
-                <h2 className="text-2xl font-bold text-blue-200 mb-2">
-                  Random Discovery
-                </h2>
-                <div className="w-16 h-1 bg-blue-500 rounded mx-auto mb-4"></div>
-              </div>
-
-              <p className="text-zinc-300 text-sm mb-6 text-center leading-relaxed">
-                Get perfectly random movie recommendations based on your
-                preferences. Sometimes the best discoveries come by chance!
-              </p>
-
-              <div className="space-y-2 mb-6">
-                <div className="flex items-center gap-2 text-xs text-blue-300">
-                  <span>🎭</span>
-                  <span>Filter by genre</span>
-                </div>
-                <div className="flex items-center gap-2 text-xs text-blue-300">
-                  <span>📅</span>
-                  <span>Choose year range</span>
-                </div>
-                <div className="flex items-center gap-2 text-xs text-blue-300">
-                  <span>⭐</span>
-                  <span>Set rating minimum</span>
-                </div>
-              </div>
-
-              <Link
-                href="/decisions/random"
-                className="group w-full bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-2"
-              >
-                <span>Surprise Me</span>
-                <svg
-                  className="w-4 h-4 transition-transform group-hover:translate-x-1"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-              </Link>
-            </div>
-          </div>
-
-          {/* Roulette Card */}
-          <div className="bg-gradient-to-br from-purple-900/30 to-pink-900/30 border border-purple-800/50 rounded-lg p-6 transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:border-purple-600/70 relative overflow-hidden md:col-span-2 lg:col-span-1">
-            {/* Background pattern */}
-            <div className="absolute inset-0 opacity-5">
-              <div className="flex flex-wrap gap-4 transform rotate-45 scale-150">
-                <div className="text-3xl">🎪</div>
-                <div className="text-3xl">🎰</div>
-                <div className="text-3xl">🎡</div>
-              </div>
-            </div>
-
-            <div className="relative z-10">
-              <div className="text-center mb-4">
-                <div className="text-5xl mb-3">🎪</div>
-                <h2 className="text-2xl font-bold text-purple-200 mb-2">
-                  Movie Roulette
-                </h2>
-                <div className="w-16 h-1 bg-purple-500 rounded mx-auto mb-4"></div>
-              </div>
-
-              <p className="text-zinc-300 text-sm mb-6 text-center leading-relaxed">
-                Add your favorite movies to the spinning wheel and let fate
-                decide! Perfect for movie nights with friends.
-              </p>
-
-              <div className="space-y-2 mb-6">
-                <div className="flex items-center gap-2 text-xs text-purple-300">
-                  <span>🎡</span>
-                  <span>Interactive wheel</span>
-                </div>
-                <div className="flex items-center gap-2 text-xs text-purple-300">
-                  <span>🌪️</span>
-                  <span>Spin mechanics</span>
-                </div>
-                <div className="flex items-center gap-2 text-xs text-purple-300">
-                  <span>🎬</span>
-                  <span>Multiple movies</span>
-                </div>
-              </div>
-
-              <Link
-                href="/decisions/roulette"
-                className="group w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-2"
-              >
-                <span>Spin the Wheel</span>
-                <svg
-                  className="w-4 h-4 transition-transform group-hover:translate-x-1"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Footer section */}
-      <div className="container mx-auto mt-16 text-center">
-        <p className="text-zinc-500 text-sm">
-          More games and features coming soon! 🚀
-        </p>
       </div>
     </main>
   );
-};
-
-export default DecisionsPage;
+}
 
 export const metadata = {
-  title: "Movie Decision Games – Battle, Discover, Spin",
+  title: "Movie Decision Games - Battle, Discover, Spin",
   description:
     "Interactive movie decision games: battle movies in tournaments, get random recommendations, or spin the roulette wheel to discover your next favorite film.",
 };

@@ -1,8 +1,6 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import Link from "next/link";
-import { TMDBMovie } from "@/types";
 import {
   SimpleTournament,
   createTournament,
@@ -13,12 +11,13 @@ import {
   deleteTournament,
   getTournamentProgress,
 } from "@/utils/simpleTournament";
-
-// Components
+import { TMDBMovie } from "@/types";
 import TournamentSetup from "@/components/decisions/TournamentSetup";
 import MovieBattle from "@/components/decisions/MovieBattle";
 import TournamentProgress from "@/components/decisions/TournamentProgress";
 import TournamentChampion from "@/components/decisions/TournamentChampion";
+import DecisionBreadcrumbs from "@/components/decisions/DecisionBreadcrumbs";
+import DecisionHero from "@/components/decisions/DecisionHero";
 
 type TournamentPhase = "setup" | "battle" | "champion";
 
@@ -28,17 +27,11 @@ const VSBattlePage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Load existing tournament on mount
   useEffect(() => {
     const existingTournament = loadTournament();
     if (existingTournament) {
       setTournament(existingTournament);
-
-      if (existingTournament.completed) {
-        setCurrentPhase("champion");
-      } else {
-        setCurrentPhase("battle");
-      }
+      setCurrentPhase(existingTournament.completed ? "champion" : "battle");
     }
   }, []);
 
@@ -70,8 +63,6 @@ const VSBattlePage = () => {
       const updatedTournament = recordBattleWinner(tournament, winner);
       setTournament(updatedTournament);
       saveTournament(updatedTournament);
-
-      // Check if tournament is complete
       if (updatedTournament.completed) {
         setCurrentPhase("champion");
       }
@@ -97,7 +88,6 @@ const VSBattlePage = () => {
     if (!tournament) return;
 
     try {
-      // Create new tournament with same movies
       const rematchTournament = createTournament(
         tournament.movies,
         `${tournament.title} (Rematch)`
@@ -116,166 +106,125 @@ const VSBattlePage = () => {
     ? getTournamentProgress(tournament)
     : null;
 
-  const renderPhaseContent = () => {
-    switch (currentPhase) {
-      case "setup":
-        return (
-          <TournamentSetup
-            onStartTournament={handleStartTournament}
-            loading={loading}
-          />
-        );
-
-      case "battle":
-        if (!tournament || !currentBattle || !tournamentProgress) {
-          return (
-            <div className="text-center py-12">
-              <div className="text-4xl mb-4">❌</div>
-              <h2 className="text-xl font-bold text-white mb-2">
-                Tournament Error
-              </h2>
-              <p className="text-zinc-400 mb-4">
-                Unable to load tournament data.
-              </p>
-              <button
-                onClick={handleNewTournament}
-                className="bg-red-600 hover:bg-red-500 text-white px-6 py-2 rounded-lg transition-colors"
-              >
-                Start New Tournament
-              </button>
-            </div>
-          );
-        }
-
-        return (
-          <div className="space-y-8">
-            {/* Battle Interface */}
-            <MovieBattle
-              battle={currentBattle}
-              tournamentProgress={tournamentProgress}
-              onSelectWinner={handleBattleWinner}
-              loading={loading}
-            />
-
-            {/* Tournament Progress Sidebar */}
-            <div className="lg:fixed lg:top-4 lg:right-4 lg:w-80 lg:max-h-screen lg:overflow-y-auto">
-              <TournamentProgress tournament={tournament} />
-            </div>
-          </div>
-        );
-
-      case "champion":
-        if (!tournament) {
-          return (
-            <div className="text-center py-12">
-              <div className="text-4xl mb-4">❌</div>
-              <h2 className="text-xl font-bold text-white mb-2">
-                No Tournament Data
-              </h2>
-              <p className="text-zinc-400 mb-4">Tournament data not found.</p>
-              <button
-                onClick={handleNewTournament}
-                className="bg-red-600 hover:bg-red-500 text-white px-6 py-2 rounded-lg transition-colors"
-              >
-                Start New Tournament
-              </button>
-            </div>
-          );
-        }
-
-        return (
-          <TournamentChampion
-            tournament={tournament}
-            onNewTournament={handleNewTournament}
-            onRematch={handleRematch}
-          />
-        );
-
-      default:
-        return null;
-    }
-  };
+  const heroDescription =
+    currentPhase === "setup"
+      ? "Build a bracket from your own shortlist and let direct head-to-head matchups force a real decision."
+      : currentPhase === "battle"
+      ? `Round by round elimination is active in ${
+          tournament?.title || "your tournament"
+        }. Pick the winner and keep the bracket moving.`
+      : `The bracket is complete. Review the winner or run the same field again in a rematch.`;
 
   return (
-    <main className="bg-black text-white min-h-screen py-12 px-4">
-      {/* Breadcrumb Navigation */}
-      <div className="container mx-auto mb-8">
-        <nav className="flex items-center gap-2 text-sm text-zinc-400 mb-6">
-          <Link
-            href="/movies"
-            className="hover:text-white transition-colors"
-          >
-            Movies
-          </Link>
-          <span>›</span>
-          <Link
-            href="/decisions"
-            className="hover:text-white transition-colors"
-          >
-            Decisions
-          </Link>
-          <span>›</span>
-          <span className="text-red-400">Movie Battles</span>
-        </nav>
+    <main className="min-h-screen py-8 text-white md:py-12">
+      <div className="page-frame space-y-8 md:space-y-12">
+        <DecisionBreadcrumbs
+          items={[
+            { href: "/movies", label: "Movies" },
+            { href: "/decisions", label: "Decisions" },
+            { label: "Movie Battles", active: true },
+          ]}
+          accentClassName="text-red-300"
+        />
 
-        <Link
-          href="/decisions"
-          className="inline-flex items-center gap-2 text-zinc-400 hover:text-white transition-colors mb-8"
+        <DecisionHero
+          icon="⚔️"
+          eyebrow="Movie Battles"
+          title="Run the bracket, not the debate."
+          description={heroDescription}
+          accent="red"
         >
-          <svg
-            className="w-4 h-4"
-            fill="currentColor"
-            viewBox="0 0 20 20"
-          >
-            <path
-              fillRule="evenodd"
-              d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
-              clipRule="evenodd"
-            />
-          </svg>
-          Back to Decisions Hub
-        </Link>
-      </div>
-
-      {/* Header */}
-      <div className="container mx-auto text-center mb-12">
-        <div className="text-6xl mb-4">⚔️</div>
-        <h1 className="text-4xl md:text-5xl font-bold mb-4 tracking-tight text-red-200">
-          Movie Battles
-        </h1>
-        <div className="w-24 h-1 bg-red-500 rounded mx-auto mb-6"></div>
-        <p className="text-zinc-300 text-lg md:text-xl max-w-3xl mx-auto">
-          {currentPhase === "setup"
-            ? "Tournament-style movie battles where only the strongest films survive! Create brackets, face off movies head-to-head, and crown the ultimate champion."
-            : currentPhase === "battle"
-            ? `Fighting in ${
-                tournament?.title || "Movie Tournament"
-              } - Choose your champions!`
-            : `Tournament Complete! We have a champion in ${
-                tournament?.title || "Movie Tournament"
-              }!`}
-        </p>
-      </div>
-
-      {/* Error Display */}
-      {error && (
-        <div className="container mx-auto mb-8">
-          <div className="bg-red-900/20 border border-red-600/50 rounded-lg p-4">
-            <div className="flex items-center gap-2 text-red-200">
-              <span className="text-xl">⚠️</span>
-              <div>
-                <div className="font-semibold">Tournament Error</div>
-                <div className="text-sm text-red-300">{error}</div>
+          <div className="rounded-[1.5rem] border border-white/10 bg-black/20 p-4 md:p-5">
+            <p className="text-[0.68rem] font-medium uppercase tracking-[0.3em] text-zinc-500">
+              State
+            </p>
+            <div className="mt-4 grid gap-3 sm:grid-cols-2">
+              <div className="rounded-2xl border border-white/10 bg-white/6 px-4 py-3">
+                <div className="text-sm font-semibold text-white">Phase</div>
+                <div className="mt-1 text-sm text-zinc-400 capitalize">
+                  {currentPhase}
+                </div>
+              </div>
+              <div className="rounded-2xl border border-white/10 bg-white/6 px-4 py-3">
+                <div className="text-sm font-semibold text-white">Tournament</div>
+                <div className="mt-1 text-sm text-zinc-400">
+                  {tournament?.title || "Not started yet"}
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      )}
+        </DecisionHero>
 
-      {/* Phase Content */}
-      <div className="container mx-auto max-w-6xl">
-        <div className={`${currentPhase === "battle" ? "lg:pr-96" : ""}`}>
-          {renderPhaseContent()}
+        {error ? (
+          <div className="rounded-[1.5rem] border border-red-500/35 bg-red-950/20 p-4 text-red-200">
+            <div className="font-semibold">Tournament Error</div>
+            <div className="mt-1 text-sm text-red-300">{error}</div>
+          </div>
+        ) : null}
+
+        <div className="max-w-7xl">
+          {currentPhase === "setup" ? (
+            <div className="rounded-[1.75rem] border border-white/10 bg-panel/70 p-5 shadow-2xl shadow-black/15 md:p-6">
+              <TournamentSetup
+                onStartTournament={handleStartTournament}
+                loading={loading}
+              />
+            </div>
+          ) : null}
+
+          {currentPhase === "battle" ? (
+            !tournament || !currentBattle || !tournamentProgress ? (
+              <div className="rounded-[1.75rem] border border-red-500/35 bg-red-950/15 p-6 text-center">
+                <div className="text-4xl">✕</div>
+                <h2 className="mt-4 text-xl font-semibold text-white">
+                  Tournament data could not be loaded
+                </h2>
+                <button
+                  onClick={handleNewTournament}
+                  className="mt-5 rounded-2xl bg-red-600 px-5 py-3 text-sm font-semibold text-white hover:bg-red-500"
+                >
+                  Start New Tournament
+                </button>
+              </div>
+            ) : (
+              <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_20rem]">
+                <div className="rounded-[1.75rem] border border-white/10 bg-panel/70 p-5 shadow-2xl shadow-black/15 md:p-6">
+                  <MovieBattle
+                    battle={currentBattle}
+                    tournamentProgress={tournamentProgress}
+                    onSelectWinner={handleBattleWinner}
+                    loading={loading}
+                  />
+                </div>
+                <div className="rounded-[1.75rem] border border-white/10 bg-panel/70 p-4 shadow-2xl shadow-black/15 md:p-5">
+                  <TournamentProgress tournament={tournament} />
+                </div>
+              </div>
+            )
+          ) : null}
+
+          {currentPhase === "champion" ? (
+            !tournament ? (
+              <div className="rounded-[1.75rem] border border-red-500/35 bg-red-950/15 p-6 text-center">
+                <div className="text-4xl">✕</div>
+                <h2 className="mt-4 text-xl font-semibold text-white">
+                  No tournament data found
+                </h2>
+                <button
+                  onClick={handleNewTournament}
+                  className="mt-5 rounded-2xl bg-red-600 px-5 py-3 text-sm font-semibold text-white hover:bg-red-500"
+                >
+                  Start New Tournament
+                </button>
+              </div>
+            ) : (
+              <TournamentChampion
+                tournament={tournament}
+                onNewTournament={handleNewTournament}
+                onRematch={handleRematch}
+              />
+            )
+          ) : null}
         </div>
       </div>
     </main>
