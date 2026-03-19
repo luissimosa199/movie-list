@@ -102,7 +102,7 @@ export default function AuthForm({ mode, redirectTo }: AuthFormProps) {
             name="password"
             type="password"
             required
-            minLength={8}
+            minLength={7}
             autoComplete={isSignUp ? "new-password" : "current-password"}
             className="w-full rounded-lg border border-zinc-800 bg-zinc-900 px-4 py-3 text-white outline-none transition focus:border-zinc-600"
           />
