@@ -16,6 +16,14 @@ export default function AuthForm({ mode, redirectTo }: AuthFormProps) {
   const [isPending, startTransition] = useTransition();
 
   const isSignUp = mode === "sign-up";
+  const destinationLink = isSignUp
+    ? `/sign-in?redirectTo=${encodeURIComponent(redirectTo)}`
+    : `/sign-up?redirectTo=${encodeURIComponent(redirectTo)}`;
+  const title = isSignUp ? "Create your account" : "Sign in to continue";
+  const eyebrow = isSignUp ? "Create account" : "Welcome back";
+  const description = isSignUp
+    ? "Create a simple account to keep your watchlist, profile, and decision history in one place."
+    : "Pick up where you left off and return to your saved lists, profile, and decision tools.";
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -56,60 +64,83 @@ export default function AuthForm({ mode, redirectTo }: AuthFormProps) {
   };
 
   return (
-    <div className="w-full max-w-md rounded-2xl border border-zinc-800 bg-zinc-950 p-8 shadow-2xl shadow-black/30">
-      <div className="mb-8">
-        <p className="text-sm uppercase tracking-[0.2em] text-zinc-500">
-          Better Auth
+    <div className="relative w-full max-w-[28rem] overflow-hidden rounded-[1.75rem] border border-white/10 bg-[#0a0d14]/95 p-6 shadow-[0_32px_90px_rgba(0,0,0,0.45)] backdrop-blur-xl md:p-8">
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+      <div className="pointer-events-none absolute -right-16 top-0 h-40 w-40 rounded-full bg-primary/10 blur-3xl" />
+      <div className="relative">
+        <p className="text-xs uppercase tracking-[0.34em] text-zinc-500">
+          {eyebrow}
         </p>
-        <h1 className="mt-3 text-3xl font-bold tracking-tight text-white">
-          {isSignUp ? "Create account" : "Sign in"}
-        </h1>
-        <p className="mt-2 text-sm text-zinc-400">
-          {isSignUp
-            ? "Create a simple email/password account for your movie tracker."
-            : "Sign in to access your protected profile pages."}
+        <h2 className="mt-3 text-3xl font-semibold tracking-tight text-white md:text-[2rem]">
+          {title}
+        </h2>
+        <p className="mt-3 max-w-[36ch] text-sm leading-6 text-zinc-400 md:text-[0.96rem]">
+          {description}
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="relative mt-8 space-y-5">
         {isSignUp ? (
           <label className="block">
-            <span className="mb-2 block text-sm text-zinc-300">Name</span>
+            <span className="mb-2 block text-sm font-medium text-zinc-200">
+              Name
+            </span>
+            <span className="mb-2 block text-xs text-zinc-500">
+              This will appear on your profile.
+            </span>
             <input
               name="name"
               type="text"
               required
               autoComplete="name"
-              className="w-full rounded-lg border border-zinc-800 bg-zinc-900 px-4 py-3 text-white outline-none transition focus:border-zinc-600"
+              placeholder="Your name"
+              disabled={isPending}
+              className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3.5 text-white outline-none transition placeholder:text-zinc-600 focus:border-primary/40 focus:bg-white/10 focus:shadow-[0_0_0_1px_rgba(59,130,246,0.2)] disabled:cursor-not-allowed disabled:opacity-60"
             />
           </label>
         ) : null}
 
         <label className="block">
-          <span className="mb-2 block text-sm text-zinc-300">Email</span>
+          <span className="mb-2 block text-sm font-medium text-zinc-200">
+            Email
+          </span>
+          <span className="mb-2 block text-xs text-zinc-500">
+            Use the address tied to your watchlist.
+          </span>
           <input
             name="email"
             type="email"
             required
             autoComplete="email"
-            className="w-full rounded-lg border border-zinc-800 bg-zinc-900 px-4 py-3 text-white outline-none transition focus:border-zinc-600"
+            placeholder="you@example.com"
+            disabled={isPending}
+            className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3.5 text-white outline-none transition placeholder:text-zinc-600 focus:border-primary/40 focus:bg-white/10 focus:shadow-[0_0_0_1px_rgba(59,130,246,0.2)] disabled:cursor-not-allowed disabled:opacity-60"
           />
         </label>
 
         <label className="block">
-          <span className="mb-2 block text-sm text-zinc-300">Password</span>
+          <span className="mb-2 block text-sm font-medium text-zinc-200">
+            Password
+          </span>
+          <span className="mb-2 block text-xs text-zinc-500">
+            {isSignUp
+              ? "Use at least 7 characters."
+              : "Use the password you already created."}
+          </span>
           <input
             name="password"
             type="password"
             required
             minLength={7}
             autoComplete={isSignUp ? "new-password" : "current-password"}
-            className="w-full rounded-lg border border-zinc-800 bg-zinc-900 px-4 py-3 text-white outline-none transition focus:border-zinc-600"
+            placeholder="Enter password"
+            disabled={isPending}
+            className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3.5 text-white outline-none transition placeholder:text-zinc-600 focus:border-primary/40 focus:bg-white/10 focus:shadow-[0_0_0_1px_rgba(59,130,246,0.2)] disabled:cursor-not-allowed disabled:opacity-60"
           />
         </label>
 
         {error ? (
-          <p className="rounded-lg border border-red-900/60 bg-red-950/30 px-4 py-3 text-sm text-red-300">
+          <p className="rounded-2xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-200">
             {error}
           </p>
         ) : null}
@@ -117,7 +148,7 @@ export default function AuthForm({ mode, redirectTo }: AuthFormProps) {
         <button
           type="submit"
           disabled={isPending}
-          className="w-full rounded-lg bg-white px-4 py-3 text-sm font-semibold text-black transition hover:bg-zinc-200 disabled:cursor-not-allowed disabled:opacity-60"
+          className="inline-flex h-12 w-full items-center justify-center rounded-2xl bg-white px-4 text-sm font-semibold text-black transition hover:bg-zinc-200 disabled:cursor-not-allowed disabled:opacity-60"
         >
           {isPending
             ? isSignUp
@@ -127,13 +158,14 @@ export default function AuthForm({ mode, redirectTo }: AuthFormProps) {
               ? "Create account"
               : "Sign in"}
         </button>
+
       </form>
 
-      <p className="mt-6 text-sm text-zinc-400">
+      <p className="mt-6 text-sm leading-6 text-zinc-400">
         {isSignUp ? "Already have an account?" : "Need an account?"}{" "}
         <Link
-          href={isSignUp ? `/sign-in?redirectTo=${encodeURIComponent(redirectTo)}` : `/sign-up?redirectTo=${encodeURIComponent(redirectTo)}`}
-          className="text-white underline decoration-zinc-700 underline-offset-4 hover:decoration-zinc-300"
+          href={destinationLink}
+          className="font-medium text-white underline decoration-white/20 underline-offset-4 transition hover:decoration-white/50"
         >
           {isSignUp ? "Sign in" : "Create one"}
         </Link>
