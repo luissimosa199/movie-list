@@ -18,6 +18,7 @@ import DecisionBreadcrumbs from "@/components/decisions/DecisionBreadcrumbs";
 import DecisionHero from "@/components/decisions/DecisionHero";
 import Link from "next/link";
 import Image from "next/image";
+import DiscoverySearchSection from "@/components/DiscoverySearchSection";
 
 const RandomRecommendationPage = () => {
   const [filters, setFilters] = useState<RecommendationFilters>(
@@ -118,6 +119,12 @@ const RandomRecommendationPage = () => {
             </div>
           </div>
         </DecisionHero>
+
+        <DiscoverySearchSection
+          eyebrow="Manual Lookup"
+          title="Search directly when random discovery stops being random enough."
+          description="Keep the recommendation flow intact, but give yourself a faster escape hatch into known titles right under the page hero."
+        />
 
         <div className="grid gap-8 xl:grid-cols-[minmax(0,1.05fr)_minmax(22rem,0.95fr)]">
           <section className="rounded-[1.75rem] border border-white/10 bg-panel/70 p-5 shadow-2xl shadow-black/15 md:p-6">

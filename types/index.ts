@@ -55,6 +55,24 @@ export interface FullDetailTMDBMovie extends TMDBMovie {
   status: string;
   tagline: string;
   credits?: MovieCredits;
+  videos?: TMDBVideoResults;
+}
+
+export interface TMDBVideo {
+  id: string;
+  iso_3166_1: string;
+  iso_639_1: string;
+  key: string;
+  name: string;
+  official: boolean;
+  published_at: string;
+  site: string;
+  size: number;
+  type: string;
+}
+
+export interface TMDBVideoResults {
+  results: TMDBVideo[];
 }
 
 export interface MovieCredits {

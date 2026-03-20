@@ -13,6 +13,7 @@ import RouletteControls from "@/components/decisions/RouletteControls";
 import WinnerDisplay from "@/components/decisions/WinnerDisplay";
 import DecisionBreadcrumbs from "@/components/decisions/DecisionBreadcrumbs";
 import DecisionHero from "@/components/decisions/DecisionHero";
+import DiscoverySearchSection from "@/components/DiscoverySearchSection";
 
 interface RouletteHistory {
   winner: TMDBMovie;
@@ -169,6 +170,12 @@ const RouletteGamePage = () => {
             </div>
           </div>
         </DecisionHero>
+
+        <DiscoverySearchSection
+          eyebrow="Wheel Prep"
+          title="Find contenders before you load the roulette wheel."
+          description="Search from here when the shortlist is not fully formed yet, then come back and add the titles that deserve a spin."
+        />
 
         <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
           <div className="xl:col-span-1">

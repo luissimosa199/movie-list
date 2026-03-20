@@ -9,6 +9,7 @@ import {
   getMoviesWatchedThisYearCount,
 } from "@/api/db";
 import { requireUser } from "@/lib/auth-session";
+import DiscoverySearchSection from "@/components/DiscoverySearchSection";
 
 export default async function Home() {
   const user = await requireUser("/");
@@ -33,6 +34,12 @@ export default async function Home() {
           <h1 className="text-3xl md:text-4xl font-bold mb-6 tracking-tight">
             Dashboard
           </h1>
+          <DiscoverySearchSection
+            className="mb-8"
+            eyebrow="Discovery Access"
+            title="Search the catalog before you drop into the stats."
+            description="Use a fast cross-search deck at the top of the dashboard, then return to your watch history and list activity without context switching."
+          />
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-6">
               <div className="text-zinc-400 text-sm">Total watched</div>

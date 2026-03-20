@@ -3,6 +3,7 @@ import ClientGridWrapper from "@/components/ClientGridWrapper";
 import { getLatestWatchedMovies, getRecentlyAddedMovies } from "@/api/db";
 import Link from "next/link";
 import { requireUser } from "@/lib/auth-session";
+import DiscoverySearchSection from "@/components/DiscoverySearchSection";
 
 export default async function ProfilePage() {
   const user = await requireUser("/profile");
@@ -16,6 +17,13 @@ export default async function ProfilePage() {
         <h1 className="text-3xl md:text-4xl font-bold mb-10 tracking-tight">
           My Profile
         </h1>
+
+        <DiscoverySearchSection
+          className="mb-12"
+          eyebrow="Library Lookup"
+          title="Search the catalog without leaving your history view."
+          description="Keep discovery visible but secondary here: add something new or jump to a show while your recent activity stays in focus below."
+        />
 
         {/* Latest Watched Movies Section */}
         <div className="mb-12">

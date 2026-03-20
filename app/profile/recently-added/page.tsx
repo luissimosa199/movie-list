@@ -3,6 +3,7 @@ import ClientGridWrapper from "@/components/ClientGridWrapper";
 import { getRecentlyAddedMovies } from "@/api/db";
 import Link from "next/link";
 import { requireUser } from "@/lib/auth-session";
+import DiscoverySearchSection from "@/components/DiscoverySearchSection";
 
 export default async function RecentlyAddedPage() {
   const user = await requireUser("/profile/recently-added");
@@ -38,6 +39,13 @@ export default async function RecentlyAddedPage() {
         <h1 className="text-3xl md:text-4xl font-bold mb-10 tracking-tight">
           Recently Added to List
         </h1>
+
+        <DiscoverySearchSection
+          className="mb-10"
+          eyebrow="Quick Lookup"
+          title="Search the catalog while browsing your latest additions."
+          description="The list stays primary, but the discovery deck keeps it easy to jump toward another title before you leave this page."
+        />
 
         {recentlyAddedMovies.length > 0 ? (
           <>

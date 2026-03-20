@@ -3,6 +3,7 @@ import ClientGridWrapper from "@/components/ClientGridWrapper";
 import { getLatestWatchedMovies } from "@/api/db";
 import Link from "next/link";
 import { requireUser } from "@/lib/auth-session";
+import DiscoverySearchSection from "@/components/DiscoverySearchSection";
 
 export default async function LatestWatchedPage() {
   const user = await requireUser("/profile/latest-watched");
@@ -38,6 +39,13 @@ export default async function LatestWatchedPage() {
         <h1 className="text-3xl md:text-4xl font-bold mb-10 tracking-tight">
           Latest Watched Movies
         </h1>
+
+        <DiscoverySearchSection
+          className="mb-10"
+          eyebrow="Quick Lookup"
+          title="Search while reviewing recent watch history."
+          description="Use this search deck to branch into a new movie or series without losing your place in the latest watched archive."
+        />
 
         {latestWatchedMovies.length > 0 ? (
           <>

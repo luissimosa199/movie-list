@@ -42,11 +42,17 @@ export default async function SeriesPage() {
               </div>
             </div>
 
-            <div className="relative z-30 rounded-[1.5rem] border border-white/10 bg-black/20 p-4 md:p-5">
-              <p className="mb-3 text-[0.68rem] font-medium uppercase tracking-[0.3em] text-zinc-500">
+            <div className="relative z-30 overflow-hidden rounded-[1.5rem] border border-blue-400/20 bg-[linear-gradient(135deg,rgba(37,99,235,0.18),rgba(59,130,246,0.12),rgba(217,70,239,0.14))] p-4 shadow-lg shadow-blue-950/20 md:p-5">
+              <div className="absolute inset-0">
+                <div className="absolute -right-6 top-0 h-24 w-24 rounded-full bg-fuchsia-500/16 blur-2xl" />
+                <div className="absolute left-0 bottom-0 h-24 w-24 rounded-full bg-blue-400/16 blur-2xl" />
+              </div>
+              <p className="relative z-10 mb-3 text-[0.68rem] font-medium uppercase tracking-[0.3em] text-blue-100/80">
                 Find a show
               </p>
-              <SeriesSearchBar />
+              <div className="relative z-10">
+                <SeriesSearchBar />
+              </div>
             </div>
           </div>
         </section>

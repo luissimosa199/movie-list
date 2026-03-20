@@ -5,6 +5,12 @@ import Link from "next/link";
 import Image from "next/image";
 import { TMDBMovieWithDbStatus } from "@/types";
 import { useDebounce } from "@/hooks/useDebounce";
+import {
+  SearchEmptyPoster,
+  SearchInputFrame,
+  SearchResultsPanel,
+  SearchResultPoster,
+} from "@/components/search/SearchShared";
 
 interface TMDBResponse {
   page: number;
@@ -15,9 +21,13 @@ interface TMDBResponse {
 
 interface SearchBarProps {
   className?: string;
+  compact?: boolean;
 }
 
-export default function SearchBar({ className = "" }: SearchBarProps) {
+export default function SearchBar({
+  className = "",
+  compact = false,
+}: SearchBarProps) {
   const [query, setQuery] = useState("");
   const [searchResults, setSearchResults] = useState<TMDBMovieWithDbStatus[]>(
     []
@@ -130,26 +140,24 @@ export default function SearchBar({ className = "" }: SearchBarProps) {
       className={`relative z-[70] ${className}`}
       ref={searchContainerRef}
     >
-      <div className="flex flex-col gap-2">
+      <SearchInputFrame isLoading={isLoading} compact={compact}>
         <input
           ref={inputRef}
           type="text"
           value={query}
           onChange={handleInputChange}
           onFocus={handleInputFocus}
-          placeholder="Search movies..."
-          className="w-full px-4 py-2 text-sm bg-zinc-900 border border-zinc-700 rounded-md text-white placeholder-zinc-400 focus:outline-none focus:border-primary transition-colors"
+          placeholder="Search movies by title"
+          className={`w-full bg-transparent font-medium text-white placeholder:text-blue-100/45 focus:outline-none ${
+            compact
+              ? "px-3 py-3 pr-11 text-[0.88rem]"
+              : "px-4 py-4 pr-12 text-[0.98rem]"
+          }`}
         />
-        <div className="flex gap-2">{/* Filters removed as requested */}</div>
-      </div>
-      {isLoading && (
-        <div className="absolute right-3 top-1/2 -translate-y-1/2">
-          <div className="w-4 h-4 border-2 border-zinc-600 border-t-primary rounded-full animate-spin"></div>
-        </div>
-      )}
+      </SearchInputFrame>
 
       {showResults && searchResults.length > 0 && (
-        <div className="absolute left-0 top-full z-[80] mt-1 w-full overflow-hidden rounded-md border border-zinc-700 bg-zinc-900 shadow-2xl shadow-black/40">
+        <SearchResultsPanel>
           {searchResults.map((result) => (
             <Link
               key={result.id}
@@ -159,34 +167,46 @@ export default function SearchBar({ className = "" }: SearchBarProps) {
                   : `/movies/${result.id}?tmdb=true`
               }
               onClick={handleResultClick}
-              className="flex items-center p-3 hover:bg-zinc-800 transition-colors border-b border-zinc-700 last:border-b-0"
+              className="group flex items-center gap-4 border-b border-white/8 px-4 py-3.5 transition-colors hover:bg-white/[0.06] last:border-b-0"
             >
-              <div className="w-12 h-16 bg-zinc-800 rounded flex-shrink-0 overflow-hidden">
+              <SearchResultPoster>
                 {getPosterUrl(result) ? (
                   <Image
                     src={getPosterUrl(result)!}
                     alt={`${result.title} poster`}
-                    width={48}
-                    height={64}
+                    width={50}
+                    height={72}
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center text-zinc-500 text-xs">
-                    No Image
-                  </div>
+                  <SearchEmptyPoster label="No Art" />
                 )}
-              </div>
-              <div className="ml-3 flex-1 min-w-0">
-                <h3 className="text-white text-sm font-medium truncate">
-                  {result.title}
-                </h3>
-                <p className="text-zinc-400 text-xs">
+              </SearchResultPoster>
+              <div className="min-w-0 flex-1">
+                <div className="flex items-start justify-between gap-3">
+                  <h3 className="truncate text-sm font-semibold tracking-[0.01em] text-white transition-colors group-hover:text-blue-100">
+                    {result.title}
+                  </h3>
+                  {result.inDb ? (
+                    <span className="shrink-0 rounded-full border border-emerald-400/20 bg-emerald-400/10 px-2.5 py-1 text-[0.63rem] font-medium uppercase tracking-[0.18em] text-emerald-200">
+                      Saved
+                    </span>
+                  ) : (
+                    <span className="shrink-0 rounded-full border border-white/10 bg-white/[0.04] px-2.5 py-1 text-[0.63rem] font-medium uppercase tracking-[0.18em] text-zinc-400">
+                      TMDB
+                    </span>
+                  )}
+                </div>
+                <p className="mt-1 text-[0.72rem] font-medium uppercase tracking-[0.18em] text-zinc-500">
                   {getReleaseYear(result) || "Unknown Year"}
+                </p>
+                <p className="mt-2 line-clamp-2 text-xs leading-5 text-zinc-400">
+                  {result.overview || "Open the detail page for synopsis and list actions."}
                 </p>
               </div>
             </Link>
           ))}
-        </div>
+        </SearchResultsPanel>
       )}
     </div>
   );

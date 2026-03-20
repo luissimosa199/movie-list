@@ -40,7 +40,7 @@ async function fetchFromTMDB<T>(
 
 export async function getMovieDetails(id: number): Promise<FullDetailTMDBMovie> {
   return fetchFromTMDB<FullDetailTMDBMovie>(`/movie/${id}`, {
-    append_to_response: 'credits'
+    append_to_response: "credits,videos",
   });
 }
 

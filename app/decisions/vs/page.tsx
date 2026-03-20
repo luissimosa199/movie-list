@@ -18,6 +18,7 @@ import TournamentProgress from "@/components/decisions/TournamentProgress";
 import TournamentChampion from "@/components/decisions/TournamentChampion";
 import DecisionBreadcrumbs from "@/components/decisions/DecisionBreadcrumbs";
 import DecisionHero from "@/components/decisions/DecisionHero";
+import DiscoverySearchSection from "@/components/DiscoverySearchSection";
 
 type TournamentPhase = "setup" | "battle" | "champion";
 
@@ -154,6 +155,12 @@ const VSBattlePage = () => {
             </div>
           </div>
         </DecisionHero>
+
+        <DiscoverySearchSection
+          eyebrow="Bracket Prep"
+          title="Search first when the battle card needs better contenders."
+          description="Use the discovery deck as a pre-bracket staging area, then come back to seed the matchups with less tab-hopping."
+        />
 
         {error ? (
           <div className="rounded-[1.5rem] border border-red-500/35 bg-red-950/20 p-4 text-red-200">

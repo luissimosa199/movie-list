@@ -1,3 +1,5 @@
+import DiscoverySearchSection from "@/components/DiscoverySearchSection";
+
 const pillars = [
   {
     number: "01",
@@ -110,6 +112,12 @@ export default function AboutPage() {
             </aside>
           </div>
         </section>
+
+        <DiscoverySearchSection
+          eyebrow="Catalog Access"
+          title="Jump into the catalog from the project overview."
+          description="The app is built around fast recall as much as reading. Search a movie or a series here, then go back to the product notes without losing the page."
+        />
 
         <section className="grid gap-4 md:gap-5 lg:grid-cols-3">
           {pillars.map((pillar) => (
