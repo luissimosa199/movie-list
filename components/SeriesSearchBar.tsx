@@ -129,7 +129,7 @@ export default function SeriesSearchBar({ className = "" }: SearchBarProps) {
 
   return (
     <div
-      className={`relative z-[120] ${className}`}
+      className={`relative ${showResults ? "z-[160]" : "z-[120]"} ${className}`}
       ref={searchContainerRef}
     >
       <SearchInputFrame isLoading={isLoading}>
