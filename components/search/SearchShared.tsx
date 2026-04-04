@@ -54,7 +54,7 @@ interface SearchResultsPanelProps {
 
 export function SearchResultsPanel({ children }: SearchResultsPanelProps) {
   return (
-    <div className="absolute left-0 top-full z-[90] mt-3 w-full overflow-hidden rounded-[1.5rem] border border-white/10 bg-[linear-gradient(180deg,rgba(18,24,36,0.98),rgba(8,12,20,0.98))] shadow-[0_24px_80px_rgba(0,0,0,0.55)] backdrop-blur-xl">
+    <div className="absolute left-0 top-full z-[130] mt-3 w-full overflow-hidden rounded-[1.5rem] border border-white/10 bg-[linear-gradient(180deg,rgba(18,24,36,0.98),rgba(8,12,20,0.98))] shadow-[0_24px_80px_rgba(0,0,0,0.55)] backdrop-blur-xl">
       <div className="border-b border-white/8 bg-white/[0.03] px-4 py-2.5 text-[0.65rem] font-medium uppercase tracking-[0.28em] text-zinc-500">
         Top matches
       </div>

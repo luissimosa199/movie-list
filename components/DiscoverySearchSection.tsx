@@ -18,7 +18,7 @@ export default function DiscoverySearchSection({
 }: DiscoverySearchSectionProps) {
   return (
     <section
-      className={`relative z-20 overflow-visible rounded-[1.9rem] border border-white/10 bg-[linear-gradient(135deg,rgba(17,24,39,0.92),rgba(7,10,18,0.98))] p-5 shadow-[0_24px_90px_rgba(0,0,0,0.28)] md:p-6 ${className}`}
+      className={`relative z-[60] overflow-visible rounded-[1.9rem] border border-white/10 bg-[linear-gradient(135deg,rgba(17,24,39,0.92),rgba(7,10,18,0.98))] p-5 shadow-[0_24px_90px_rgba(0,0,0,0.28)] md:p-6 ${className}`}
     >
       <div className="absolute inset-0 overflow-hidden rounded-[1.9rem]">
         <div className="absolute -left-10 top-0 h-28 w-28 rounded-full bg-blue-500/12 blur-3xl" />
