@@ -61,7 +61,7 @@ export default function MobileMenu({ isSignedIn }: MobileMenuProps) {
       </button>
 
       {isOpen ? (
-        <div className="fixed inset-0 z-50 md:hidden">
+        <div className="fixed inset-0 z-[260] md:hidden">
           <button
             type="button"
             aria-label="Close navigation menu"

@@ -11,7 +11,7 @@ export default async function Header() {
   const isSignedIn = Boolean(session);
 
   return (
-    <header className="sticky top-0 z-40 border-b border-white/8 bg-black/65 text-white backdrop-blur-xl">
+    <header className="sticky top-0 z-[220] border-b border-white/8 bg-black/65 text-white backdrop-blur-xl">
       <div className="page-frame">
         <nav className="flex min-h-[4.75rem] items-center justify-between gap-4 py-3">
           <div className="flex items-center gap-4 lg:gap-6">

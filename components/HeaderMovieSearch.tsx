@@ -62,7 +62,7 @@ export default function HeaderMovieSearch() {
       </div>
 
       {isOpen ? (
-        <div className="fixed inset-0 z-[70] md:hidden">
+        <div className="fixed inset-0 z-[250] md:hidden">
           <button
             type="button"
             aria-label="Close movie search"
