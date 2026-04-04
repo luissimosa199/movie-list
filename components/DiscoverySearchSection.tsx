@@ -42,7 +42,7 @@ export default function DiscoverySearchSection({
         </div>
 
         <div className="grid gap-4 xl:grid-cols-2">
-          <div className="relative z-0 rounded-[1.55rem] border border-white/10 bg-black/20 p-4 backdrop-blur-sm focus-within:z-[140] md:p-5">
+          <div className="relative z-0 rounded-[1.55rem] border border-white/10 bg-black/20 p-4 backdrop-blur-sm focus-within:z-[140] has-[input:not(:placeholder-shown)]:z-[140] md:p-5">
             <div className="mb-3 flex items-center justify-between gap-3">
               <div>
                 <p className="text-[0.65rem] font-medium uppercase tracking-[0.28em] text-zinc-500">
@@ -59,7 +59,7 @@ export default function DiscoverySearchSection({
             <SearchBar />
           </div>
 
-          <div className="relative z-0 rounded-[1.55rem] border border-white/10 bg-black/20 p-4 backdrop-blur-sm focus-within:z-[140] md:p-5">
+          <div className="relative z-0 rounded-[1.55rem] border border-white/10 bg-black/20 p-4 backdrop-blur-sm focus-within:z-[140] has-[input:not(:placeholder-shown)]:z-[140] md:p-5">
             <div className="mb-3 flex items-center justify-between gap-3">
               <div>
                 <p className="text-[0.65rem] font-medium uppercase tracking-[0.28em] text-zinc-500">
