@@ -35,6 +35,7 @@ export default function SearchBar({
   const [isLoading, setIsLoading] = useState(false);
   const [showResults, setShowResults] = useState(false);
   const [lastQueryWithResults, setLastQueryWithResults] = useState("");
+  const [totalResults, setTotalResults] = useState(0);
   const debouncedQuery = useDebounce(query, 300); // 300ms delay
   const searchContainerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -45,6 +46,7 @@ export default function SearchBar({
         setSearchResults([]);
         setShowResults(false);
         setLastQueryWithResults("");
+        setTotalResults(0);
         return;
       }
 
@@ -66,11 +68,13 @@ export default function SearchBar({
         setSearchResults(results);
         setShowResults(true);
         setLastQueryWithResults(debouncedQuery);
+        setTotalResults(data.total_results);
       } catch (error) {
         console.error("Error searching movies:", error);
         setSearchResults([]);
         setShowResults(false);
         setLastQueryWithResults("");
+        setTotalResults(0);
       } finally {
         setIsLoading(false);
       }
@@ -122,6 +126,11 @@ export default function SearchBar({
     setShowResults(false);
     inputRef.current?.blur();
   };
+
+  const seeMoreQuery = lastQueryWithResults || query;
+  const seeMoreHref = `/search?type=movie&q=${encodeURIComponent(
+    seeMoreQuery.trim()
+  )}`;
 
   const getPosterUrl = (movie: TMDBMovieWithDbStatus) => {
     return movie.poster_path
@@ -206,6 +215,36 @@ export default function SearchBar({
               </div>
             </Link>
           ))}
+          <Link
+            href={seeMoreHref}
+            onClick={handleResultClick}
+            className="group flex items-center justify-between gap-4 bg-white/[0.03] px-4 py-3.5 transition-colors hover:bg-white/[0.08]"
+          >
+            <div>
+              <p className="text-sm font-semibold text-white transition-colors group-hover:text-blue-100">
+                See all movie results
+              </p>
+              <p className="mt-1 text-[0.68rem] font-medium uppercase tracking-[0.18em] text-zinc-500">
+                {totalResults.toLocaleString()} matches
+              </p>
+            </div>
+            <span className="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-blue-100 transition-transform group-hover:translate-x-0.5">
+              <svg
+                aria-hidden="true"
+                className="h-4 w-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={1.75}
+                  d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"
+                />
+              </svg>
+            </span>
+          </Link>
         </SearchResultsPanel>
       )}
     </div>

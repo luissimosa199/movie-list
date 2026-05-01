@@ -116,6 +116,106 @@ export interface ExternalIds {
   twitter_id: string | null;
 }
 
+export interface TMDBPersonKnownFor {
+  adult: boolean;
+  backdrop_path: string | null;
+  id: number;
+  media_type: "movie" | "tv";
+  original_language: string;
+  overview: string;
+  poster_path: string | null;
+  genre_ids: number[];
+  popularity: number;
+  vote_average: number;
+  vote_count: number;
+  title?: string;
+  original_title?: string;
+  release_date?: string;
+  video?: boolean;
+  name?: string;
+  original_name?: string;
+  first_air_date?: string;
+  origin_country?: string[];
+}
+
+export interface TMDBPerson {
+  adult: boolean;
+  gender: number | null;
+  id: number;
+  known_for: TMDBPersonKnownFor[];
+  known_for_department: string;
+  name: string;
+  original_name: string;
+  popularity: number;
+  profile_path: string | null;
+}
+
+export interface TMDBPersonMovieCredit {
+  adult: boolean;
+  backdrop_path: string | null;
+  genre_ids: number[];
+  id: number;
+  media_type: "movie";
+  original_language: string;
+  original_title: string;
+  overview: string;
+  popularity: number;
+  poster_path: string | null;
+  release_date: string;
+  title: string;
+  video: boolean;
+  vote_average: number;
+  vote_count: number;
+  credit_id: string;
+  character?: string;
+  order?: number;
+  department?: string;
+  job?: string;
+}
+
+export interface TMDBPersonSeriesCredit {
+  adult: boolean;
+  backdrop_path: string | null;
+  genre_ids: number[];
+  id: number;
+  media_type: "tv";
+  origin_country: string[];
+  original_language: string;
+  original_name: string;
+  overview: string;
+  popularity: number;
+  poster_path: string | null;
+  first_air_date: string;
+  name: string;
+  vote_average: number;
+  vote_count: number;
+  credit_id: string;
+  character?: string;
+  episode_count?: number;
+  department?: string;
+  job?: string;
+}
+
+export type TMDBPersonCredit =
+  | TMDBPersonMovieCredit
+  | TMDBPersonSeriesCredit;
+
+export interface TMDBPersonCombinedCredits {
+  cast: TMDBPersonCredit[];
+  crew: TMDBPersonCredit[];
+}
+
+export interface FullDetailTMDBPerson extends TMDBPerson {
+  also_known_as: string[];
+  biography: string;
+  birthday: string | null;
+  deathday: string | null;
+  homepage: string | null;
+  imdb_id: string | null;
+  place_of_birth: string | null;
+  combined_credits?: TMDBPersonCombinedCredits;
+}
+
 export interface Movie {
   id: number;
   tmdb_id: number;

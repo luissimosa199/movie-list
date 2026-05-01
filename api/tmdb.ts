@@ -1,4 +1,4 @@
-import { TMDBMovie, TMDBSeries, FullDetailTMDBMovie, FullDetailTMDBSeries, Genre, DiscoverParams, MovieCredits, ExternalIds } from "@/types";
+import { TMDBMovie, TMDBSeries, TMDBPerson, FullDetailTMDBMovie, FullDetailTMDBSeries, FullDetailTMDBPerson, Genre, DiscoverParams, MovieCredits, ExternalIds } from "@/types";
 
 type QueryParams = Record<string, string | number>;
 
@@ -50,6 +50,30 @@ export async function getMovieCredits(id: number): Promise<MovieCredits> {
 
 export async function getMovieExternalIds(id: number): Promise<ExternalIds> {
   return fetchFromTMDB<ExternalIds>(`/movie/${id}/external_ids`);
+}
+
+export async function getPersonDetails(id: number): Promise<FullDetailTMDBPerson> {
+  return fetchFromTMDB<FullDetailTMDBPerson>(`/person/${id}`, {
+    append_to_response: "combined_credits",
+  });
+}
+
+export async function searchPeople(
+  query: string,
+  page: number = 1,
+  limit: number = 10
+): Promise<TMDBResponse<TMDBPerson>> {
+  const response = await fetchFromTMDB<TMDBResponse<TMDBPerson>>(
+    "/search/person",
+    {
+      query,
+      page,
+    }
+  );
+  return {
+    ...response,
+    results: response.results.slice(0, limit),
+  };
 }
 
 export async function searchMovies(
