@@ -18,26 +18,23 @@ export default async function SeriesPage() {
           <div className="relative z-10 grid gap-6 xl:grid-cols-[minmax(0,1.3fr)_minmax(22rem,0.9fr)] xl:items-end">
             <div>
               <p className="text-[0.68rem] font-medium uppercase tracking-[0.32em] text-zinc-500">
-                Series Index
+                Series
               </p>
               <h1 className="mt-3 max-w-3xl text-4xl font-semibold tracking-tight md:text-5xl">
-                Keep the long-form picks organized.
+                Browse series.
               </h1>
               <p className="mt-4 max-w-2xl text-sm leading-7 text-zinc-300 md:text-base">
-                Search fast when a show is already on your radar, then browse a
-                tighter set of popular series without the duplicate heading noise
-                from the previous layout.
-              </p>
+                Search a show or browse popular series.</p>
 
               <div className="mt-6 flex flex-wrap gap-3 text-sm text-zinc-300">
                 <div className="rounded-full border border-white/10 bg-white/6 px-4 py-2">
-                  <span className="text-white">Popular series queue</span>
+                  <span className="text-white">Popular</span>
                 </div>
                 <div className="rounded-full border border-white/10 bg-white/6 px-4 py-2">
-                  <span className="text-white">TMDB search</span>
+                  <span className="text-white">Search</span>
                 </div>
                 <div className="rounded-full border border-white/10 bg-white/6 px-4 py-2">
-                  <span className="text-white">Consistent browse layout</span>
+                  <span className="text-white">Browse</span>
                 </div>
               </div>
             </div>
@@ -48,7 +45,7 @@ export default async function SeriesPage() {
                 <div className="absolute left-0 bottom-0 h-24 w-24 rounded-full bg-blue-400/16 blur-2xl" />
               </div>
               <p className="relative z-10 mb-3 text-[0.68rem] font-medium uppercase tracking-[0.3em] text-blue-100/80">
-                Find a show
+                Search shows
               </p>
               <div className="relative z-10">
                 <SeriesSearchBar />
@@ -64,12 +61,11 @@ export default async function SeriesPage() {
                 Spotlight
               </p>
               <h2 className="mt-2 text-3xl font-semibold tracking-tight md:text-4xl">
-                Popular TV Series
+                Popular series
               </h2>
             </div>
             <p className="max-w-xl text-sm leading-7 text-zinc-400 md:text-base">
-              Strong starters for your next multi-episode commitment, presented
-              in the same browsing rhythm as the movie discovery page.
+              Same layout as the movie page.
             </p>
           </div>
 
@@ -91,5 +87,5 @@ export default async function SeriesPage() {
 export const metadata = {
   title: "Series - Discover Popular TV Series",
   description:
-    "Browse and discover popular TV series to add to your watchlist.",
+    "Browse popular TV series to add to your watchlist.",
 };

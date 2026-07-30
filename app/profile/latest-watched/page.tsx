@@ -32,25 +32,25 @@ export default async function LatestWatchedPage() {
                 d="M10 19l-7-7m0 0l7-7m-7 7h18"
               />
             </svg>
-            Back to Profile
+            Back to profile
           </Link>
         </div>
 
         <h1 className="text-3xl md:text-4xl font-bold mb-10 tracking-tight">
-          Latest Watched Movies
+          Latest watched
         </h1>
 
         <DiscoverySearchSection
           className="mb-10"
-          eyebrow="Quick Lookup"
-          title="Search while reviewing recent watch history."
-          description="Use this search deck to branch into a new movie or series without losing your place in the latest watched archive."
+          eyebrow="Search"
+          title="Search your history"
+          description="ppen a title and return here."
         />
 
         {latestWatchedMovies.length > 0 ? (
           <>
             <p className="text-zinc-400 mb-8">
-              Showing {latestWatchedMovies.length} most recent watch entries
+              Showing {latestWatchedMovies.length} titles
             </p>
             <ClientGridWrapper>
               {latestWatchedMovies.map((movie) => (
@@ -81,15 +81,15 @@ export default async function LatestWatchedPage() {
                 />
               </svg>
             </div>
-            <p className="text-zinc-400 text-xl mb-2">No watched movies yet</p>
+            <p className="text-zinc-400 text-xl mb-2">No watched titles yet</p>
             <p className="text-zinc-500">
-              Start watching movies and they&apos;ll appear here!
+              Watch a few movies to populate this section.
             </p>
             <Link
               href="/movies"
               className="inline-block mt-6 bg-primary hover:bg-primary/90 text-white py-3 px-6 rounded-md transition-colors font-medium"
             >
-              Browse Movies
+              Browse movies
             </Link>
           </div>
         )}

@@ -73,10 +73,10 @@ export default function MobileMenu({ isSignedIn }: MobileMenuProps) {
             <div className="mb-4 flex items-center justify-between border-b border-white/8 pb-4">
               <div>
                 <p className="text-[0.68rem] uppercase tracking-[0.3em] text-zinc-500">
-                  Navigation
+                  Menu
                 </p>
                 <p className="mt-1 text-lg font-semibold text-white">
-                  Browse the app
+                  rrowse
                 </p>
               </div>
               <span className="rounded-full border border-primary/25 bg-primary/12 px-3 py-1 text-xs font-medium uppercase tracking-[0.18em] text-blue-200">
@@ -88,7 +88,7 @@ export default function MobileMenu({ isSignedIn }: MobileMenuProps) {
 
             <div className="mt-4 rounded-3xl border border-white/8 bg-white/4 p-3">
               <p className="mb-3 text-[0.72rem] uppercase tracking-[0.28em] text-zinc-500">
-                Layout
+                View
               </p>
               <ViewToggle
                 showLabel

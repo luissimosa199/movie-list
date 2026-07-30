@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, {
   useState,
@@ -29,7 +29,7 @@ interface RouletteControlsProps {
   className?: string;
 }
 
-interface SpinSettings {
+interface SpinOptions {
   speed: "slow" | "normal" | "fast";
   sound: boolean;
 }
@@ -45,11 +45,11 @@ const RouletteControls: React.FC<RouletteControlsProps> = ({
   const [isCharging, setIsCharging] = useState(false);
   const [chargeLevel, setChargeLevel] = useState(0);
   const [holdStartTime, setHoldStartTime] = useState<number | null>(null);
-  const [settings, setSettings] = useState<SpinSettings>({
+  const [settings, setOptions] = useState<SpinOptions>({
     speed: "normal",
     sound: true,
   });
-  const [showSettings, setShowSettings] = useState(false);
+  const [showOptions, setShowOptions] = useState(false);
 
   const buttonRef = useRef<HTMLButtonElement>(null);
   const chargeIntervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -147,7 +147,7 @@ const RouletteControls: React.FC<RouletteControlsProps> = ({
       // Play sound if enabled
       if (settings.sound) {
         // You could implement actual sound here
-        console.log("🔊 Spin sound effect");
+        console.log("Ã°Å¸â€Å  Spin sound effect");
       }
     },
     [onSpin, onSpinStart, settings, speedMultipliers]
@@ -165,11 +165,11 @@ const RouletteControls: React.FC<RouletteControlsProps> = ({
       chargeIntervalRef.current = null;
     }
 
-    // Reset states
+    // Reset wheel states
     setIsCharging(false);
     setHoldStartTime(null);
 
-    // Reset button animation
+    // Reset wheel button animation
     if (buttonRef.current) {
       resetChargeButton(buttonRef.current);
     }
@@ -278,11 +278,11 @@ const RouletteControls: React.FC<RouletteControlsProps> = ({
   };
 
   const getChargeText = () => {
-    if (!isCharging) return "🎪 HOLD TO SPIN!";
-    if (chargeLevel < 25) return "⚡ Charging...";
-    if (chargeLevel < 50) return "💫 Building Power...";
-    if (chargeLevel < 75) return "🔥 Getting Strong...";
-    return "🌟 MAXIMUM POWER!";
+    if (!isCharging) return "Ã°Å¸Å½Âª Hold to spin";
+    if (chargeLevel < 25) return "Ã¢Å¡Â¡ Charging...";
+    if (chargeLevel < 50) return "Ã°Å¸â€™Â« Charging more...";
+    if (chargeLevel < 75) return "Ã°Å¸â€Â¥ Nearly full...";
+    return "Ã°Å¸Å’Å¸ Full charge";
   };
 
   return (
@@ -330,7 +330,7 @@ const RouletteControls: React.FC<RouletteControlsProps> = ({
         <div className="mt-2 text-xs text-zinc-400 text-center">
           {canSpin ? (
             <div>
-              Hold button longer for stronger spin • Press{" "}
+              Hold longer for a stronger spin Ã¢â‚¬Â¢ Press{" "}
               <kbd className="px-1 py-0.5 bg-zinc-800 rounded text-xs">
                 Space
               </kbd>{" "}
@@ -344,19 +344,19 @@ const RouletteControls: React.FC<RouletteControlsProps> = ({
         </div>
       </div>
 
-      {/* Settings Panel */}
+      {/* Options Panel */}
       <div className="bg-zinc-900/50 border border-zinc-800 rounded-lg p-4">
         <div className="flex items-center justify-between mb-3">
           <h4 className="text-sm font-semibold text-purple-200">
-            Spin Settings
+            Spin options
           </h4>
           <button
-            onClick={() => setShowSettings(!showSettings)}
+            onClick={() => setShowOptions(!showOptions)}
             className="text-zinc-400 hover:text-white transition-colors"
           >
             <svg
               className={`w-4 h-4 transition-transform ${
-                showSettings ? "rotate-180" : ""
+                showOptions ? "rotate-180" : ""
               }`}
               fill="currentColor"
               viewBox="0 0 20 20"
@@ -370,18 +370,18 @@ const RouletteControls: React.FC<RouletteControlsProps> = ({
           </button>
         </div>
 
-        {showSettings && (
+        {showOptions && (
           <div className="space-y-3">
             {/* Speed Setting */}
             <div>
               <label className="block text-xs text-zinc-400 mb-1">
-                Spin Speed
+                Speed
               </label>
               <div className="flex gap-1">
                 {(["slow", "normal", "fast"] as const).map((speed) => (
                   <button
                     key={speed}
-                    onClick={() => setSettings((prev) => ({ ...prev, speed }))}
+                    onClick={() => setOptions((prev) => ({ ...prev, speed }))}
                     className={`
                       flex-1 px-3 py-2 text-xs rounded transition-colors
                       ${
@@ -399,10 +399,10 @@ const RouletteControls: React.FC<RouletteControlsProps> = ({
 
             {/* Sound Setting */}
             <div className="flex items-center justify-between">
-              <label className="text-xs text-zinc-400">Sound Effects</label>
+              <label className="text-xs text-zinc-400">Sound</label>
               <button
                 onClick={() =>
-                  setSettings((prev) => ({ ...prev, sound: !prev.sound }))
+                  setOptions((prev) => ({ ...prev, sound: !prev.sound }))
                 }
                 className={`
                   relative w-10 h-5 rounded-full transition-colors
@@ -420,14 +420,14 @@ const RouletteControls: React.FC<RouletteControlsProps> = ({
           </div>
         )}
 
-        {/* Current Stats */}
+        {/* Stats */}
         <div className="mt-3 pt-3 border-t border-zinc-700 text-xs text-zinc-400">
           <div className="flex justify-between">
-            <span>Movies on wheel:</span>
+            <span>Movies:</span>
             <span className="text-white">{movies.length}</span>
           </div>
           <div className="flex justify-between">
-            <span>Spin speed:</span>
+            <span>Speed:</span>
             <span className="text-white capitalize">{settings.speed}</span>
           </div>
           <div className="flex justify-between">
@@ -444,14 +444,14 @@ const RouletteControls: React.FC<RouletteControlsProps> = ({
           disabled={isSpinning}
           className="flex-1 bg-zinc-700 hover:bg-zinc-600 text-zinc-300 py-2 px-3 rounded text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          🔄 Reset Game
+          Ã°Å¸â€â€ž Reset wheel
         </button>
         <button
-          onClick={() => setShowSettings(!showSettings)}
+          onClick={() => setShowOptions(!showOptions)}
           disabled={isSpinning}
           className="flex-1 bg-zinc-700 hover:bg-zinc-600 text-zinc-300 py-2 px-3 rounded text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          ⚙️ Settings
+          Ã¢Å¡â„¢Ã¯Â¸Â Options
         </button>
       </div>
     </div>
@@ -459,3 +459,4 @@ const RouletteControls: React.FC<RouletteControlsProps> = ({
 };
 
 export default RouletteControls;
+

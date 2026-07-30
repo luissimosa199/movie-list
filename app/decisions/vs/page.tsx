@@ -109,12 +109,12 @@ const VSBattlePage = () => {
 
   const heroDescription =
     currentPhase === "setup"
-      ? "Build a bracket from your own shortlist and let direct head-to-head matchups force a real decision."
+      ? "Build a bracket from your list."
       : currentPhase === "battle"
-      ? `Round by round elimination is active in ${
+      ? `Elimination is active in ${
           tournament?.title || "your tournament"
-        }. Pick the winner and keep the bracket moving.`
-      : `The bracket is complete. Review the winner or run the same field again in a rematch.`;
+        }. Pick the winner to continue.`
+      : `The bracket is complete. Review the winner or start over.`;
 
   return (
     <main className="min-h-screen py-8 text-white md:py-12">
@@ -129,9 +129,9 @@ const VSBattlePage = () => {
         />
 
         <DecisionHero
-          icon="⚔️"
+          icon="âš”ï¸"
           eyebrow="Movie Battles"
-          title="Run the bracket, not the debate."
+          title="Run a bracket."
           description={heroDescription}
           accent="red"
         >
@@ -157,14 +157,14 @@ const VSBattlePage = () => {
         </DecisionHero>
 
         <DiscoverySearchSection
-          eyebrow="Bracket Prep"
-          title="Search first when the battle card needs better contenders."
-          description="Use the discovery deck as a pre-bracket staging area, then come back to seed the matchups with less tab-hopping."
+          eyebrow="Search"
+          title="Search first."
+          description="Add titles with search."
         />
 
         {error ? (
           <div className="rounded-[1.5rem] border border-red-500/35 bg-red-950/20 p-4 text-red-200">
-            <div className="font-semibold">Tournament Error</div>
+            <div className="font-semibold">Error</div>
             <div className="mt-1 text-sm text-red-300">{error}</div>
           </div>
         ) : null}
@@ -182,15 +182,15 @@ const VSBattlePage = () => {
           {currentPhase === "battle" ? (
             !tournament || !currentBattle || !tournamentProgress ? (
               <div className="rounded-[1.75rem] border border-red-500/35 bg-red-950/15 p-6 text-center">
-                <div className="text-4xl">✕</div>
+                <div className="text-4xl">âœ•</div>
                 <h2 className="mt-4 text-xl font-semibold text-white">
-                  Tournament data could not be loaded
+                  Could not load bracket
                 </h2>
                 <button
                   onClick={handleNewTournament}
                   className="mt-5 rounded-2xl bg-red-600 px-5 py-3 text-sm font-semibold text-white hover:bg-red-500"
                 >
-                  Start New Tournament
+                  New bracket
                 </button>
               </div>
             ) : (
@@ -213,15 +213,15 @@ const VSBattlePage = () => {
           {currentPhase === "champion" ? (
             !tournament ? (
               <div className="rounded-[1.75rem] border border-red-500/35 bg-red-950/15 p-6 text-center">
-                <div className="text-4xl">✕</div>
+                <div className="text-4xl">âœ•</div>
                 <h2 className="mt-4 text-xl font-semibold text-white">
-                  No tournament data found
+                  No bracket found
                 </h2>
                 <button
                   onClick={handleNewTournament}
                   className="mt-5 rounded-2xl bg-red-600 px-5 py-3 text-sm font-semibold text-white hover:bg-red-500"
                 >
-                  Start New Tournament
+                  New bracket
                 </button>
               </div>
             ) : (

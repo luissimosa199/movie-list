@@ -36,22 +36,22 @@ export default async function Home() {
           </h1>
           <DiscoverySearchSection
             className="mb-8"
-            eyebrow="Discovery Access"
-            title="Search the catalog before you drop into the stats."
-            description="Use a fast cross-search deck at the top of the dashboard, then return to your watch history and list activity without context switching."
+            eyebrow="Search"
+            title="Search the catalog"
+            description="Open a title, then come back."
           />
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-6">
-              <div className="text-zinc-400 text-sm">Total watched</div>
+              <div className="text-zinc-400 text-sm">All time</div>
               <div className="text-3xl font-semibold mt-2">{totalWatched}</div>
             </div>
             <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-6">
-              <div className="text-zinc-400 text-sm">Movies watched this month</div>
+              <div className="text-zinc-400 text-sm">This month</div>
               <div className="text-3xl font-semibold mt-2">{watchedThisMonth}</div>
             </div>
             <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-6">
               <div className="text-zinc-400 text-sm">
-                Movies watched this year
+                This year
               </div>
               <div className="text-3xl font-semibold mt-2">
                 {watchedThisYear}
@@ -78,7 +78,7 @@ export default async function Home() {
             </div>
           ) : (
             <p className="text-zinc-400">
-              Watch movies to see your favorite genres here.
+              Watch a few titles to populate this.
             </p>
           )}
         </section>
@@ -109,14 +109,14 @@ export default async function Home() {
                 ))}
               </ClientGridWrapper>
             ) : (
-              <p className="text-zinc-400">No watched movies yet.</p>
+              <p className="text-zinc-400">No activity yet.</p>
             )}
           </div>
 
           <div>
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-2xl md:text-3xl font-bold tracking-tight">
-                Recently added to list
+                Recently added
               </h2>
               <Link
                 href="/profile/recently-added"
@@ -138,7 +138,7 @@ export default async function Home() {
                 ))}
               </ClientGridWrapper>
             ) : (
-              <p className="text-zinc-400">No movies in your list yet.</p>
+              <p className="text-zinc-400">No saved titles yet.</p>
             )}
           </div>
         </section>
@@ -148,7 +148,7 @@ export default async function Home() {
 }
 
 export const metadata = {
-  title: "Home – Movie Tracker",
+  title: "Home â€“ Movie Tracker",
   description:
     "Personal dashboard with your movie stats, favorite genres, and recent activity.",
 };

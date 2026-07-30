@@ -1,7 +1,7 @@
 {
     "name": "Movie List",
     "short_name": "Movie List",
-    "description": "Track and discover movies and TV series with your personal watchlist",
+    "description": "Track movies and series in one place.",
     "start_url": "/",
     "display": "standalone",
     "background_color": "#000000",

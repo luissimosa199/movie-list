@@ -66,7 +66,7 @@ const MovieBattle: React.FC<MovieBattleProps> = ({
   const getReleaseYear = (movie: TMDBMovie) => {
     return movie.release_date
       ? new Date(movie.release_date).getFullYear()
-      : "Unknown Year";
+      : "Unknown year";
   };
 
   const roundName = getRoundName(battle.round, tournamentProgress.totalRounds);
@@ -91,20 +91,20 @@ const MovieBattle: React.FC<MovieBattleProps> = ({
   if (isByeBattle) {
     return (
       <div className="text-center py-12">
-        <div className="text-6xl mb-4">🏃‍♂️</div>
+        <div className="text-6xl mb-4">ðŸƒâ€â™‚ï¸</div>
         <h2 className="text-2xl font-bold text-white mb-4">
-          {battle.movie1.title} Advances!
+          {battle.movie1.title} Advances
         </h2>
         <p className="text-zinc-400 mb-6">
-          This movie gets a bye to the next round
+          This matchup advances automatically.
         </p>
         <div className="text-sm text-zinc-500">
-          {roundName} • Battle {battlePosition}
+          {roundName} â€¢ Battle {battlePosition}
         </div>
         <div className="mt-4">
           <div className="inline-flex items-center gap-2 text-zinc-400 text-sm">
             <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-            Advancing automatically...
+            Advancing...
           </div>
         </div>
       </div>
@@ -115,13 +115,13 @@ const MovieBattle: React.FC<MovieBattleProps> = ({
     <div className="space-y-6">
       {/* Battle Header */}
       <div className="text-center">
-        <div className="text-4xl mb-4">⚔️</div>
+        <div className="text-4xl mb-4">âš”ï¸</div>
         <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">
           {roundName} Battle
         </h2>
         <div className="flex items-center justify-center gap-4 text-sm text-zinc-400">
           <span>Battle {battlePosition}</span>
-          <span>•</span>
+          <span>â€¢</span>
           <span>
             Round {battle.round} of {tournamentProgress.totalRounds}
           </span>
@@ -187,7 +187,7 @@ const MovieBattle: React.FC<MovieBattleProps> = ({
         <div className="bg-zinc-900 border border-zinc-700 rounded-lg p-6">
           <div className="text-center">
             <h3 className="text-lg font-semibold text-white mb-2">
-              Confirm Your Choice
+              Confirm choice
             </h3>
             <p className="text-zinc-400 mb-4">
               You selected{" "}
@@ -209,7 +209,7 @@ const MovieBattle: React.FC<MovieBattleProps> = ({
                 disabled={loading}
                 className="bg-zinc-700 hover:bg-zinc-600 text-white px-6 py-2 rounded-lg font-medium transition-colors disabled:opacity-50"
               >
-                Change Choice
+                Choose again
               </button>
             </div>
           </div>
@@ -224,7 +224,7 @@ const MovieBattle: React.FC<MovieBattleProps> = ({
             disabled={loading}
             className="text-zinc-400 hover:text-zinc-300 text-sm transition-colors disabled:opacity-50"
           >
-            Too hard to choose? Skip and let fate decide
+            Skip
           </button>
         </div>
       )}
@@ -292,8 +292,8 @@ const MovieCard: React.FC<MovieCardProps> = ({
           ) : (
             <div className="w-full h-full bg-zinc-800 flex items-center justify-center text-zinc-500 text-center">
               <div>
-                <div className="text-4xl mb-2">🎬</div>
-                <div className="text-sm">No Poster Available</div>
+                <div className="text-4xl mb-2">ðŸŽ¬</div>
+                <div className="text-sm">No poster</div>
               </div>
             </div>
           )}
@@ -356,8 +356,8 @@ const MovieCard: React.FC<MovieCardProps> = ({
           </Link>
 
           <div className="text-zinc-400 text-sm space-y-1">
-            <p>Released: {getReleaseYear(movie)}</p>
-            <p>Rating: ⭐ {movie.vote_average.toFixed(1)}/10</p>
+            <p>Year: {getReleaseYear(movie)}</p>
+            <p>Rating: â­ {movie.vote_average.toFixed(1)}/10</p>
             <p>Votes: {movie.vote_count.toLocaleString()}</p>
           </div>
 
@@ -381,7 +381,7 @@ const MovieCard: React.FC<MovieCardProps> = ({
                 : "bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-500 hover:to-orange-500 text-white transform hover:scale-105"
             }`}
           >
-            {isSelected ? "✓ Selected" : `Choose ${movie.title}`}
+            {isSelected ? "âœ“ Selected" : `Select ${movie.title}`}
           </button>
         </div>
       </div>

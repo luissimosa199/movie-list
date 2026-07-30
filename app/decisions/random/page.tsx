@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useState, useCallback } from "react";
 import { TMDBMovie, RecommendationFilters } from "@/types";
@@ -78,7 +78,7 @@ const RandomRecommendationPage = () => {
     setError(null);
   };
 
-  const handleClearHistory = () => {
+  const handleResetHistory = () => {
     RecommendationHistory.clear();
     setHistory([]);
   };
@@ -90,16 +90,16 @@ const RandomRecommendationPage = () => {
           items={[
             { href: "/movies", label: "Movies" },
             { href: "/decisions", label: "Decisions" },
-            { label: "Random Discovery", active: true },
+            { label: "Random", active: true },
           ]}
           accentClassName="text-blue-300"
         />
 
         <DecisionHero
-          icon="🎲"
-          eyebrow="Random Discovery"
-          title="Pull a recommendation without losing control."
-          description="Use filters when you want to narrow the field, or ignore them and let the app throw you something unexpected. The goal is speed, not analysis paralysis."
+          icon="\u{1F3B2}"
+          eyebrow="Random"
+          title="Get a recommendation."
+          description="Tune filters or skip ahead."
           accent="blue"
         >
           <div className="rounded-[1.5rem] border border-white/10 bg-black/20 p-4 md:p-5">
@@ -108,22 +108,22 @@ const RandomRecommendationPage = () => {
             </p>
             <div className="mt-4 space-y-3 text-sm text-zinc-300">
               <div className="rounded-2xl border border-white/10 bg-white/6 px-4 py-3">
-                Filter by genre, year, and rating
+                Filter by genre, year, or rating
               </div>
               <div className="rounded-2xl border border-white/10 bg-white/6 px-4 py-3">
-                Save recent discoveries locally
+                Save recent picks
               </div>
               <div className="rounded-2xl border border-white/10 bg-white/6 px-4 py-3">
-                Jump straight to the movie details page
+                Open
               </div>
             </div>
           </div>
         </DecisionHero>
 
         <DiscoverySearchSection
-          eyebrow="Manual Lookup"
-          title="Search directly when random discovery stops being random enough."
-          description="Keep the recommendation flow intact, but give yourself a faster escape hatch into known titles right under the page hero."
+          eyebrow="Search"
+          title="Search a title"
+          description="Jump to a title."
         />
 
         <div className="grid gap-8 xl:grid-cols-[minmax(0,1.05fr)_minmax(22rem,0.95fr)]">
@@ -131,13 +131,13 @@ const RandomRecommendationPage = () => {
             <div className="mb-5 flex items-start justify-between gap-4">
               <div>
                 <p className="text-[0.68rem] font-medium uppercase tracking-[0.28em] text-zinc-500">
-                  Filter Stack
+                  Filters
                 </p>
                 <h2 className="mt-2 text-2xl font-semibold text-white">
-                  Customize your discovery
+                  Filters
                 </h2>
                 <p className="mt-2 max-w-xl text-sm leading-6 text-zinc-400">
-                  Narrow the field with a few deliberate controls instead of a crowded control panel.
+                  Narrow the results.
                 </p>
               </div>
 
@@ -145,11 +145,11 @@ const RandomRecommendationPage = () => {
                 onClick={() => setShowFilters(!showFilters)}
                 className="rounded-full border border-white/10 bg-white/6 px-4 py-2 text-sm text-white transition-colors hover:bg-white/10 md:hidden"
               >
-                {showFilters ? "Hide filters" : "Show filters"}
+                {showFilters ? "Hide" : "Show"}
               </button>
             </div>
 
-            <div className={`${showFilters ? "block" : "hidden md:block"}`}>
+            <div className={showFilters ? "block" : "hidden md:block"}>
               <div className="rounded-[1.5rem] border border-blue-500/20 bg-gradient-to-br from-blue-950/25 to-cyan-950/20 p-4 md:p-5">
                 <div className="space-y-5">
                   <GenreFilter
@@ -178,7 +178,7 @@ const RandomRecommendationPage = () => {
                       disabled={loading}
                       className="rounded-2xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-50"
                     >
-                      Get random movie
+                      Get recommendation
                     </button>
 
                     <button
@@ -194,7 +194,7 @@ const RandomRecommendationPage = () => {
                       disabled={loading}
                       className="rounded-2xl border border-white/10 bg-white/6 px-5 py-3 text-sm font-medium text-zinc-200 hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-50"
                     >
-                      Reset filters
+                      Reset
                     </button>
                   </div>
 
@@ -238,36 +238,36 @@ const RandomRecommendationPage = () => {
                       History
                     </p>
                     <h3 className="mt-2 text-lg font-semibold text-white">
-                      Recent discoveries
+                      Recent picks
                     </h3>
                   </div>
                   <button
-                    onClick={handleClearHistory}
+                    onClick={handleResetHistory}
                     className="text-xs text-zinc-400 transition-colors hover:text-white"
                   >
-                    Clear
+                    Reset
                   </button>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
                   {history.map((movie, index) => (
                     <Link
-                      key={`${movie.id}-${index}`}
-                      href={`/movies/${movie.id}?tmdb=true`}
+                      key={movie.id + "-" + index}
+                      href={"/movies/" + movie.id + "?tmdb=true"}
                       className="group"
                     >
                       <div className="relative aspect-[2/3] overflow-hidden rounded-xl border border-white/8 bg-zinc-800">
                         {movie.poster_path ? (
                           <Image
-                            src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`}
-                            alt={`${movie.title} poster`}
+                            src={"https://image.tmdb.org/t/p/w200" + movie.poster_path}
+                            alt={movie.title + " poster"}
                             fill
                             sizes="(max-width: 640px) 50vw, 33vw"
                             className="object-cover"
                           />
                         ) : (
                           <div className="flex h-full items-center justify-center text-center text-xs text-zinc-500">
-                            No Poster
+                            No poster
                           </div>
                         )}
                       </div>
@@ -287,3 +287,4 @@ const RandomRecommendationPage = () => {
 };
 
 export default RandomRecommendationPage;
+

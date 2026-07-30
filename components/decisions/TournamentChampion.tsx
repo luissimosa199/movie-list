@@ -36,10 +36,10 @@ const TournamentChampion: React.FC<TournamentChampionProps> = ({
   if (!tournament.champion || !summary) {
     return (
       <div className="text-center py-12">
-        <div className="text-4xl mb-4">❌</div>
-        <h2 className="text-xl font-bold text-white mb-2">No Champion Found</h2>
+        <div className="text-4xl mb-4">âŒ</div>
+        <h2 className="text-xl font-bold text-white mb-2">No champion found</h2>
         <p className="text-zinc-400">
-          Something went wrong with the tournament.
+          Something went wrong.
         </p>
       </div>
     );
@@ -53,11 +53,11 @@ const TournamentChampion: React.FC<TournamentChampionProps> = ({
   const getReleaseYear = (movie: TMDBMovie) => {
     return movie.release_date
       ? new Date(movie.release_date).getFullYear()
-      : "Unknown Year";
+      : "Unknown year";
   };
 
   const handleShare = async () => {
-    const shareText = `🏆 "${champion.title}" just won my movie tournament! It defeated ${summary.defeatedMovies.length} other movies to claim victory. 🎬`;
+    const shareText = `ðŸ† "${champion.title}" just won my movie tournament! It defeated ${summary.defeatedMovies.length} other movies to claim victory. ðŸŽ¬`;
 
     if (navigator.share) {
       try {
@@ -90,7 +90,7 @@ const TournamentChampion: React.FC<TournamentChampionProps> = ({
                 animationDuration: `${3 + Math.random() * 2}s`,
               }}
             >
-              {["🎉", "🏆", "⭐", "🎬", "👑"][Math.floor(Math.random() * 5)]}
+              {["ðŸŽ‰", "ðŸ†", "â­", "ðŸŽ¬", "ðŸ‘‘"][Math.floor(Math.random() * 5)]}
             </div>
           ))}
         </div>
@@ -99,9 +99,9 @@ const TournamentChampion: React.FC<TournamentChampionProps> = ({
       <div className="space-y-8">
         {/* Champion Header */}
         <div className="text-center">
-          <div className="text-6xl md:text-8xl mb-4">🏆</div>
+          <div className="text-6xl md:text-8xl mb-4">ðŸ†</div>
           <h1 className="text-3xl md:text-4xl font-bold text-yellow-400 mb-2">
-            Tournament Champion!
+            Champion
           </h1>
           <p className="text-zinc-400 text-lg">{tournament.title}</p>
         </div>
@@ -130,8 +130,8 @@ const TournamentChampion: React.FC<TournamentChampionProps> = ({
                 ) : (
                   <div className="w-full h-full bg-zinc-800 flex items-center justify-center text-zinc-500 text-center">
                     <div>
-                      <div className="text-4xl mb-2">🎬</div>
-                      <div className="text-sm">No Poster Available</div>
+                      <div className="text-4xl mb-2">ðŸŽ¬</div>
+                      <div className="text-sm">No poster</div>
                     </div>
                   </div>
                 )}
@@ -144,7 +144,7 @@ const TournamentChampion: React.FC<TournamentChampionProps> = ({
 
                 {/* Crown overlay */}
                 <div className="absolute -top-6 left-1/2 -translate-x-1/2">
-                  <div className="text-4xl">👑</div>
+                  <div className="text-4xl">ðŸ‘‘</div>
                 </div>
               </div>
             </div>
@@ -158,7 +158,7 @@ const TournamentChampion: React.FC<TournamentChampionProps> = ({
                   </h2>
                 </Link>
                 <p className="text-yellow-300 text-lg">
-                  {getReleaseYear(champion)} • ⭐{" "}
+                  {getReleaseYear(champion)} â€¢ â­{" "}
                   {champion.vote_average.toFixed(1)}/10
                 </p>
               </div>
@@ -172,7 +172,7 @@ const TournamentChampion: React.FC<TournamentChampionProps> = ({
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div className="bg-zinc-800/50 rounded-lg p-3">
                   <div className="text-yellow-400 font-semibold">
-                    Battles Won
+                    Wins
                   </div>
                   <div className="text-white text-xl font-bold">
                     {summary.totalBattles}
@@ -180,7 +180,7 @@ const TournamentChampion: React.FC<TournamentChampionProps> = ({
                 </div>
                 <div className="bg-zinc-800/50 rounded-lg p-3">
                   <div className="text-yellow-400 font-semibold">
-                    Tournament Time
+                    Duration
                   </div>
                   <div className="text-white text-xl font-bold">
                     {formatDuration(summary.duration)}
@@ -194,7 +194,7 @@ const TournamentChampion: React.FC<TournamentChampionProps> = ({
         {/* Battle Path */}
         <div className="bg-zinc-900/50 border border-zinc-700 rounded-lg p-6">
           <h3 className="text-xl font-bold text-white mb-4 text-center">
-            🛤️ Path to Victory
+            ðŸ›¤ï¸ Path
           </h3>
           <div className="space-y-3">
             {summary.battlePath.map((battle, index) => (
@@ -211,39 +211,39 @@ const TournamentChampion: React.FC<TournamentChampionProps> = ({
                       Defeated {battle.opponent.title}
                     </div>
                     <div className="text-zinc-400 text-sm">
-                      Round {battle.round} • {getReleaseYear(battle.opponent)}
+                      Round {battle.round} â€¢ {getReleaseYear(battle.opponent)}
                     </div>
                   </div>
                 </div>
-                <div className="text-green-400 text-xl">⚔️</div>
+                <div className="text-green-400 text-xl">âš”ï¸</div>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Tournament Statistics */}
+        {/* Tournament stats */}
         <div className="bg-zinc-900/50 border border-zinc-700 rounded-lg p-6">
           <h3 className="text-xl font-bold text-white mb-4 text-center">
-            📊 Tournament Statistics
+            ðŸ“Š Tournament stats
           </h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
             <div>
               <div className="text-2xl font-bold text-yellow-400">
                 {tournament.movies.length}
               </div>
-              <div className="text-zinc-400 text-sm">Total Movies</div>
+              <div className="text-zinc-400 text-sm">Total titles</div>
             </div>
             <div>
               <div className="text-2xl font-bold text-yellow-400">
                 {summary.totalBattles}
               </div>
-              <div className="text-zinc-400 text-sm">Total Battles</div>
+              <div className="text-zinc-400 text-sm">Battles</div>
             </div>
             <div>
               <div className="text-2xl font-bold text-yellow-400">
                 {summary.defeatedMovies.length}
               </div>
-              <div className="text-zinc-400 text-sm">Movies Defeated</div>
+              <div className="text-zinc-400 text-sm">Defeated</div>
             </div>
             <div>
               <div className="text-2xl font-bold text-yellow-400">
@@ -260,15 +260,15 @@ const TournamentChampion: React.FC<TournamentChampionProps> = ({
             onClick={onNewTournament}
             className="bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-500 hover:to-orange-500 text-white font-semibold px-8 py-3 rounded-lg transition-all transform hover:scale-105 flex items-center justify-center gap-2"
           >
-            <span>🆕</span>
-            New Tournament
+            <span>ðŸ†•</span>
+            New bracket
           </button>
 
           <button
             onClick={onRematch}
             className="bg-zinc-700 hover:bg-zinc-600 text-white font-semibold px-8 py-3 rounded-lg transition-all transform hover:scale-105 flex items-center justify-center gap-2"
           >
-            <span>🔄</span>
+            <span>ðŸ”„</span>
             Rematch
           </button>
 
@@ -276,16 +276,16 @@ const TournamentChampion: React.FC<TournamentChampionProps> = ({
             onClick={handleShare}
             className="bg-blue-600 hover:bg-blue-500 text-white font-semibold px-8 py-3 rounded-lg transition-all transform hover:scale-105 flex items-center justify-center gap-2"
           >
-            <span>📤</span>
-            Share Result
+            <span>ðŸ“¤</span>
+            Share
           </button>
 
           <Link
             href={`/movies/${champion.id}?tmdb=true`}
             className="bg-yellow-600 hover:bg-yellow-500 text-white font-semibold px-8 py-3 rounded-lg transition-all transform hover:scale-105 flex items-center justify-center gap-2"
           >
-            <span>ℹ️</span>
-            View Details
+            <span>â„¹ï¸</span>
+            View details
           </Link>
         </div>
 
@@ -293,7 +293,7 @@ const TournamentChampion: React.FC<TournamentChampionProps> = ({
         {summary.defeatedMovies.length > 0 && (
           <div className="bg-zinc-900/50 border border-zinc-700 rounded-lg p-6">
             <h3 className="text-lg font-bold text-white mb-4 text-center">
-              💀 Defeated Opponents
+              ðŸ’€ Defeated movies
             </h3>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {summary.defeatedMovies.map((movie, index) => (
