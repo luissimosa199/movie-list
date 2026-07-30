@@ -156,7 +156,7 @@ export default function SearchBar({
           value={query}
           onChange={handleInputChange}
           onFocus={handleInputFocus}
-          placeholder="Search movies by title"
+          placeholder="Search"
           className={`w-full bg-transparent font-medium text-white placeholder:text-blue-100/45 focus:outline-none ${
             compact
               ? "px-3 py-3 pr-11 text-[0.88rem]"
@@ -188,7 +188,7 @@ export default function SearchBar({
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <SearchEmptyPoster label="No Art" />
+                  <SearchEmptyPoster label="No art" />
                 )}
               </SearchResultPoster>
               <div className="min-w-0 flex-1">
@@ -207,10 +207,10 @@ export default function SearchBar({
                   )}
                 </div>
                 <p className="mt-1 text-[0.72rem] font-medium uppercase tracking-[0.18em] text-zinc-500">
-                  {getReleaseYear(result) || "Unknown Year"}
+                  {getReleaseYear(result) || "Unknown year"}
                 </p>
                 <p className="mt-2 line-clamp-2 text-xs leading-5 text-zinc-400">
-                  {result.overview || "Open the detail page for synopsis and list actions."}
+                  {result.overview || "Open"}
                 </p>
               </div>
             </Link>
@@ -222,10 +222,10 @@ export default function SearchBar({
           >
             <div>
               <p className="text-sm font-semibold text-white transition-colors group-hover:text-blue-100">
-                See all movie results
+                See all results
               </p>
               <p className="mt-1 text-[0.68rem] font-medium uppercase tracking-[0.18em] text-zinc-500">
-                {totalResults.toLocaleString()} matches
+                {totalResults.toLocaleString()} results
               </p>
             </div>
             <span className="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-blue-100 transition-transform group-hover:translate-x-0.5">

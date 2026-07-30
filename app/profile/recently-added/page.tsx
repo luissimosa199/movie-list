@@ -32,25 +32,25 @@ export default async function RecentlyAddedPage() {
                 d="M10 19l-7-7m0 0l7-7m-7 7h18"
               />
             </svg>
-            Back to Profile
+            Back to profile
           </Link>
         </div>
 
         <h1 className="text-3xl md:text-4xl font-bold mb-10 tracking-tight">
-          Recently Added to List
+          Recently added
         </h1>
 
         <DiscoverySearchSection
           className="mb-10"
-          eyebrow="Quick Lookup"
-          title="Search the catalog while browsing your latest additions."
-          description="The list stays primary, but the discovery deck keeps it easy to jump toward another title before you leave this page."
+          eyebrow="Search"
+          title="Search while you browse"
+          description="eeep the list in focus."
         />
 
         {recentlyAddedMovies.length > 0 ? (
           <>
             <p className="text-zinc-400 mb-8">
-              Showing {recentlyAddedMovies.length} most recently added movies
+              Showing {recentlyAddedMovies.length} titles
             </p>
             <ClientGridWrapper>
               {recentlyAddedMovies.map((movie) => (
@@ -82,16 +82,16 @@ export default async function RecentlyAddedPage() {
               </svg>
             </div>
             <p className="text-zinc-400 text-xl mb-2">
-              No movies in your list yet
+              No saved titles yet
             </p>
             <p className="text-zinc-500">
-              Add movies to your list and they&apos;ll appear here!
+              Add movies to populate this section.
             </p>
             <Link
               href="/movies"
               className="inline-block mt-6 bg-primary hover:bg-primary/90 text-white py-3 px-6 rounded-md transition-colors font-medium"
             >
-              Browse Movies
+              Browse movies
             </Link>
           </div>
         )}

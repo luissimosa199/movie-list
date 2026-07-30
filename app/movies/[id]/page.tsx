@@ -288,7 +288,7 @@ export default async function MoviePage({ params, searchParams }: PageProps) {
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center text-zinc-500 text-lg">
-                No Poster Available
+                No poster
               </div>
             )}
           </div>
@@ -372,7 +372,7 @@ export default async function MoviePage({ params, searchParams }: PageProps) {
             <section className="mb-8 overflow-hidden rounded-[1.75rem] border border-white/10 bg-[linear-gradient(180deg,rgba(17,24,39,0.88),rgba(7,10,18,0.96))] shadow-[0_24px_90px_rgba(0,0,0,0.24)]">
               <div className="border-b border-white/8 px-5 py-4 md:px-6">
                 <p className="text-[0.68rem] font-medium uppercase tracking-[0.3em] text-zinc-500">
-                  Featured Video
+                  Video
                 </p>
                 <div className="mt-2 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
                   <div>
@@ -380,8 +380,7 @@ export default async function MoviePage({ params, searchParams }: PageProps) {
                       Trailer
                     </h2>
                     <p className="mt-2 max-w-2xl text-sm leading-6 text-zinc-400">
-                      A quick look at the film before you commit to list actions
-                      or a rewatch.
+                      Watch a trailer before you add it.
                     </p>
                   </div>
                   {featuredTrailer ? (
@@ -413,7 +412,7 @@ export default async function MoviePage({ params, searchParams }: PageProps) {
                           {featuredTrailer?.name || "Trailer"}
                         </div>
                         <div className="mt-1 text-xs uppercase tracking-[0.18em] text-zinc-500">
-                          YouTube embed selected from TMDB videos
+                          Selected from TMDB.
                         </div>
                       </div>
                       <div className="text-xs text-zinc-400">
@@ -421,7 +420,7 @@ export default async function MoviePage({ params, searchParams }: PageProps) {
                           ? `Published ${new Date(
                               featuredTrailer.published_at
                             ).toLocaleDateString()}`
-                          : "Playback uses the most suitable available video"}
+                          : "Using the best available video."}
                       </div>
                     </div>
                   </div>
@@ -443,12 +442,12 @@ export default async function MoviePage({ params, searchParams }: PageProps) {
                       </svg>
                     </div>
                     <h3 className="mt-4 text-lg font-semibold text-white">
-                      No embeddable trailer available
+                      No trailer found
                     </h3>
                     <p className="mt-2 max-w-xl mx-auto text-sm leading-6 text-zinc-400">
                       {availableVideos.length > 0
-                        ? "TMDB returned video entries for this movie, but none were usable as a YouTube trailer or teaser embed."
-                        : "TMDB does not currently provide trailer or teaser video data for this title."}
+                        ? "TMDB has videos, but none can be embedded."
+                        : "No trailer or teaser is available for this title."}
                     </p>
                   </div>
                 )}

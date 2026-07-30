@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useState, useRef, useCallback, useEffect } from "react";
 import Link from "next/link";
@@ -26,7 +26,7 @@ const RouletteGamePage = () => {
   const [isSpinning, setIsSpinning] = useState(false);
   const [winner, setWinner] = useState<TMDBMovie | null>(null);
   const [spinHistory, setSpinHistory] = useState<RouletteHistory[]>([]);
-  const [gameState, setGameState] = useState<
+  const [gameStatus, setGameStatus] = useState<
     "setup" | "ready" | "spinning" | "winner"
   >("setup");
 
@@ -57,13 +57,13 @@ const RouletteGamePage = () => {
 
   useEffect(() => {
     if (isSpinning) {
-      setGameState("spinning");
+      setGameStatus("spinning");
     } else if (winner) {
-      setGameState("winner");
+      setGameStatus("winner");
     } else if (selectedMovies.length >= 2) {
-      setGameState("ready");
+      setGameStatus("ready");
     } else {
-      setGameState("setup");
+      setGameStatus("setup");
     }
   }, [selectedMovies.length, isSpinning, winner]);
 
@@ -120,13 +120,13 @@ const RouletteGamePage = () => {
 
   const handleSpinAgain = useCallback(() => {
     setWinner(null);
-    setGameState(selectedMovies.length >= 2 ? "ready" : "setup");
+    setGameStatus(selectedMovies.length >= 2 ? "ready" : "setup");
   }, [selectedMovies.length]);
 
   const handleClearWinner = useCallback(() => {
     setWinner(null);
     setSelectedMovies([]);
-    setGameState("setup");
+    setGameStatus("setup");
   }, []);
 
   const getRecentWinners = () => spinHistory.slice(0, 5).map((entry) => entry.winner);
@@ -138,16 +138,16 @@ const RouletteGamePage = () => {
           items={[
             { href: "/movies", label: "Movies" },
             { href: "/decisions", label: "Decisions" },
-            { label: "Movie Roulette", active: true },
+            { label: "Movie roulette", active: true },
           ]}
           accentClassName="text-purple-300"
         />
 
         <DecisionHero
-          icon="🎪"
-          eyebrow="Movie Roulette"
-          title="Load the wheel and let it settle the room."
-          description="This mode is best when you already have contenders. Add movies, charge the spin, and let the wheel land the choice without another round of group indecision."
+          icon="Ã°Å¸Å½Âª"
+          eyebrow="Movie roulette"
+          title="Spin now."
+          description="Add movies, then spin."
           accent="purple"
         >
           <div className="rounded-[1.5rem] border border-white/10 bg-black/20 p-4 md:p-5">
@@ -156,15 +156,15 @@ const RouletteGamePage = () => {
             </p>
             <div className="mt-4 grid gap-3 sm:grid-cols-2">
               <div className="rounded-2xl border border-white/10 bg-white/6 px-4 py-3">
-                <div className="text-sm font-semibold text-white">Wheel</div>
+                <div className="text-sm font-semibold text-white">Selected</div>
                 <div className="mt-1 text-sm text-zinc-400">
-                  {selectedMovies.length}/12 movies loaded
+                  {selectedMovies.length}/12 titles loaded
                 </div>
               </div>
               <div className="rounded-2xl border border-white/10 bg-white/6 px-4 py-3">
-                <div className="text-sm font-semibold text-white">Game state</div>
+                <div className="text-sm font-semibold text-white">Status</div>
                 <div className="mt-1 text-sm capitalize text-zinc-400">
-                  {gameState}
+                  {gameStatus}
                 </div>
               </div>
             </div>
@@ -172,9 +172,9 @@ const RouletteGamePage = () => {
         </DecisionHero>
 
         <DiscoverySearchSection
-          eyebrow="Wheel Prep"
-          title="Find contenders before you load the roulette wheel."
-          description="Search from here when the shortlist is not fully formed yet, then come back and add the titles that deserve a spin."
+          eyebrow="Search"
+          title="Find titles."
+          description="Search titles and add them."
         />
 
         <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
@@ -192,11 +192,10 @@ const RouletteGamePage = () => {
           <div className="xl:col-span-1">
             <div className="rounded-[1.75rem] border border-white/10 bg-panel/70 p-5 text-center shadow-2xl shadow-black/15 md:p-6">
               <h2 className="text-2xl font-semibold text-purple-200">
-                The Wheel of Fate
+                Roulette wheel
               </h2>
               <p className="mt-2 text-sm leading-6 text-zinc-400">
-                More charge means more drama. Once the spin starts, the wheel owns
-                the result.
+                Add movies and let the wheel decide.
               </p>
 
               <RouletteWheel
@@ -238,7 +237,7 @@ const RouletteGamePage = () => {
                   History
                 </p>
                 <h2 className="mt-2 text-2xl font-semibold text-white">
-                  Spin history
+                  Recent spins
                 </h2>
               </div>
               <button
@@ -259,13 +258,13 @@ const RouletteGamePage = () => {
                   className="rounded-2xl border border-white/8 bg-white/4 p-4"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="text-2xl">{index === 0 ? "🏆" : "🎬"}</div>
+                    <div className="text-2xl">{index === 0 ? "Ã°Å¸Ââ€ " : "Ã°Å¸Å½Â¬"}</div>
                     <div className="flex-1">
                       <h4 className="font-semibold text-white line-clamp-1">
                         {entry.winner.title}
                       </h4>
                       <p className="text-xs text-zinc-400">
-                        {new Date(entry.timestamp).toLocaleDateString()} •{" "}
+                        {new Date(entry.timestamp).toLocaleDateString()} Ã¢â‚¬Â¢{" "}
                         {entry.movies.length} movies
                       </p>
                     </div>
@@ -275,7 +274,7 @@ const RouletteGamePage = () => {
                     href={`/movies/${entry.winner.id}?tmdb=true`}
                     className="mt-4 inline-flex text-sm text-purple-300 transition-colors hover:text-purple-200"
                   >
-                    View details
+                    Open
                   </Link>
                 </div>
               ))}
@@ -288,3 +287,4 @@ const RouletteGamePage = () => {
 };
 
 export default RouletteGamePage;
+

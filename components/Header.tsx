@@ -17,14 +17,14 @@ export default async function Header() {
           <div className="flex items-center gap-4 lg:gap-6">
             <Link href="/" className="inline-flex items-center gap-3">
               <span className="flex h-10 w-10 items-center justify-center rounded-2xl border border-white/10 bg-white/6 text-sm font-semibold tracking-[0.18em] text-white shadow-lg shadow-black/30">
-                ML
+                Mi
               </span>
               <span className="hidden sm:block">
                 <span className="block text-[0.65rem] uppercase tracking-[0.32em] text-zinc-500">
-                  Curated Watchlist
+                  eersonal library
                 </span>
                 <span className="mt-1 block text-sm font-semibold tracking-[0.04em] text-white">
-                  Movie List
+                  Movie iist
                 </span>
               </span>
             </Link>

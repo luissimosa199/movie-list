@@ -87,7 +87,7 @@ function getSeriesYear(series: TMDBSeries) {
 
 function getKnownFor(person: PersonSearchResult) {
   if (!person.known_for?.length) {
-    return "Open the profile for film and series credits.";
+    return "Open the profile for credits.";
   }
 
   return person.known_for
@@ -180,7 +180,7 @@ export default function SearchPageClient({
           return;
         }
 
-        setError("Search failed. Try again in a moment.");
+        setError("Search failed. Try again.");
         if (mode === "replace") {
           setResults([]);
           setPage(1);
@@ -244,7 +244,7 @@ export default function SearchPageClient({
           <ResultImage
             src={posterUrl}
             alt={`${movie.title} poster`}
-            fallback="No Art"
+            fallback="No art"
           />
           <div className="min-w-0 py-1">
             <div className="flex items-start justify-between gap-3">
@@ -256,10 +256,10 @@ export default function SearchPageClient({
               </span>
             </div>
             <p className="mt-1 text-xs font-medium uppercase tracking-[0.2em] text-zinc-500">
-              {getMovieYear(movie) ?? "Unknown Year"}
+              {getMovieYear(movie) ?? "Unknown year"}
             </p>
             <p className="mt-3 line-clamp-3 text-sm leading-6 text-zinc-300">
-              {movie.overview || "Open the detail page for synopsis and list actions."}
+              {movie.overview || "Open details."}
             </p>
           </div>
         </Link>
@@ -281,7 +281,7 @@ export default function SearchPageClient({
           <ResultImage
             src={posterUrl}
             alt={`${series.name} poster`}
-            fallback="No Art"
+            fallback="No art"
           />
           <div className="min-w-0 py-1">
             <div className="flex items-start justify-between gap-3">
@@ -293,10 +293,10 @@ export default function SearchPageClient({
               </span>
             </div>
             <p className="mt-1 text-xs font-medium uppercase tracking-[0.2em] text-zinc-500">
-              {getSeriesYear(series) ?? "Unknown Year"}
+              {getSeriesYear(series) ?? "Unknown year"}
             </p>
             <p className="mt-3 line-clamp-3 text-sm leading-6 text-zinc-300">
-              {series.overview || "Open the show page for more detail and watch actions."}
+              {series.overview || "Open details."}
             </p>
           </div>
         </Link>
@@ -314,7 +314,7 @@ export default function SearchPageClient({
         href={`/people/${person.id}`}
         className="group grid grid-cols-[5.2rem_minmax(0,1fr)] gap-4 rounded-[1.4rem] border border-white/10 bg-[linear-gradient(180deg,rgba(15,23,42,0.9),rgba(8,12,20,0.97))] p-3 shadow-[0_18px_50px_rgba(0,0,0,0.22)] hover:-translate-y-0.5 hover:border-fuchsia-200/25 hover:bg-white/[0.04] sm:grid-cols-[6rem_minmax(0,1fr)]"
       >
-        <ResultImage src={profileUrl} alt={person.name} fallback="No Photo" />
+        <ResultImage src={profileUrl} alt={person.name} fallback="No photo" />
         <div className="min-w-0 py-1">
           <div className="flex items-start justify-between gap-3">
             <h2 className="line-clamp-2 text-lg font-semibold tracking-tight text-white group-hover:text-fuchsia-100">
@@ -347,14 +347,13 @@ export default function SearchPageClient({
           <div className="relative z-10 grid gap-6 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
             <div>
               <p className="text-[0.68rem] font-medium uppercase tracking-[0.32em] text-zinc-500">
-                Search Archive
+                Search
               </p>
               <h1 className="mt-3 max-w-3xl text-4xl font-semibold tracking-tight md:text-5xl">
-                Keep searching past the first few matches.
+                Search.
               </h1>
               <p className="mt-4 max-w-2xl text-sm leading-7 text-zinc-300 md:text-base">
-                Move between titles and people without leaving the result flow,
-                then open the exact movie, series, actor, or director page.
+                Move between titles and people, then open the right result.
               </p>
             </div>
 
@@ -373,7 +372,7 @@ export default function SearchPageClient({
                 type="search"
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
-                placeholder="Search by title or person"
+                placeholder="Search"
                 className="min-h-[4rem] w-full rounded-[1.35rem] border border-blue-300/30 bg-[linear-gradient(180deg,rgba(17,24,39,0.76),rgba(5,7,12,0.8))] px-12 text-[1rem] font-medium text-white shadow-[0_20px_65px_rgba(0,0,0,0.35)] placeholder:text-blue-100/45 focus:border-fuchsia-200/50 focus:outline-none"
               />
               {isLoading ? (
@@ -413,11 +412,11 @@ export default function SearchPageClient({
 
         <section className="space-y-4">
           {!trimmedQuery ? (
-            <EmptyState title="Start with a search" copy="Enter a title or name to load results." />
+            <EmptyState title="Start typing" copy="Search a title or name." />
           ) : error ? (
             <EmptyState title="Search unavailable" copy={error} />
           ) : !isLoading && results.length === 0 ? (
-            <EmptyState title="No results found" copy="Try a different title or person name." />
+            <EmptyState title="No matches" copy="Try another title or name." />
           ) : (
             <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
               {results.map(renderResult)}
@@ -434,7 +433,7 @@ export default function SearchPageClient({
 
           {!isLoading && !hasMore && results.length > 0 ? (
             <div className="rounded-[1.25rem] border border-white/10 bg-white/[0.03] px-5 py-4 text-center text-sm text-zinc-500">
-              End of results
+              No more results
             </div>
           ) : null}
         </section>

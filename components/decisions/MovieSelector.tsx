@@ -119,12 +119,12 @@ const MovieSelector: React.FC<MovieSelectorProps> = ({
 
   const handleAddMovie = (movie: TMDBMovie) => {
     if (selectedMovies.length >= maxMovies) {
-      setError(`Maximum ${maxMovies} movies allowed`);
+      setError(`You can add up to ${maxMovies} movies`);
       return;
     }
 
     if (selectedMovies.some((selected) => selected.id === movie.id)) {
-      setError("Movie already added to wheel");
+      setError("Movie already added");
       return;
     }
 
@@ -192,7 +192,7 @@ const MovieSelector: React.FC<MovieSelectorProps> = ({
       {/* Search Section */}
       <div>
         <h3 className="text-lg font-semibold text-purple-200 mb-3">
-          Add Movies to Wheel
+          Add movies
         </h3>
 
         <div
@@ -208,8 +208,8 @@ const MovieSelector: React.FC<MovieSelectorProps> = ({
               onFocus={handleInputFocus}
               placeholder={
                 selectedMovies.length >= maxMovies
-                  ? `Maximum ${maxMovies} movies reached`
-                  : "Search for movies to add..."
+                  ? `Limit reached`
+                  : "Search movies"
               }
               disabled={disabled || selectedMovies.length >= maxMovies}
               className="w-full px-4 py-3 text-sm bg-zinc-900 border border-zinc-700 rounded-lg text-white placeholder-zinc-400 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
@@ -243,7 +243,7 @@ const MovieSelector: React.FC<MovieSelectorProps> = ({
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-zinc-500 text-xs text-center">
-                        No Image
+                        No poster
                       </div>
                     )}
                   </div>
@@ -252,7 +252,7 @@ const MovieSelector: React.FC<MovieSelectorProps> = ({
                       {result.title}
                     </h4>
                     <p className="text-zinc-400 text-xs">
-                      {getReleaseYear(result) || "Unknown Year"}
+                      {getReleaseYear(result) || "Unknown year"}
                     </p>
                     <p className="text-zinc-500 text-xs mt-1 line-clamp-1">
                       {result.overview}
@@ -299,7 +299,7 @@ const MovieSelector: React.FC<MovieSelectorProps> = ({
       <div>
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-lg font-semibold text-purple-200">
-            Selected Movies ({selectedMovies.length}/{maxMovies})
+            Selected movies ({selectedMovies.length}/{maxMovies})
           </h3>
 
           {selectedMovies.length > 0 && (
@@ -308,17 +308,17 @@ const MovieSelector: React.FC<MovieSelectorProps> = ({
               disabled={disabled}
               className="text-sm text-zinc-400 hover:text-red-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Clear All
+              Clear all
             </button>
           )}
         </div>
 
         {selectedMovies.length === 0 ? (
           <div className="bg-zinc-900/50 border border-zinc-800 rounded-lg p-8 text-center">
-            <div className="text-4xl mb-3">🎬</div>
-            <p className="text-zinc-400 mb-2">No movies in your wheel yet</p>
+            <div className="text-4xl mb-3">ðŸŽ¬</div>
+            <p className="text-zinc-400 mb-2">No movies selected</p>
             <p className="text-zinc-500 text-sm">
-              Add at least 2 movies to start spinning!
+              Add at least two to spin.
             </p>
           </div>
         ) : (
@@ -340,7 +340,7 @@ const MovieSelector: React.FC<MovieSelectorProps> = ({
                     />
                   ) : (
                     <div className="w-full h-full bg-gradient-to-b from-purple-600 to-pink-600 flex items-center justify-center text-white text-xs">
-                      🎬
+                      ðŸŽ¬
                     </div>
                   )}
                 </div>
@@ -350,7 +350,7 @@ const MovieSelector: React.FC<MovieSelectorProps> = ({
                     {movie.title}
                   </h4>
                   <p className="text-zinc-400 text-xs">
-                    {getReleaseYear(movie) || "Unknown Year"}
+                    {getReleaseYear(movie) || "Unknown year"}
                   </p>
                 </div>
 
@@ -360,7 +360,7 @@ const MovieSelector: React.FC<MovieSelectorProps> = ({
                   onClick={() => handleRemoveMovie(movie.id)}
                   disabled={disabled}
                   className="text-red-400 hover:text-red-300 transition-colors p-1 disabled:opacity-50 disabled:cursor-not-allowed"
-                  title="Remove movie"
+                  title="Remove"
                 >
                   <svg
                     className="w-4 h-4"
@@ -390,10 +390,10 @@ const MovieSelector: React.FC<MovieSelectorProps> = ({
                     } to spin`
                   : selectedMovies.length >= 2 &&
                     selectedMovies.length < maxMovies
-                  ? `Ready to spin! (Can add ${
+                  ? `Ready to spin. Can add ${
                       maxMovies - selectedMovies.length
-                    } more)`
-                  : "Wheel is full - ready to spin!"}
+                    } more.`
+                  : "Wheel is full. Ready to spin."}
               </span>
 
               {selectedMovies.length >= 2 && (

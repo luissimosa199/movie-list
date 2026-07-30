@@ -148,7 +148,7 @@ export default function SeriesSearchBar({ className = "" }: SearchBarProps) {
           value={query}
           onChange={handleInputChange}
           onFocus={handleInputFocus}
-          placeholder="Search TV series by title"
+          placeholder="Search"
           className="w-full bg-transparent px-4 py-4 pr-12 text-[0.98rem] font-medium text-white placeholder:text-blue-100/45 focus:outline-none"
         />
       </SearchInputFrame>
@@ -172,7 +172,7 @@ export default function SeriesSearchBar({ className = "" }: SearchBarProps) {
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <SearchEmptyPoster label="No Art" />
+                  <SearchEmptyPoster label="No art" />
                 )}
               </SearchResultPoster>
               <div className="min-w-0 flex-1">
@@ -185,10 +185,10 @@ export default function SeriesSearchBar({ className = "" }: SearchBarProps) {
                   </span>
                 </div>
                 <p className="mt-1 text-[0.72rem] font-medium uppercase tracking-[0.18em] text-zinc-500">
-                  {getFirstAirYear(result) || "Unknown Year"}
+                  {getFirstAirYear(result) || "Unknown year"}
                 </p>
                 <p className="mt-2 line-clamp-2 text-xs leading-5 text-zinc-400">
-                  {result.overview || "Open the show page for more detail and watch actions."}
+                  {result.overview || "Open"}
                 </p>
               </div>
             </Link>
@@ -200,10 +200,10 @@ export default function SeriesSearchBar({ className = "" }: SearchBarProps) {
           >
             <div>
               <p className="text-sm font-semibold text-white transition-colors group-hover:text-emerald-100">
-                See all series results
+                See all results
               </p>
               <p className="mt-1 text-[0.68rem] font-medium uppercase tracking-[0.18em] text-zinc-500">
-                {totalResults.toLocaleString()} matches
+                {totalResults.toLocaleString()} results
               </p>
             </div>
             <span className="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-emerald-100 transition-transform group-hover:translate-x-0.5">

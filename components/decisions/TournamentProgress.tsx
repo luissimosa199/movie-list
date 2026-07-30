@@ -25,10 +25,10 @@ const TournamentProgress: React.FC<TournamentProgressProps> = ({
     >
       <div className="text-center mb-6">
         <h3 className="text-lg font-semibold text-white mb-2">
-          Tournament Progress
+          Progress
         </h3>
         <p className="text-zinc-400 text-sm">
-          {tournament.title} • {tournament.movies.length} Movies
+          {tournament.title} â€¢ {tournament.movies.length} titles
         </p>
       </div>
 
@@ -55,7 +55,7 @@ const TournamentProgress: React.FC<TournamentProgressProps> = ({
       {tournament.completed && tournament.champion && (
         <div className="mt-6 pt-6 border-t border-zinc-700">
           <div className="text-center">
-            <div className="text-4xl mb-2">👑</div>
+            <div className="text-4xl mb-2">ðŸ‘‘</div>
             <h4 className="text-xl font-bold text-yellow-400 mb-1">Champion</h4>
             <p className="text-white font-semibold">
               {tournament.champion.title}
@@ -131,7 +131,7 @@ const RoundDisplay: React.FC<RoundDisplayProps> = ({
 
         {battles.length === 0 && (
           <div className="text-zinc-500 text-sm italic">
-            Waiting for previous round to complete...
+            Waiting for the previous round.
           </div>
         )}
       </div>
@@ -215,13 +215,13 @@ const BattleDisplay: React.FC<BattleDisplayProps> = ({
         <div className="text-right">
           {battle.completed ? (
             <div className="flex items-center gap-1">
-              <span className="text-green-400 text-xs">✓</span>
+              <span className="text-green-400 text-xs">âœ“</span>
               <span className="text-xs text-zinc-400">Complete</span>
             </div>
           ) : isCurrentBattle ? (
             <div className="flex items-center gap-1">
               <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
-              <span className="text-xs text-red-400">Fighting</span>
+              <span className="text-xs text-red-400">Active</span>
             </div>
           ) : (
             <span className="text-xs text-zinc-500">Pending</span>

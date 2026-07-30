@@ -37,10 +37,10 @@ const MovieRecommendationCard: React.FC<MovieRecommendationCardProps> = ({
         <div className="text-center">
           <div className="mx-auto mb-4 h-16 w-16 animate-spin rounded-full border-4 border-zinc-700 border-t-blue-500" />
           <h3 className="mb-2 text-lg font-semibold text-blue-200">
-            Finding your movie
+            Loading
           </h3>
           <p className="text-sm text-zinc-400">
-            Searching through thousands of movies to find the right match.
+            Checking catalog.
           </p>
         </div>
       </div>
@@ -52,7 +52,7 @@ const MovieRecommendationCard: React.FC<MovieRecommendationCardProps> = ({
       <div className="rounded-[1.5rem] border border-red-500/20 bg-red-500/10 p-6">
         <div className="text-center">
           <h3 className="mb-2 text-lg font-semibold text-red-200">
-            Something went wrong
+            Unable to load
           </h3>
           <p className="mb-4 text-sm text-zinc-300">{error}</p>
           <button
@@ -72,13 +72,13 @@ const MovieRecommendationCard: React.FC<MovieRecommendationCardProps> = ({
       <div className="rounded-[1.5rem] border border-white/10 bg-black/20 p-8">
         <div className="text-center">
           <h3 className="mb-2 text-xl font-semibold text-blue-200">
-            Ready to discover?
+            Ready for a recommendation?
           </h3>
           <p className="mb-4 text-zinc-400">
-            Set your preferences and get a personalized movie recommendation.
+            Set filters to generate one.
           </p>
           <div className="text-sm text-zinc-500">
-            Use the filters above to shape the result.
+            Use the controls.
           </div>
         </div>
       </div>

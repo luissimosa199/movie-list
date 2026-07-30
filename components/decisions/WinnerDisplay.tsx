@@ -82,12 +82,12 @@ const WinnerDisplay: React.FC<WinnerDisplayProps> = ({
     return (
       <div className={`text-center ${className}`}>
         <div className="bg-gradient-to-br from-purple-900/30 to-pink-900/30 border border-purple-800/50 rounded-lg p-8">
-          <div className="text-6xl mb-4 animate-spin">🎪</div>
+          <div className="text-6xl mb-4 animate-spin">ðŸŽª</div>
           <h3 className="text-2xl font-bold text-purple-200 mb-2">
-            Spinning the Wheel...
+            Spinning...
           </h3>
           <p className="text-zinc-400">
-            The fates are deciding your next movie!
+            Choosing a winner.
           </p>
 
           {/* Spinning animation dots */}
@@ -109,12 +109,12 @@ const WinnerDisplay: React.FC<WinnerDisplayProps> = ({
     return (
       <div className={`text-center ${className}`}>
         <div className="bg-zinc-900/50 border border-zinc-800 rounded-lg p-8">
-          <div className="text-4xl mb-3">🎬</div>
+          <div className="text-4xl mb-3">ðŸŽ¬</div>
           <h3 className="text-xl font-semibold text-zinc-300 mb-2">
-            Ready to Spin?
+            Ready to spin
           </h3>
           <p className="text-zinc-400 text-sm">
-            Add movies to your wheel and spin to discover your next watch!
+            Add movies, then spin.
           </p>
         </div>
       </div>
@@ -148,11 +148,11 @@ const WinnerDisplay: React.FC<WinnerDisplayProps> = ({
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-40 pointer-events-none">
           <div className="text-center">
             {celebrationStep >= 1 && (
-              <div className="text-8xl mb-4 animate-bounce">🏆</div>
+              <div className="text-8xl mb-4 animate-bounce">ðŸ†</div>
             )}
             {celebrationStep >= 2 && (
               <h2 className="text-6xl font-bold text-yellow-400 mb-4 animate-pulse">
-                WINNER!
+                Winner
               </h2>
             )}
             {celebrationStep >= 3 && (
@@ -168,7 +168,7 @@ const WinnerDisplay: React.FC<WinnerDisplayProps> = ({
       <div className="bg-gradient-to-br from-yellow-900/20 to-orange-900/20 border-2 border-yellow-500/50 rounded-lg p-8 md:p-10 relative overflow-hidden">
         {/* Winner Badge */}
         <div className="absolute top-4 right-4 bg-gradient-to-r from-yellow-500 to-orange-500 text-white px-3 py-1 rounded-full text-sm font-bold">
-          🏆 WINNER
+          ðŸ† WINNER
         </div>
 
         <div className="flex flex-col gap-6">
@@ -187,8 +187,8 @@ const WinnerDisplay: React.FC<WinnerDisplayProps> = ({
               ) : (
                 <div className="w-full h-full flex items-center justify-center text-zinc-500">
                   <div className="text-center">
-                    <div className="text-4xl mb-2">🎬</div>
-                    <p className="text-sm">No Poster</p>
+                    <div className="text-4xl mb-2">ðŸŽ¬</div>
+                    <p className="text-sm">No poster</p>
                   </div>
                 </div>
               )}
@@ -213,7 +213,7 @@ const WinnerDisplay: React.FC<WinnerDisplayProps> = ({
             <div>
               <div className="flex items-center justify-center gap-4">
                 <div className="flex items-center gap-1">
-                  <span className="text-yellow-400">⭐</span>
+                  <span className="text-yellow-400">â­</span>
                   <span className="text-white font-semibold">
                     {formatRating(winner.vote_average)}
                   </span>
@@ -236,8 +236,8 @@ const WinnerDisplay: React.FC<WinnerDisplayProps> = ({
                 href={`/movies/${winner.id}?tmdb=true`}
                 className="bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-500 hover:to-orange-500 text-white font-semibold px-6 py-3 rounded-lg transition-all duration-300 transform hover:scale-105 flex items-center gap-2"
               >
-                <span>📖</span>
-                View Details
+                <span>ðŸ“–</span>
+                View details
               </Link>
 
               {onSpinAgain && (
@@ -245,8 +245,8 @@ const WinnerDisplay: React.FC<WinnerDisplayProps> = ({
                   onClick={onSpinAgain}
                   className="bg-purple-600 hover:bg-purple-500 text-white font-semibold px-6 py-3 rounded-lg transition-colors flex items-center gap-2"
                 >
-                  <span>🎪</span>
-                  Spin Again
+                  <span>ðŸŽª</span>
+                  Spin again
                 </button>
               )}
 
@@ -255,8 +255,8 @@ const WinnerDisplay: React.FC<WinnerDisplayProps> = ({
                   onClick={onClearWinner}
                   className="bg-zinc-700 hover:bg-zinc-600 text-zinc-300 px-6 py-3 rounded-lg transition-colors flex items-center gap-2"
                 >
-                  <span>✨</span>
-                  New Game
+                  <span>âœ¨</span>
+                  Start over
                 </button>
               )}
             </div>
@@ -268,7 +268,7 @@ const WinnerDisplay: React.FC<WinnerDisplayProps> = ({
       {spinHistory.length > 0 && (
         <div className="mt-6 bg-zinc-900/50 border border-zinc-800 rounded-lg p-4">
           <h3 className="text-lg font-semibold text-purple-200 mb-3">
-            Recent Spins
+            Recent spins
           </h3>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
@@ -292,7 +292,7 @@ const WinnerDisplay: React.FC<WinnerDisplayProps> = ({
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-zinc-500 text-xs text-center">
-                        No Poster
+                        No poster
                       </div>
                     )}
 
@@ -312,7 +312,7 @@ const WinnerDisplay: React.FC<WinnerDisplayProps> = ({
 
           {spinHistory.length > 5 && (
             <p className="text-xs text-zinc-500 mt-2 text-center">
-              Showing last 5 spins of {spinHistory.length} total
+              Showing the last 5 of {spinHistory.length} spins
             </p>
           )}
         </div>

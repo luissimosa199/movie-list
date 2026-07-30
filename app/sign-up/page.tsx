@@ -33,16 +33,15 @@ export default async function SignUpPage({ searchParams }: SignUpPageProps) {
         <div className="grid items-center gap-10 py-8 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)] lg:gap-14 lg:py-12">
           <section className="max-w-2xl space-y-6">
             <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs uppercase tracking-[0.32em] text-zinc-400 backdrop-blur">
-              Start fresh
+              Create account
             </div>
 
             <div className="space-y-4">
               <h1 className="text-4xl font-semibold tracking-tight text-white md:text-6xl">
-                Build your watchlist home.
+                Create your account.
               </h1>
               <p className="max-w-xl text-base leading-7 text-zinc-300 md:text-lg">
-                Create an account to keep movies, series, and decision tools in
-                one private place with a cleaner path back into the app.
+                Use one account for your lists and decisions.
               </p>
             </div>
 
@@ -50,29 +49,28 @@ export default async function SignUpPage({ searchParams }: SignUpPageProps) {
               <div className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur">
                 <p className="text-sm font-medium text-white">One profile</p>
                 <p className="mt-2 text-sm leading-6 text-zinc-400">
-                  Save your viewing habits under a single private identity.
+                  Keep your activity in one place.
                 </p>
               </div>
               <div className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur">
                 <p className="text-sm font-medium text-white">
-                  Shared decisions
+                  Decision tools
                 </p>
                 <p className="mt-2 text-sm leading-6 text-zinc-400">
-                  Keep your favorite games and outcomes available later.
+                  Review your picks later.
                 </p>
               </div>
               <div className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur">
-                <p className="text-sm font-medium text-white">Fast setup</p>
+                <p className="text-sm font-medium text-white">Quick setup</p>
                 <p className="mt-2 text-sm leading-6 text-zinc-400">
-                  Email and password are enough to get moving quickly.
+                  Sign up with email and password.
                 </p>
               </div>
             </div>
 
             <div className="rounded-[1.75rem] border border-emerald-500/15 bg-emerald-500/10 p-5 shadow-[0_20px_60px_rgba(16,185,129,0.08)]">
               <p className="text-sm leading-6 text-emerald-50/90">
-                Registration stays lightweight. Use the same email each time so
-                your lists and profile remain easy to return to.
+                Use the same email so your data stays linked.
               </p>
             </div>
           </section>
@@ -85,3 +83,4 @@ export default async function SignUpPage({ searchParams }: SignUpPageProps) {
     </main>
   );
 }
+

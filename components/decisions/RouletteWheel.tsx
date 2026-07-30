@@ -8,7 +8,7 @@ import {
   calculateWheelSize,
   WheelSegment,
 } from "@/utils/roulettePhysics";
-import { animateWinnerHighlight } from "@/utils/rouletteAnimations";
+
 
 interface RouletteWheelProps {
   movies: TMDBMovie[];
@@ -57,7 +57,17 @@ const RouletteWheel = React.forwardRef<RouletteWheelRef, RouletteWheelProps>(
           ) as HTMLElement;
           if (segmentElement) {
             setTimeout(() => {
-              animateWinnerHighlight(segmentElement);
+              segmentElement.animate(
+                [
+                  { transform: "scale(1)", filter: "brightness(1)" },
+                  { transform: "scale(1.03)", filter: "brightness(1.25)" },
+                  { transform: "scale(1)", filter: "brightness(1)" },
+                ],
+                {
+                  duration: 700,
+                  easing: "cubic-bezier(0.25, 0.46, 0.45, 0.94)",
+                }
+              );
             }, 500);
           }
         }
@@ -114,23 +124,23 @@ const RouletteWheel = React.forwardRef<RouletteWheelRef, RouletteWheelProps>(
     };
 
     const getTextPosition = (segment: WheelSegment, radius: number) => {
-      const midAngle =
+      const middleAngle =
         ((segment.startAngle + segment.endAngle) / 2 - 90) * (Math.PI / 180);
       const textRadius = radius * 0.8;
 
-      const x = radius + textRadius * Math.cos(midAngle);
-      const y = radius + textRadius * Math.sin(midAngle);
+      const x = radius + textRadius * Math.cos(middleAngle);
+      const y = radius + textRadius * Math.sin(middleAngle);
 
       return { x, y, angle: (segment.startAngle + segment.endAngle) / 2 };
     };
 
     const getPosterPosition = (segment: WheelSegment, radius: number) => {
-      const midAngle =
+      const middleAngle =
         ((segment.startAngle + segment.endAngle) / 2 - 90) * (Math.PI / 180);
       const posterRadius = radius * 0.6;
 
-      const x = radius + posterRadius * Math.cos(midAngle);
-      const y = radius + posterRadius * Math.sin(midAngle);
+      const x = radius + posterRadius * Math.cos(middleAngle);
+      const y = radius + posterRadius * Math.sin(middleAngle);
 
       return { x, y };
     };
@@ -146,8 +156,8 @@ const RouletteWheel = React.forwardRef<RouletteWheelRef, RouletteWheelProps>(
             }}
           >
             <div className="text-center text-zinc-500">
-              <div className="text-4xl mb-2">🎪</div>
-              <p className="text-sm">Add movies to create wheel</p>
+              <div className="text-4xl mb-2">ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸Ãƒâ€¦Ã‚Â½Ãƒâ€šÃ‚Âª</div>
+              <p className="text-sm">ddd movies to begin</p>
             </div>
           </div>
         </div>
@@ -275,7 +285,7 @@ const RouletteWheel = React.forwardRef<RouletteWheelRef, RouletteWheelProps>(
                 height: Math.max(40, wheelSize.diameter * 0.12),
               }}
             >
-              <span className="text-2xl">🎬</span>
+              <span className="text-2xl">ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸Ãƒâ€¦Ã‚Â½Ãƒâ€šÃ‚Â¬</span>
             </div>
           </div>
 
@@ -311,11 +321,11 @@ const RouletteWheel = React.forwardRef<RouletteWheelRef, RouletteWheelProps>(
           </div>
         )}
 
-        {/* Winner Announcement Overlay */}
+        {/* Winner dnnouncement Overlay */}
         {props.winner && !props.isSpinning && (
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
             <div className="bg-gradient-to-br from-yellow-500/90 to-orange-500/90 rounded-lg p-4 text-center text-white shadow-lg">
-              <div className="text-2xl mb-1">🏆</div>
+              <div className="text-2xl mb-1">ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸Ãƒâ€šÃ‚ÂÃƒÂ¢Ã¢â€šÂ¬Ã‚Â </div>
               <div className="font-bold text-lg">Winner!</div>
               <div className="text-sm opacity-90">{props.winner.title}</div>
             </div>

@@ -126,7 +126,7 @@ const TournamentSetup: React.FC<TournamentSetupProps> = ({
   const getReleaseYear = (movie: TMDBMovie) => {
     return movie.release_date
       ? new Date(movie.release_date).getFullYear()
-      : "Unknown Year";
+      : "Unknown year";
   };
 
   const getPreviewMatchups = () => {
@@ -156,13 +156,13 @@ const TournamentSetup: React.FC<TournamentSetupProps> = ({
       {/* Tournament Title */}
       <div>
         <label className="block text-sm font-medium text-zinc-300 mb-2">
-          Tournament Name (Optional)
+          Bracket name (optional)
         </label>
         <input
           type="text"
           value={tournamentTitle}
           onChange={(e) => setTournamentTitle(e.target.value)}
-          placeholder="Enter tournament name..."
+          placeholder="Bracket name"
           className="w-full px-4 py-2 bg-zinc-900 border border-zinc-700 rounded-lg text-white placeholder-zinc-400 focus:outline-none focus:border-red-500 transition-colors"
           disabled={loading}
         />
@@ -171,7 +171,7 @@ const TournamentSetup: React.FC<TournamentSetupProps> = ({
       {/* Movie Search */}
       <div>
         <label className="block text-sm font-medium text-zinc-300 mb-2">
-          Add Movies to Tournament
+          Add titles
         </label>
         <div
           className="relative"
@@ -182,7 +182,7 @@ const TournamentSetup: React.FC<TournamentSetupProps> = ({
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             onFocus={() => searchResults.length > 0 && setShowResults(true)}
-            placeholder="Search for movies to add..."
+            placeholder="Search titles"
             className="w-full px-4 py-2 bg-zinc-900 border border-zinc-700 rounded-lg text-white placeholder-zinc-400 focus:outline-none focus:border-red-500 transition-colors"
             disabled={loading}
           />
@@ -222,7 +222,7 @@ const TournamentSetup: React.FC<TournamentSetupProps> = ({
                         />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center text-zinc-500 text-xs">
-                          No Image
+                          No poster
                         </div>
                       )}
                     </div>
@@ -231,7 +231,7 @@ const TournamentSetup: React.FC<TournamentSetupProps> = ({
                         {movie.title}
                       </h3>
                       <p className="text-zinc-400 text-xs">
-                        {getReleaseYear(movie)} • ⭐{" "}
+                        {getReleaseYear(movie)} â€¢ â­{" "}
                         {movie.vote_average.toFixed(1)}
                       </p>
                       {isSelected && (
@@ -254,14 +254,14 @@ const TournamentSetup: React.FC<TournamentSetupProps> = ({
         <div>
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-white">
-              Selected Movies ({selectedMovies.length})
+              Selected movies ({selectedMovies.length})
             </h3>
             <button
               onClick={() => setSelectedMovies([])}
               className="text-zinc-400 hover:text-red-400 text-sm transition-colors"
               disabled={loading}
             >
-              Clear All
+              Clear all
             </button>
           </div>
 
@@ -283,8 +283,8 @@ const TournamentSetup: React.FC<TournamentSetupProps> = ({
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-zinc-500 text-xs text-center">
                       <div>
-                        <div className="text-2xl mb-1">🎬</div>
-                        No Poster
+                        <div className="text-2xl mb-1">ðŸŽ¬</div>
+                        No poster
                       </div>
                     </div>
                   )}
@@ -295,7 +295,7 @@ const TournamentSetup: React.FC<TournamentSetupProps> = ({
                     className="absolute top-2 right-2 w-6 h-6 bg-red-600 hover:bg-red-500 text-white rounded-full flex items-center justify-center text-sm opacity-0 group-hover:opacity-100 transition-opacity"
                     disabled={loading}
                   >
-                    ×
+                    Ã—
                   </button>
                 </div>
 
@@ -317,19 +317,19 @@ const TournamentSetup: React.FC<TournamentSetupProps> = ({
       {validationError && (
         <div className="bg-red-900/20 border border-red-600/50 rounded-lg p-4">
           <div className="flex items-center gap-2 text-red-200">
-            <span className="text-xl">⚠️</span>
+            <span className="text-xl">âš ï¸</span>
             <div>
-              <div className="font-semibold">Invalid Tournament Setup</div>
+              <div className="font-semibold">Invalid bracket</div>
               <div className="text-sm text-red-300">{validationError}</div>
             </div>
           </div>
         </div>
       )}
 
-      {/* Tournament Requirements */}
+      {/* Requirements */}
       <div className="bg-zinc-900/50 border border-zinc-700 rounded-lg p-4">
         <h3 className="text-sm font-semibold text-zinc-300 mb-2">
-          Tournament Requirements
+          Requirements
         </h3>
         <ul className="space-y-1 text-sm text-zinc-400">
           <li
@@ -337,7 +337,7 @@ const TournamentSetup: React.FC<TournamentSetupProps> = ({
               selectedMovies.length >= 4 ? "text-green-400" : ""
             }`}
           >
-            <span>{selectedMovies.length >= 4 ? "✅" : "❌"}</span>
+            <span>{selectedMovies.length >= 4 ? "âœ…" : "âŒ"}</span>
             Minimum 4 movies
           </li>
           <li
@@ -349,19 +349,19 @@ const TournamentSetup: React.FC<TournamentSetupProps> = ({
           >
             <span>
               {selectedMovies.length > 0 && selectedMovies.length % 2 === 0
-                ? "✅"
-                : "❌"}
+                ? "âœ…"
+                : "âŒ"}
             </span>
             Even number of movies
           </li>
         </ul>
       </div>
 
-      {/* First Round Preview */}
+      {/* Preview */}
       {previewMatchups.length > 0 && (
         <div>
           <h3 className="text-lg font-semibold text-white mb-4">
-            First Round Preview
+            Preview
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {previewMatchups.map((matchup, index) => (
@@ -399,7 +399,7 @@ const TournamentSetup: React.FC<TournamentSetupProps> = ({
         </div>
       )}
 
-      {/* Start Tournament Button */}
+      {/* Start bracket Button */}
       <div className="text-center">
         <button
           onClick={handleStartTournament}
@@ -413,12 +413,12 @@ const TournamentSetup: React.FC<TournamentSetupProps> = ({
           {loading ? (
             <>
               <div className="w-5 h-5 border-2 border-zinc-400 border-t-white rounded-full animate-spin"></div>
-              Starting Tournament...
+              Starting...
             </>
           ) : (
             <>
-              <span className="text-xl">⚔️</span>
-              Start Tournament
+              <span className="text-xl">âš”ï¸</span>
+              Start bracket
               {canStart && (
                 <span className="text-sm opacity-80">
                   ({selectedMovies.length} movies)
@@ -431,8 +431,8 @@ const TournamentSetup: React.FC<TournamentSetupProps> = ({
         {!canStart && selectedMovies.length > 0 && (
           <p className="text-zinc-400 text-sm mt-2">
             {selectedMovies.length % 2 !== 0
-              ? "Add one more movie to create an even number"
-              : "Add more movies to start the tournament"}
+              ? "Add one more title to make it even."
+              : "Add more titles to start."}
           </p>
         )}
       </div>

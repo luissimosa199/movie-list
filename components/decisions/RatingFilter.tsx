@@ -40,13 +40,13 @@ const RatingFilter: React.FC<RatingFilterProps> = ({
   };
 
   const presetRatings = [
-    { value: 0, label: "Any rating", description: "Include all movies" },
-    { value: 6.0, label: "Good (6.0+)", description: "Well-received movies" },
-    { value: 7.0, label: "Great (7.0+)", description: "Highly rated movies" },
+    { value: 0, label: "Any rating", description: "Any" },
+    { value: 6.0, label: "6.0+", description: "Good" },
+    { value: 7.0, label: "7.0+", description: "Top rated" },
     {
       value: 8.0,
-      label: "Excellent (8.0+)",
-      description: "Exceptional movies",
+      label: "8.0+",
+      description: "Top picks",
     },
   ];
 
@@ -54,10 +54,10 @@ const RatingFilter: React.FC<RatingFilterProps> = ({
     <div className="space-y-3">
       <div className="space-y-1">
         <label className="text-sm font-medium text-blue-200">
-          Minimum Rating
+          Minimum rating
         </label>
         <p className="text-xs text-zinc-500">
-          Filter to stronger picks without overconstraining the result.
+          Set a minimum rating.
         </p>
       </div>
 
@@ -73,8 +73,8 @@ const RatingFilter: React.FC<RatingFilterProps> = ({
           ) : null}
           <div className="text-xs text-zinc-400">
             {minRating === 0
-              ? "No rating filter"
-              : `${minRating.toFixed(1)}/10.0 IMDb minimum`}
+              ? "Any rating"
+              : `${minRating.toFixed(1)}/10 minimum`}
           </div>
         </div>
 
@@ -132,19 +132,19 @@ const RatingFilter: React.FC<RatingFilterProps> = ({
           <div className="grid gap-2 text-xs text-zinc-400">
             <div className="flex items-center justify-between gap-3 rounded-2xl border border-white/8 bg-white/4 px-3 py-2">
               <span>{`8.0+ ${filledStar.repeat(5)}`}</span>
-              <span>Masterpieces</span>
+              <span>Best</span>
             </div>
             <div className="flex items-center justify-between gap-3 rounded-2xl border border-white/8 bg-white/4 px-3 py-2">
               <span>{`7.0+ ${filledStar.repeat(4)}${emptyStar}`}</span>
-              <span>Great movies</span>
+              <span>Strong</span>
             </div>
             <div className="flex items-center justify-between gap-3 rounded-2xl border border-white/8 bg-white/4 px-3 py-2">
               <span>{`6.0+ ${filledStar.repeat(3)}${emptyStar.repeat(2)}`}</span>
-              <span>Good entertainment</span>
+              <span>Good</span>
             </div>
             <div className="flex items-center justify-between gap-3 rounded-2xl border border-white/8 bg-white/4 px-3 py-2">
               <span>{`<6.0 ${filledStar.repeat(2)}${emptyStar.repeat(3)}`}</span>
-              <span>Mixed reviews</span>
+              <span>Broad</span>
             </div>
           </div>
         </div>

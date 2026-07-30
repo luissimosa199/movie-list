@@ -19,11 +19,11 @@ export default function AuthForm({ mode, redirectTo }: AuthFormProps) {
   const destinationLink = isSignUp
     ? `/sign-in?redirectTo=${encodeURIComponent(redirectTo)}`
     : `/sign-up?redirectTo=${encodeURIComponent(redirectTo)}`;
-  const title = isSignUp ? "Create your account" : "Sign in to continue";
-  const eyebrow = isSignUp ? "Create account" : "Welcome back";
+  const title = isSignUp ? "Create account" : "Sign in";
+  const eyebrow = isSignUp ? "Create account" : "Sign in";
   const description = isSignUp
-    ? "Create a simple account to keep your watchlist, profile, and decision history in one place."
-    : "Pick up where you left off and return to your saved lists, profile, and decision tools.";
+    ? "Keep everything together."
+    : "Continue where you left off.";
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -86,7 +86,7 @@ export default function AuthForm({ mode, redirectTo }: AuthFormProps) {
               Name
             </span>
             <span className="mb-2 block text-xs text-zinc-500">
-              This will appear on your profile.
+              Displayed on your profile.
             </span>
             <input
               name="name"
@@ -105,7 +105,7 @@ export default function AuthForm({ mode, redirectTo }: AuthFormProps) {
             Email
           </span>
           <span className="mb-2 block text-xs text-zinc-500">
-            Use the address tied to your watchlist.
+            Use the email tied to your account.
           </span>
           <input
             name="email"
@@ -124,8 +124,8 @@ export default function AuthForm({ mode, redirectTo }: AuthFormProps) {
           </span>
           <span className="mb-2 block text-xs text-zinc-500">
             {isSignUp
-              ? "Use at least 7 characters."
-              : "Use the password you already created."}
+              ? "At least 7 characters."
+              : "Use your account password."}
           </span>
           <input
             name="password"
@@ -133,7 +133,7 @@ export default function AuthForm({ mode, redirectTo }: AuthFormProps) {
             required
             minLength={7}
             autoComplete={isSignUp ? "new-password" : "current-password"}
-            placeholder="Enter password"
+            placeholder="Password"
             disabled={isPending}
             className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3.5 text-white outline-none transition placeholder:text-zinc-600 focus:border-primary/40 focus:bg-white/10 focus:shadow-[0_0_0_1px_rgba(59,130,246,0.2)] disabled:cursor-not-allowed disabled:opacity-60"
           />
@@ -167,7 +167,7 @@ export default function AuthForm({ mode, redirectTo }: AuthFormProps) {
           href={destinationLink}
           className="font-medium text-white underline decoration-white/20 underline-offset-4 transition hover:decoration-white/50"
         >
-          {isSignUp ? "Sign in" : "Create one"}
+          {isSignUp ? "Sign in" : "Create account"}
         </Link>
       </p>
     </div>
