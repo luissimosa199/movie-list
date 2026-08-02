@@ -12,17 +12,17 @@ const movieSections = [
   {
     eyebrow: "Right Now",
     title: "Popular Movies",
-    description: "The titles pulling the most attention across the platform.",
+    description: "Popular now.",
   },
   {
     eyebrow: "Critics & Crowd",
     title: "Top Rated Movies",
-    description: "High-scoring picks when you want stronger odds than a random scroll.",
+    description: "High scores.",
   },
   {
     eyebrow: "Coming Soon",
     title: "Upcoming Movies",
-    description: "Fresh releases worth tracking before they disappear into the noise.",
+    description: "Fresh releases.",
   },
 ];
 
@@ -43,26 +43,24 @@ export default async function Movies() {
           <div className="relative z-10 grid gap-6 xl:grid-cols-[minmax(0,1.3fr)_minmax(22rem,0.9fr)] xl:items-end">
             <div>
               <p className="text-[0.68rem] font-medium uppercase tracking-[0.32em] text-zinc-500">
-                Discovery Deck
+                Movies
               </p>
               <h1 className="mt-3 max-w-3xl text-4xl font-semibold tracking-tight md:text-5xl">
-                Browse the movies worth your attention first.
+                Browse movies.
               </h1>
               <p className="mt-4 max-w-2xl text-sm leading-7 text-zinc-300 md:text-base">
-                Search immediately when you know the title, or work through live
-                slices of popular, top-rated, and upcoming releases without the
-                usual endless-scroll mess.
+                Search titles or browse popular, top-rated, and upcoming releases.
               </p>
 
               <div className="mt-6 flex flex-wrap gap-3 text-sm text-zinc-300">
                 <div className="rounded-full border border-white/10 bg-white/6 px-4 py-2">
-                  <span className="text-white">3 curated lanes</span>
+                  <span className="text-white">3 feeds</span>
                 </div>
                 <div className="rounded-full border border-white/10 bg-white/6 px-4 py-2">
-                  <span className="text-white">Fast title search</span>
+                  <span className="text-white">Fast search</span>
                 </div>
                 <div className="rounded-full border border-white/10 bg-white/6 px-4 py-2">
-                  <span className="text-white">Grid or compact browsing</span>
+                  <span className="text-white">Grid or list</span>
                 </div>
               </div>
             </div>
@@ -73,7 +71,7 @@ export default async function Movies() {
                 <div className="absolute left-0 bottom-0 h-24 w-24 rounded-full bg-blue-400/16 blur-2xl" />
               </div>
               <p className="relative z-10 mb-3 text-[0.68rem] font-medium uppercase tracking-[0.3em] text-blue-100/80">
-                Find a specific movie
+                Search
               </p>
               <div className="relative z-10">
                 <SearchBar />
@@ -166,6 +164,6 @@ export default async function Movies() {
 }
 
 export const metadata = {
-  title: "Movies - Discover Popular, Top Rated, and Upcoming",
-  description: "Discover movies by popularity, rating, and upcoming releases.",
+  title: "Movies - Movie Tracker",
+  description: "Browse popular, top-rated, and upcoming movies.",
 };

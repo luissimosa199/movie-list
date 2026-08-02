@@ -98,8 +98,8 @@ const RandomRecommendationPage = () => {
         <DecisionHero
           icon="🎲"
           eyebrow="Random Discovery"
-          title="Pull a recommendation without losing control."
-          description="Use filters when you want to narrow the field, or ignore them and let the app throw you something unexpected. The goal is speed, not analysis paralysis."
+          title="Pull a recommendation."
+          description="Filter or go random."
           accent="blue"
         >
           <div className="rounded-[1.5rem] border border-white/10 bg-black/20 p-4 md:p-5">
@@ -108,13 +108,13 @@ const RandomRecommendationPage = () => {
             </p>
             <div className="mt-4 space-y-3 text-sm text-zinc-300">
               <div className="rounded-2xl border border-white/10 bg-white/6 px-4 py-3">
-                Filter by genre, year, and rating
+                Genre, year, rating
               </div>
               <div className="rounded-2xl border border-white/10 bg-white/6 px-4 py-3">
-                Save recent discoveries locally
+                Save picks
               </div>
               <div className="rounded-2xl border border-white/10 bg-white/6 px-4 py-3">
-                Jump straight to the movie details page
+                Open movie page
               </div>
             </div>
           </div>
@@ -122,8 +122,8 @@ const RandomRecommendationPage = () => {
 
         <DiscoverySearchSection
           eyebrow="Manual Lookup"
-          title="Search directly when random discovery stops being random enough."
-          description="Keep the recommendation flow intact, but give yourself a faster escape hatch into known titles right under the page hero."
+          title="Search a title."
+          description="Jump to the catalog."
         />
 
         <div className="grid gap-8 xl:grid-cols-[minmax(0,1.05fr)_minmax(22rem,0.95fr)]">
@@ -131,13 +131,13 @@ const RandomRecommendationPage = () => {
             <div className="mb-5 flex items-start justify-between gap-4">
               <div>
                 <p className="text-[0.68rem] font-medium uppercase tracking-[0.28em] text-zinc-500">
-                  Filter Stack
+                  Filters
                 </p>
                 <h2 className="mt-2 text-2xl font-semibold text-white">
-                  Customize your discovery
+                  Tune filters
                 </h2>
                 <p className="mt-2 max-w-xl text-sm leading-6 text-zinc-400">
-                  Narrow the field with a few deliberate controls instead of a crowded control panel.
+                  Set filters above.
                 </p>
               </div>
 
@@ -145,7 +145,7 @@ const RandomRecommendationPage = () => {
                 onClick={() => setShowFilters(!showFilters)}
                 className="rounded-full border border-white/10 bg-white/6 px-4 py-2 text-sm text-white transition-colors hover:bg-white/10 md:hidden"
               >
-                {showFilters ? "Hide filters" : "Show filters"}
+                {showFilters ? "Hide" : "Show"}
               </button>
             </div>
 
@@ -178,7 +178,7 @@ const RandomRecommendationPage = () => {
                       disabled={loading}
                       className="rounded-2xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-50"
                     >
-                      Get random movie
+                      Pick
                     </button>
 
                     <button
@@ -186,7 +186,7 @@ const RandomRecommendationPage = () => {
                       disabled={loading}
                       className="rounded-2xl bg-cyan-600 px-5 py-3 text-sm font-semibold text-white hover:bg-cyan-500 disabled:cursor-not-allowed disabled:opacity-50"
                     >
-                      Surprise me
+                      Surprise
                     </button>
 
                     <button
@@ -194,7 +194,7 @@ const RandomRecommendationPage = () => {
                       disabled={loading}
                       className="rounded-2xl border border-white/10 bg-white/6 px-5 py-3 text-sm font-medium text-zinc-200 hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-50"
                     >
-                      Reset filters
+                      Reset
                     </button>
                   </div>
 
@@ -204,7 +204,7 @@ const RandomRecommendationPage = () => {
                     filters.yearRange[1] !== new Date().getFullYear()) && (
                     <div className="rounded-2xl border border-white/8 bg-black/20 px-4 py-3 text-sm leading-6 text-zinc-300">
                       <span className="font-medium text-blue-200">
-                        Active filters:
+                        Filters:
                       </span>{" "}
                       {buildFilterSummary(filters, [])}
                     </div>
@@ -238,7 +238,7 @@ const RandomRecommendationPage = () => {
                       History
                     </p>
                     <h3 className="mt-2 text-lg font-semibold text-white">
-                      Recent discoveries
+                      Recent picks
                     </h3>
                   </div>
                   <button

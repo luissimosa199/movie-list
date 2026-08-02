@@ -91,9 +91,9 @@ const YearRangeSlider: React.FC<YearRangeSliderProps> = ({
   return (
     <div className="space-y-3">
       <div className="space-y-1">
-        <label className="text-sm font-medium text-blue-200">Year Range</label>
+        <label className="text-sm font-medium text-blue-200">Year range</label>
         <p className="text-xs text-zinc-500">
-          Drag the range or use a preset.
+          Drag or pick a preset.
         </p>
       </div>
 
@@ -188,7 +188,7 @@ const YearRangeSlider: React.FC<YearRangeSliderProps> = ({
             disabled={disabled}
             className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs text-zinc-300 transition-colors hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            Recent (2020+)
+            Recent
           </button>
           <button
             onClick={() => !disabled && onYearRangeChange([2010, 2019])}
@@ -216,7 +216,7 @@ const YearRangeSlider: React.FC<YearRangeSliderProps> = ({
             disabled={disabled}
             className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs text-zinc-300 transition-colors hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            All Years
+            All years
           </button>
         </div>
       </div>

@@ -15,24 +15,24 @@ export default async function ProfilePage() {
     <main className="bg-black text-white min-h-screen py-12 px-4">
       <div className="container mx-auto">
         <h1 className="text-3xl md:text-4xl font-bold mb-10 tracking-tight">
-          My Profile
+          Profile
         </h1>
 
         <DiscoverySearchSection
           className="mb-12"
           eyebrow="Library Lookup"
-          title="Search the catalog without leaving your history view."
-          description="Keep discovery visible but secondary here: add something new or jump to a show while your recent activity stays in focus below."
+          title="Search while you browse."
+          description="Keep discovery handy."
         />
 
-        {/* Latest Watched Movies Section */}
+        {/* Latest watched Movies Section */}
         <div className="mb-12">
           <Link
             href="/profile/latest-watched"
             className="inline-block mb-6 group"
           >
             <h2 className="text-2xl md:text-3xl font-bold tracking-tight group-hover:text-primary transition-colors">
-              Latest Watched
+              Latest watched
               <span className="ml-2 text-lg opacity-60 group-hover:opacity-100">
                 →
               </span>
@@ -55,7 +55,7 @@ export default async function ProfilePage() {
             <div className="bg-zinc-900 rounded-lg p-8 text-center border border-zinc-800">
               <p className="text-zinc-400 text-lg">No watched movies yet</p>
               <p className="text-zinc-500 text-sm mt-2">
-                Start watching movies and they&apos;ll appear here!
+                Start watching movies and they will appear here.
               </p>
             </div>
           )}
@@ -68,7 +68,7 @@ export default async function ProfilePage() {
             className="inline-block mb-6 group"
           >
             <h2 className="text-2xl md:text-3xl font-bold tracking-tight group-hover:text-primary transition-colors">
-              Recently Added to List
+              Recently added
               <span className="ml-2 text-lg opacity-60 group-hover:opacity-100">
                 →
               </span>
@@ -93,7 +93,7 @@ export default async function ProfilePage() {
                 No movies in your list yet
               </p>
               <p className="text-zinc-500 text-sm mt-2">
-                Add movies to your list and they&apos;ll appear here!
+                Add titles to your list and they will appear here.
               </p>
             </div>
           )}
@@ -106,5 +106,5 @@ export default async function ProfilePage() {
 export const metadata = {
   title: "Profile – Movie Tracker",
   description:
-    "View your latest watched movies and recently added list in your profile.",
+    "View recent activity.",
 };

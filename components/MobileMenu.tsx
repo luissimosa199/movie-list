@@ -76,7 +76,7 @@ export default function MobileMenu({ isSignedIn }: MobileMenuProps) {
                   Navigation
                 </p>
                 <p className="mt-1 text-lg font-semibold text-white">
-                  Browse the app
+                  Menu
                 </p>
               </div>
               <span className="rounded-full border border-primary/25 bg-primary/12 px-3 py-1 text-xs font-medium uppercase tracking-[0.18em] text-blue-200">

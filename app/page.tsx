@@ -32,13 +32,13 @@ export default async function Home() {
       <div className="container mx-auto space-y-12">
         <section>
           <h1 className="text-3xl md:text-4xl font-bold mb-6 tracking-tight">
-            Dashboard
+            Home
           </h1>
           <DiscoverySearchSection
             className="mb-8"
             eyebrow="Discovery Access"
-            title="Search the catalog before you drop into the stats."
-            description="Use a fast cross-search deck at the top of the dashboard, then return to your watch history and list activity without context switching."
+            title="Search the catalog."
+            description="Search above, then check stats."
           />
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-6">
@@ -62,7 +62,7 @@ export default async function Home() {
 
         <section>
           <h2 className="text-2xl md:text-3xl font-bold mb-4 tracking-tight">
-            Favorite genres
+            Top genres
           </h2>
           {favoriteGenres.length > 0 ? (
             <div className="flex flex-wrap gap-3">
@@ -78,7 +78,7 @@ export default async function Home() {
             </div>
           ) : (
             <p className="text-zinc-400">
-              Watch movies to see your favorite genres here.
+              Watch movies to see top genres.
             </p>
           )}
         </section>
@@ -116,7 +116,7 @@ export default async function Home() {
           <div>
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-2xl md:text-3xl font-bold tracking-tight">
-                Recently added to list
+                Recently added
               </h2>
               <Link
                 href="/profile/recently-added"
@@ -148,7 +148,7 @@ export default async function Home() {
 }
 
 export const metadata = {
-  title: "Home – Movie Tracker",
+  title: "Home - Movie Tracker",
   description:
-    "Personal dashboard with your movie stats, favorite genres, and recent activity.",
+    "Stats, genres, and recent activity.",
 };

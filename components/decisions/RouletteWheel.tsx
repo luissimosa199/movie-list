@@ -147,7 +147,7 @@ const RouletteWheel = React.forwardRef<RouletteWheelRef, RouletteWheelProps>(
           >
             <div className="text-center text-zinc-500">
               <div className="text-4xl mb-2">🎪</div>
-              <p className="text-sm">Add movies to create wheel</p>
+              <p className="text-sm">Add titles to spin</p>
             </div>
           </div>
         </div>

@@ -217,7 +217,7 @@ export async function generateMetadata({
     console.error("Error generating metadata:", error);
     return {
       title: "Movie Details",
-      description: "Discover amazing movies and add them to your watchlist.",
+      description: "Movie details unavailable.",
     };
   }
 }
@@ -380,8 +380,7 @@ export default async function MoviePage({ params, searchParams }: PageProps) {
                       Trailer
                     </h2>
                     <p className="mt-2 max-w-2xl text-sm leading-6 text-zinc-400">
-                      A quick look at the film before you commit to list actions
-                      or a rewatch.
+                      Preview the trailer before you decide.
                     </p>
                   </div>
                   {featuredTrailer ? (
@@ -484,3 +483,4 @@ export default async function MoviePage({ params, searchParams }: PageProps) {
     </main>
   );
 }
+

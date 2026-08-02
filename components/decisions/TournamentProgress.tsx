@@ -8,12 +8,12 @@ import {
   BattleMatch,
 } from "@/utils/simpleTournament";
 
-interface TournamentProgressProps {
+interface TournamentBracketProps {
   tournament: SimpleTournament;
   className?: string;
 }
 
-const TournamentProgress: React.FC<TournamentProgressProps> = ({
+const TournamentBracket: React.FC<TournamentBracketProps> = ({
   tournament,
   className = "",
 }) => {
@@ -25,7 +25,7 @@ const TournamentProgress: React.FC<TournamentProgressProps> = ({
     >
       <div className="text-center mb-6">
         <h3 className="text-lg font-semibold text-white mb-2">
-          Tournament Progress
+          Bracket
         </h3>
         <p className="text-zinc-400 text-sm">
           {tournament.title} • {tournament.movies.length} Movies
@@ -44,8 +44,8 @@ const TournamentProgress: React.FC<TournamentProgressProps> = ({
               round={round}
               roundName={roundName}
               battles={roundBattles}
-              isCurrentRound={round === tournament.currentRound}
-              isCompleted={round < tournament.currentRound}
+              isLiveRound={round === tournament.currentRound}
+              isDoned={round < tournament.currentRound}
             />
           );
         })}
@@ -71,16 +71,16 @@ interface RoundDisplayProps {
   round: number;
   roundName: string;
   battles: BattleMatch[];
-  isCurrentRound: boolean;
-  isCompleted: boolean;
+  isLiveRound: boolean;
+  isDoned: boolean;
 }
 
 const RoundDisplay: React.FC<RoundDisplayProps> = ({
   round,
   roundName,
   battles,
-  isCurrentRound,
-  isCompleted,
+  isLiveRound,
+  isDoned,
 }) => {
   return (
     <div>
@@ -88,9 +88,9 @@ const RoundDisplay: React.FC<RoundDisplayProps> = ({
       <div className="flex items-center gap-3 mb-3">
         <div
           className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
-            isCompleted
+            isDoned
               ? "bg-green-500 text-white"
-              : isCurrentRound
+              : isLiveRound
               ? "bg-red-500 text-white"
               : "bg-zinc-700 text-zinc-400"
           }`}
@@ -99,9 +99,9 @@ const RoundDisplay: React.FC<RoundDisplayProps> = ({
         </div>
         <h4
           className={`font-semibold ${
-            isCurrentRound
+            isLiveRound
               ? "text-red-400"
-              : isCompleted
+              : isDoned
               ? "text-green-400"
               : "text-zinc-400"
           }`}
@@ -121,8 +121,8 @@ const RoundDisplay: React.FC<RoundDisplayProps> = ({
             key={battle.id}
             battle={battle}
             battleNumber={index + 1}
-            isCurrentBattle={
-              isCurrentRound &&
+            isLiveBattle={
+              isLiveRound &&
               !battle.completed &&
               battles.slice(0, index).every((b) => b.completed)
             }
@@ -131,7 +131,7 @@ const RoundDisplay: React.FC<RoundDisplayProps> = ({
 
         {battles.length === 0 && (
           <div className="text-zinc-500 text-sm italic">
-            Waiting for previous round to complete...
+            Waiting for the next round...
           </div>
         )}
       </div>
@@ -142,13 +142,13 @@ const RoundDisplay: React.FC<RoundDisplayProps> = ({
 interface BattleDisplayProps {
   battle: BattleMatch;
   battleNumber: number;
-  isCurrentBattle: boolean;
+  isLiveBattle: boolean;
 }
 
 const BattleDisplay: React.FC<BattleDisplayProps> = ({
   battle,
   battleNumber,
-  isCurrentBattle,
+  isLiveBattle,
 }) => {
   const isByeBattle = battle.movie1.id === battle.movie2.id;
 
@@ -169,7 +169,7 @@ const BattleDisplay: React.FC<BattleDisplayProps> = ({
   return (
     <div
       className={`border rounded p-3 ${
-        isCurrentBattle
+        isLiveBattle
           ? "bg-red-900/20 border-red-600/50"
           : battle.completed
           ? "bg-green-900/20 border-green-600/50"
@@ -179,10 +179,10 @@ const BattleDisplay: React.FC<BattleDisplayProps> = ({
       <div className="flex items-center justify-between">
         <div className="flex-1">
           <div className="flex items-center gap-2 text-sm">
-            <span className="text-zinc-500">Battle {battleNumber}:</span>
-            {isCurrentBattle && (
+            <span className="text-zinc-500">Match {battleNumber}:</span>
+            {isLiveBattle && (
               <span className="bg-red-500 text-white px-2 py-1 rounded text-xs">
-                Current
+                Live
               </span>
             )}
           </div>
@@ -216,15 +216,15 @@ const BattleDisplay: React.FC<BattleDisplayProps> = ({
           {battle.completed ? (
             <div className="flex items-center gap-1">
               <span className="text-green-400 text-xs">✓</span>
-              <span className="text-xs text-zinc-400">Complete</span>
+              <span className="text-xs text-zinc-400">Done</span>
             </div>
-          ) : isCurrentBattle ? (
+          ) : isLiveBattle ? (
             <div className="flex items-center gap-1">
               <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
-              <span className="text-xs text-red-400">Fighting</span>
+              <span className="text-xs text-red-400">Live</span>
             </div>
           ) : (
-            <span className="text-xs text-zinc-500">Pending</span>
+            <span className="text-xs text-zinc-500">Waiting</span>
           )}
         </div>
       </div>
@@ -232,4 +232,4 @@ const BattleDisplay: React.FC<BattleDisplayProps> = ({
   );
 };
 
-export default TournamentProgress;
+export default TournamentBracket;

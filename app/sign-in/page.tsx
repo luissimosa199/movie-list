@@ -5,7 +5,7 @@ import { getServerSession } from "@/lib/auth-session";
 export const metadata = {
   title: "Sign In - Movie List",
   description:
-    "Sign in to access your Movie List profile, watchlists, and decision history.",
+    "Sign in to access your lists.",
 };
 
 type SignInPageProps = {
@@ -38,39 +38,37 @@ export default async function SignInPage({ searchParams }: SignInPageProps) {
 
             <div className="space-y-4">
               <h1 className="text-4xl font-semibold tracking-tight text-white md:text-6xl">
-                Return to your tracker.
+                Welcome back
               </h1>
               <p className="max-w-xl text-base leading-7 text-zinc-300 md:text-lg">
-                Sign in to pick up your watchlist, profile, and decision history
-                from the same place you left them.
+                Sign in to continue.
               </p>
             </div>
 
             <div className="grid gap-4 sm:grid-cols-3">
               <div className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur">
-                <p className="text-sm font-medium text-white">Saved lists</p>
+                <p className="text-sm font-medium text-white">Lists stay synced</p>
                 <p className="mt-2 text-sm leading-6 text-zinc-400">
-                  Keep movies and series organized without losing progress.
+                  Keep movies and series organized.
                 </p>
               </div>
               <div className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur">
-                <p className="text-sm font-medium text-white">Profile sync</p>
+                <p className="text-sm font-medium text-white">Profile linked</p>
                 <p className="mt-2 text-sm leading-6 text-zinc-400">
-                  Your private profile and preferences stay connected.
+                  Your profile stays linked.
                 </p>
               </div>
               <div className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur">
-                <p className="text-sm font-medium text-white">Fast return</p>
+                <p className="text-sm font-medium text-white">Quick return</p>
                 <p className="mt-2 text-sm leading-6 text-zinc-400">
-                  One step back into browsing, decisions, and discovery.
+                  Jump back in fast.
                 </p>
               </div>
             </div>
 
             <div className="rounded-[1.75rem] border border-primary/15 bg-primary/10 p-5 shadow-[0_20px_60px_rgba(37,99,235,0.08)]">
               <p className="text-sm leading-6 text-blue-50/90">
-                Use the email tied to your account. We will send you straight
-                back to your saved destination after sign-in.
+                Use your account email. We will send you back after sign-in.
               </p>
             </div>
           </section>

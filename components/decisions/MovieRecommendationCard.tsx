@@ -37,10 +37,10 @@ const MovieRecommendationCard: React.FC<MovieRecommendationCardProps> = ({
         <div className="text-center">
           <div className="mx-auto mb-4 h-16 w-16 animate-spin rounded-full border-4 border-zinc-700 border-t-blue-500" />
           <h3 className="mb-2 text-lg font-semibold text-blue-200">
-            Finding your movie
+            Finding pick
           </h3>
           <p className="text-sm text-zinc-400">
-            Searching through thousands of movies to find the right match.
+            Checking catalog.
           </p>
         </div>
       </div>
@@ -72,13 +72,13 @@ const MovieRecommendationCard: React.FC<MovieRecommendationCardProps> = ({
       <div className="rounded-[1.5rem] border border-white/10 bg-black/20 p-8">
         <div className="text-center">
           <h3 className="mb-2 text-xl font-semibold text-blue-200">
-            Ready to discover?
+            Ready to pick?
           </h3>
           <p className="mb-4 text-zinc-400">
-            Set your preferences and get a personalized movie recommendation.
+            Set filters and pick.
           </p>
           <div className="text-sm text-zinc-500">
-            Use the filters above to shape the result.
+            Use controls above.
           </div>
         </div>
       </div>
@@ -134,7 +134,7 @@ const MovieRecommendationCard: React.FC<MovieRecommendationCardProps> = ({
                 />
               ) : (
                 <div className="flex h-full items-center justify-center text-center text-sm text-zinc-500">
-                  No poster available
+                  No poster
                 </div>
               )}
               {imageLoading ? (
@@ -205,7 +205,7 @@ const MovieRecommendationCard: React.FC<MovieRecommendationCardProps> = ({
             disabled={disabled}
             className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-blue-600 px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            Get another
+            Pick again
           </button>
 
           {onAddToWatchlist ? (

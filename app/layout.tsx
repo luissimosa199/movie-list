@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Movie List",
-  description: "Track and discover movies and TV series with your personal watchlist",
+  description: "Track movies and series in one private list.",
   icons: {
     icon: [
       { url: '/icon.png', sizes: '32x32', type: 'image/png' },

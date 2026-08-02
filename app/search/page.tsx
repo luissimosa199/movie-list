@@ -34,7 +34,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
 }
 
 export const metadata = {
-  title: "Search - Movies, Series, Actors, and Directors",
+  title: "Search - Movie Tracker",
   description:
-    "Search movies, series, actors, and directors across the catalog.",
+    "Search titles, series, actors, and directors.",
 };
