@@ -21,7 +21,7 @@ export default async function Header() {
               </span>
               <span className="hidden sm:block">
                 <span className="block text-[0.65rem] uppercase tracking-[0.32em] text-zinc-500">
-                  Curated Watchlist
+                  Watchlist
                 </span>
                 <span className="mt-1 block text-sm font-semibold tracking-[0.04em] text-white">
                   Movie List

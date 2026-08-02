@@ -5,49 +5,49 @@ const pillars = [
     number: "01",
     title: "Why it exists",
     body:
-      "The app keeps watch history, watchlist ideas, and decision-making in one place so movie and series tracking feels immediate instead of scattered.",
+      "It keeps history and picks in one place.",
   },
   {
     number: "02",
     title: "What it is not",
     body:
-      "It is not a public platform, a monetized catalog, or a social feed. It is a private utility built to stay focused on personal use.",
+      "It stays private and focused.",
   },
   {
     number: "03",
     title: "How it is built",
     body:
-      "The experience is shaped with Next.js, public movie data, and a dark editorial layout that favors clarity, density, and low-friction browsing.",
+      "Built with Next.js and public movie data.",
   },
 ];
 
 const facts = [
   {
     label: "Purpose",
-    value: "Track movies and series without losing the thread",
+    value: "Track movies and series",
   },
   {
     label: "Tone",
-    value: "Cinematic, quiet, and intentionally structured",
+    value: "Clear and easy to scan",
   },
   {
     label: "Focus",
-    value: "Useful pages first, decoration only when it earns its place",
+    value: "Useful pages first",
   },
 ];
 
 const notes = [
   {
     label: "Use case",
-    value: "Keep track of what has been watched and what to watch next.",
+    value: "Keep history and next picks together.",
   },
   {
     label: "Experience",
-    value: "Dark surfaces, stronger hierarchy, and a calmer reading rhythm.",
+    value: "Dark surfaces, clear hierarchy.",
   },
   {
     label: "Data source",
-    value: "Public movie APIs and app-specific user actions.",
+    value: "Public movie APIs and saved actions.",
   },
 ];
 
@@ -68,13 +68,10 @@ export default function AboutPage() {
                 About the project
               </p>
               <h1 className="mt-3 max-w-3xl text-4xl font-semibold tracking-tight md:text-5xl">
-                A personal film notebook with a clearer frame.
+                A movie tracker.
               </h1>
               <p className="mt-4 max-w-2xl text-sm leading-7 text-zinc-300 md:text-base">
-                This project keeps movie and series tracking in one place so the
-                experience feels curated, searchable, and easy to return to. The
-                layout is intentionally editorial: enough atmosphere to feel
-                finished, enough restraint to stay useful.
+                Movie and series tracking stays in one place.
               </p>
 
               <div className="mt-6 flex flex-wrap gap-3 text-sm text-zinc-300">
@@ -92,7 +89,7 @@ export default function AboutPage() {
 
             <aside className="rounded-[1.5rem] border border-white/10 bg-black/20 p-5 md:p-6">
               <p className="text-[0.68rem] font-medium uppercase tracking-[0.3em] text-zinc-500">
-                Project frame
+                Project notes
               </p>
               <div className="mt-4 space-y-4">
                 {notes.map((note) => (
@@ -115,8 +112,8 @@ export default function AboutPage() {
 
         <DiscoverySearchSection
           eyebrow="Catalog Access"
-          title="Jump into the catalog from the project overview."
-          description="The app is built around fast recall as much as reading. Search a movie or a series here, then go back to the product notes without losing the page."
+          title="Jump into the catalog from here."
+          description="Search here, then return."
         />
 
         <section className="grid gap-4 md:gap-5 lg:grid-cols-3">
@@ -151,25 +148,18 @@ export default function AboutPage() {
         <section className="grid gap-6 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:items-start">
           <article className="rounded-[1.75rem] border border-white/10 bg-black/20 p-6 md:p-8">
             <p className="text-[0.68rem] font-medium uppercase tracking-[0.32em] text-zinc-500">
-              Reading room
+              Overview
             </p>
             <h2 className="mt-3 text-3xl font-semibold tracking-tight md:text-4xl">
-              Built for personal use, but presented like a finished product.
+              Built for personal use.
             </h2>
             <p className="mt-4 max-w-2xl text-sm leading-7 text-zinc-300 md:text-base">
-              The goal is simple: keep the utility fast enough for everyday use
-              while giving the app enough visual structure to feel deliberate.
-              That means cleaner spacing, more confident typography, and pages
-              that read like part of the same system rather than isolated
-              placeholders.
+              Keep it fast.
             </p>
 
             <div className="mt-6 border-t border-white/8 pt-6">
               <p className="text-sm leading-7 text-zinc-400">
-                If you are here for the architecture, the important detail is
-                the balance between density and calm. The interface should help
-                you browse, decide, and come back later without having to relearn
-                the layout each time.
+                Dense, not crowded.
               </p>
             </div>
           </article>
@@ -180,20 +170,20 @@ export default function AboutPage() {
             </p>
             <ul className="mt-4 space-y-3 text-sm leading-7 text-zinc-300">
               <li className="rounded-2xl border border-white/8 bg-white/4 px-4 py-3">
-                The app does not try to be a social network or a recommendation
-                engine for everyone.
+                It is not a social network or a general recommendation
+                engine.
               </li>
               <li className="rounded-2xl border border-white/8 bg-white/4 px-4 py-3">
-                It is optimized around personal logging, browsing, and quick
-                decision-making.
+                It is tuned for personal logging, browsing, and quick
+                choices.
               </li>
               <li className="rounded-2xl border border-white/8 bg-white/4 px-4 py-3">
-                The design stays dark and cinematic so the shell, search, and
-                cards all feel related.
+                Dark surfaces keep the shell, search, and
+                cards aligned.
               </li>
             </ul>
             <div className="mt-6 rounded-2xl border border-white/8 bg-white/4 px-4 py-4 text-sm text-zinc-400">
-              A compact tool, presented with a little more care.
+              A compact tool.
             </div>
           </aside>
         </section>
@@ -205,5 +195,5 @@ export default function AboutPage() {
 export const metadata = {
   title: "About - Movie Tracker",
   description:
-    "About this personal movie and series tracker: purpose, boundaries, and technical context.",
+    "About this personal movie and series tracker.",
 };

@@ -36,7 +36,7 @@ export default function SearchBar({
   const [showResults, setShowResults] = useState(false);
   const [lastQueryWithResults, setLastQueryWithResults] = useState("");
   const [totalResults, setTotalResults] = useState(0);
-  const debouncedQuery = useDebounce(query, 300); // 300ms delay
+  const debouncedQuery = useDebounce(query, 300); 
   const searchContainerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -83,7 +83,7 @@ export default function SearchBar({
     searchMovies();
   }, [debouncedQuery]);
 
-  // Handle blur event - hide results if query hasn't changed
+  
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -104,7 +104,7 @@ export default function SearchBar({
     const newQuery = e.target.value;
     setQuery(newQuery);
 
-    // Re-display results if the query changed after being hidden
+    
     if (
       newQuery.trim() &&
       newQuery !== lastQueryWithResults &&
@@ -156,7 +156,7 @@ export default function SearchBar({
           value={query}
           onChange={handleInputChange}
           onFocus={handleInputFocus}
-          placeholder="Search movies by title"
+          placeholder="Search titles"
           className={`w-full bg-transparent font-medium text-white placeholder:text-blue-100/45 focus:outline-none ${
             compact
               ? "px-3 py-3 pr-11 text-[0.88rem]"
@@ -210,7 +210,7 @@ export default function SearchBar({
                   {getReleaseYear(result) || "Unknown Year"}
                 </p>
                 <p className="mt-2 line-clamp-2 text-xs leading-5 text-zinc-400">
-                  {result.overview || "Open the detail page for synopsis and list actions."}
+                  {result.overview || "Open details."}
                 </p>
               </div>
             </Link>
@@ -222,7 +222,7 @@ export default function SearchBar({
           >
             <div>
               <p className="text-sm font-semibold text-white transition-colors group-hover:text-blue-100">
-                See all movie results
+                View all
               </p>
               <p className="mt-1 text-[0.68rem] font-medium uppercase tracking-[0.18em] text-zinc-500">
                 {totalResults.toLocaleString()} matches

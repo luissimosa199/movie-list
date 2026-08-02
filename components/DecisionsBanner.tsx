@@ -38,28 +38,27 @@ const DecisionsBanner: React.FC<DecisionsBannerProps> = ({
           <div className="mb-4 flex items-center justify-center gap-2 lg:justify-start">
             <span className="text-2xl">🎲</span>
             <h2 className="text-2xl font-semibold tracking-tight text-white md:text-[2rem]">
-              Can&apos;t Decide What to Watch?
+              Need a pick?
             </h2>
             <span className="text-2xl">🎮</span>
           </div>
 
           <p className="max-w-2xl text-sm leading-7 text-zinc-300 md:text-base">
-            Break the deadlock fast. Compare contenders, draw a random pick, or
-            let roulette make the call when the queue gets too crowded.
+            Compare picks, draw one at random, or let roulette decide.
           </p>
 
           <div className="mt-5 flex flex-wrap justify-center gap-3 text-xs text-zinc-300 md:text-sm lg:justify-start">
             <div className="rounded-full border border-white/10 bg-white/6 px-3 py-1.5">
               <span>🆚</span>
-              <span className="ml-2">VS Battles</span>
+              <span className="ml-2">Battle</span>
             </div>
             <div className="rounded-full border border-white/10 bg-white/6 px-3 py-1.5">
               <span>🎯</span>
-              <span className="ml-2">Random Picks</span>
+              <span className="ml-2">Random</span>
             </div>
             <div className="rounded-full border border-white/10 bg-white/6 px-3 py-1.5">
               <span>🎪</span>
-              <span className="ml-2">Movie Roulette</span>
+              <span className="ml-2">Roulette</span>
             </div>
           </div>
         </div>
@@ -71,7 +70,7 @@ const DecisionsBanner: React.FC<DecisionsBannerProps> = ({
             aria-label="Start using movie decision games"
           >
             <span className="text-lg">🎲</span>
-            <span>Start Deciding</span>
+            <span>Open hub</span>
             <svg
               className="h-4 w-4 transition-transform group-hover:translate-x-1"
               fill="currentColor"
@@ -91,3 +90,4 @@ const DecisionsBanner: React.FC<DecisionsBannerProps> = ({
 };
 
 export default DecisionsBanner;
+

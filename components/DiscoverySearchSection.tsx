@@ -11,9 +11,9 @@ interface DiscoverySearchSectionProps {
 }
 
 export default function DiscoverySearchSection({
-  eyebrow = "Cross-Search",
-  title = "Search movies and series without leaving the page.",
-  description = "Use the dual search deck for quick jumps into the catalog while keeping the current page context intact.",
+  eyebrow = "Search",
+  title = "Search titles.",
+  description = "Jump between views without losing place.",
   className = "",
 }: DiscoverySearchSectionProps) {
   return (
@@ -49,11 +49,11 @@ export default function DiscoverySearchSection({
                   Movies
                 </p>
                 <p className="mt-1 text-sm text-zinc-300">
-                  Saved-state aware when signed in
+                  Syncs when signed in
                 </p>
               </div>
               <span className="rounded-full border border-blue-400/20 bg-blue-400/10 px-3 py-1 text-[0.65rem] font-medium uppercase tracking-[0.22em] text-blue-200">
-                Quick find
+                Movies
               </span>
             </div>
             <SearchBar />
@@ -66,11 +66,11 @@ export default function DiscoverySearchSection({
                   Series
                 </p>
                 <p className="mt-1 text-sm text-zinc-300">
-                  Jump straight to TMDB show details
+                  Open show details
                 </p>
               </div>
               <span className="rounded-full border border-emerald-400/20 bg-emerald-400/10 px-3 py-1 text-[0.65rem] font-medium uppercase tracking-[0.22em] text-emerald-200">
-                Long-form
+                Series
               </span>
             </div>
             <SeriesSearchBar />

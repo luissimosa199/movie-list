@@ -10,7 +10,7 @@ const gameCards = [
     icon: "⚔️",
     title: "Movie Battles",
     description:
-      "Build a bracket, run head-to-head matchups, and let one favorite survive the tournament.",
+      "Bracket pick.",
     bullets: ["Tournament brackets", "1v1 battles", "Champion reveal"],
     accent:
       "from-red-950/60 via-red-900/30 to-orange-900/30 border-red-700/40 text-red-200",
@@ -24,8 +24,8 @@ const gameCards = [
     icon: "🎲",
     title: "Random Discovery",
     description:
-      "Use filters when you want more control, or hit surprise mode when you want a clean wildcard.",
-    bullets: ["Genre filters", "Year range", "Rating minimum"],
+      "Filter or go random.",
+    bullets: ["Filters", "Year", "Rating"],
     accent:
       "from-blue-950/60 via-blue-900/30 to-cyan-900/30 border-blue-700/40 text-blue-200",
     button:
@@ -38,8 +38,8 @@ const gameCards = [
     icon: "🎪",
     title: "Movie Roulette",
     description:
-      "Load a wheel with contenders, charge the spin, and let the room settle the choice in one move.",
-    bullets: ["Interactive wheel", "Spin mechanics", "Recent winners"],
+      "Load a wheel and spin.",
+    bullets: ["Wheel", "Spin", "Recent wins"],
     accent:
       "from-purple-950/60 via-purple-900/30 to-pink-900/30 border-purple-700/40 text-purple-200",
     button:
@@ -64,26 +64,26 @@ export default function DecisionsPage() {
         <DecisionHero
           icon="🎮"
           eyebrow="Decision Hub"
-          title="Movie Decision Games"
-          description="Stop drifting between tabs. Pick a mode, narrow the field, and let the app handle the final decision with more style than a generic randomizer."
+          title="Movie decisions"
+          description="Pick a mode."
           accent="purple"
         >
           <div className="rounded-[1.5rem] border border-white/10 bg-black/20 p-4 md:p-5">
             <p className="text-[0.68rem] font-medium uppercase tracking-[0.3em] text-zinc-500">
-              Quick Modes
+              Modes
             </p>
             <div className="mt-4 grid gap-3 sm:grid-cols-3">
               <div className="rounded-2xl border border-white/10 bg-white/6 px-4 py-3 text-sm text-zinc-200">
                 <div className="font-semibold text-white">Battle</div>
-                <div className="mt-1 text-zinc-400">Bracket-style elimination</div>
+                <div className="mt-1 text-zinc-400">Bracket</div>
               </div>
               <div className="rounded-2xl border border-white/10 bg-white/6 px-4 py-3 text-sm text-zinc-200">
                 <div className="font-semibold text-white">Discover</div>
-                <div className="mt-1 text-zinc-400">Filter and randomize fast</div>
+                <div className="mt-1 text-zinc-400">Filter or randomize</div>
               </div>
               <div className="rounded-2xl border border-white/10 bg-white/6 px-4 py-3 text-sm text-zinc-200">
                 <div className="font-semibold text-white">Roulette</div>
-                <div className="mt-1 text-zinc-400">Wheel-based group choice</div>
+                <div className="mt-1 text-zinc-400">Wheel-based choice</div>
               </div>
             </div>
           </div>
@@ -91,8 +91,8 @@ export default function DecisionsPage() {
 
         <DiscoverySearchSection
           eyebrow="Decision Prep"
-          title="Pull movies or series into view before you commit to a mode."
-          description="Use the search deck here when you already know the title and want to jump straight into details or gather contenders before opening a game."
+          title="Search first."
+          description="Jump to a title before you start."
         />
 
         <section className="grid grid-cols-1 gap-6 lg:grid-cols-3">
@@ -153,7 +153,7 @@ export default function DecisionsPage() {
         </section>
 
         <div className="text-center text-sm text-zinc-500">
-          More decision tools can plug into this hub later without changing the shell.
+          More modes can be added later.
         </div>
       </div>
     </main>
@@ -161,7 +161,7 @@ export default function DecisionsPage() {
 }
 
 export const metadata = {
-  title: "Movie Decision Games - Battle, Discover, Spin",
+  title: "Movie Decisions",
   description:
-    "Interactive movie decision games: battle movies in tournaments, get random recommendations, or spin the roulette wheel to discover your next favorite film.",
+    "Battle, discover, or spin.",
 };

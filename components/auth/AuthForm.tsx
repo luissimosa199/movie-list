@@ -19,11 +19,11 @@ export default function AuthForm({ mode, redirectTo }: AuthFormProps) {
   const destinationLink = isSignUp
     ? `/sign-in?redirectTo=${encodeURIComponent(redirectTo)}`
     : `/sign-up?redirectTo=${encodeURIComponent(redirectTo)}`;
-  const title = isSignUp ? "Create your account" : "Sign in to continue";
+  const title = isSignUp ? "Create account" : "Sign in";
   const eyebrow = isSignUp ? "Create account" : "Welcome back";
   const description = isSignUp
-    ? "Create a simple account to keep your watchlist, profile, and decision history in one place."
-    : "Pick up where you left off and return to your saved lists, profile, and decision tools.";
+    ? "Create an account."
+    : "Sign in to continue.";
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -86,7 +86,7 @@ export default function AuthForm({ mode, redirectTo }: AuthFormProps) {
               Name
             </span>
             <span className="mb-2 block text-xs text-zinc-500">
-              This will appear on your profile.
+              Shown on your profile.
             </span>
             <input
               name="name"
@@ -105,7 +105,7 @@ export default function AuthForm({ mode, redirectTo }: AuthFormProps) {
             Email
           </span>
           <span className="mb-2 block text-xs text-zinc-500">
-            Use the address tied to your watchlist.
+            Use your email.
           </span>
           <input
             name="email"
@@ -124,8 +124,8 @@ export default function AuthForm({ mode, redirectTo }: AuthFormProps) {
           </span>
           <span className="mb-2 block text-xs text-zinc-500">
             {isSignUp
-              ? "Use at least 7 characters."
-              : "Use the password you already created."}
+              ? "At least 7 characters."
+              : "Enter your password."}
           </span>
           <input
             name="password"

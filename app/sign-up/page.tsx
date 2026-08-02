@@ -5,7 +5,7 @@ import { getServerSession } from "@/lib/auth-session";
 export const metadata = {
   title: "Sign Up - Movie List",
   description:
-    "Create a Movie List account for your watchlists, profile, and decision history.",
+    "Create an account.",
 };
 
 type SignUpPageProps = {
@@ -38,11 +38,10 @@ export default async function SignUpPage({ searchParams }: SignUpPageProps) {
 
             <div className="space-y-4">
               <h1 className="text-4xl font-semibold tracking-tight text-white md:text-6xl">
-                Build your watchlist home.
+                Create your account
               </h1>
               <p className="max-w-xl text-base leading-7 text-zinc-300 md:text-lg">
-                Create an account to keep movies, series, and decision tools in
-                one private place with a cleaner path back into the app.
+                Create one account for your lists and decisions.
               </p>
             </div>
 
@@ -50,7 +49,7 @@ export default async function SignUpPage({ searchParams }: SignUpPageProps) {
               <div className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur">
                 <p className="text-sm font-medium text-white">One profile</p>
                 <p className="mt-2 text-sm leading-6 text-zinc-400">
-                  Save your viewing habits under a single private identity.
+                  Keep your data under one account.
                 </p>
               </div>
               <div className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur">
@@ -58,21 +57,20 @@ export default async function SignUpPage({ searchParams }: SignUpPageProps) {
                   Shared decisions
                 </p>
                 <p className="mt-2 text-sm leading-6 text-zinc-400">
-                  Keep your favorite games and outcomes available later.
+                  Keep picks and results handy.
                 </p>
               </div>
               <div className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur">
                 <p className="text-sm font-medium text-white">Fast setup</p>
                 <p className="mt-2 text-sm leading-6 text-zinc-400">
-                  Email and password are enough to get moving quickly.
+                  Sign up with email and password.
                 </p>
               </div>
             </div>
 
             <div className="rounded-[1.75rem] border border-emerald-500/15 bg-emerald-500/10 p-5 shadow-[0_20px_60px_rgba(16,185,129,0.08)]">
               <p className="text-sm leading-6 text-emerald-50/90">
-                Registration stays lightweight. Use the same email each time so
-                your lists and profile remain easy to return to.
+                Use one email so your lists stay linked.
               </p>
             </div>
           </section>

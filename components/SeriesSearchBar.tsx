@@ -148,7 +148,7 @@ export default function SeriesSearchBar({ className = "" }: SearchBarProps) {
           value={query}
           onChange={handleInputChange}
           onFocus={handleInputFocus}
-          placeholder="Search TV series by title"
+          placeholder="Search TV series"
           className="w-full bg-transparent px-4 py-4 pr-12 text-[0.98rem] font-medium text-white placeholder:text-blue-100/45 focus:outline-none"
         />
       </SearchInputFrame>
@@ -188,7 +188,7 @@ export default function SeriesSearchBar({ className = "" }: SearchBarProps) {
                   {getFirstAirYear(result) || "Unknown Year"}
                 </p>
                 <p className="mt-2 line-clamp-2 text-xs leading-5 text-zinc-400">
-                  {result.overview || "Open the show page for more detail and watch actions."}
+                  {result.overview || "Open details."}
                 </p>
               </div>
             </Link>
@@ -200,7 +200,7 @@ export default function SeriesSearchBar({ className = "" }: SearchBarProps) {
           >
             <div>
               <p className="text-sm font-semibold text-white transition-colors group-hover:text-emerald-100">
-                See all series results
+                View all
               </p>
               <p className="mt-1 text-[0.68rem] font-medium uppercase tracking-[0.18em] text-zinc-500">
                 {totalResults.toLocaleString()} matches

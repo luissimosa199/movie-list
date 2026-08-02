@@ -74,10 +74,10 @@ export default function HeaderMovieSearch() {
             <div className="mb-4 flex items-center justify-between border-b border-white/8 pb-4">
               <div>
                 <p className="text-[0.68rem] uppercase tracking-[0.3em] text-zinc-500">
-                  Quick Search
+                  Search
                 </p>
                 <p className="mt-1 text-lg font-semibold text-white">
-                  Find another movie
+                  Search movie
                 </p>
               </div>
               <button

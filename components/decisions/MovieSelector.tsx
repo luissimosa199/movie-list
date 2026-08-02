@@ -192,7 +192,7 @@ const MovieSelector: React.FC<MovieSelectorProps> = ({
       {/* Search Section */}
       <div>
         <h3 className="text-lg font-semibold text-purple-200 mb-3">
-          Add Movies to Wheel
+          Add titles
         </h3>
 
         <div
@@ -209,7 +209,7 @@ const MovieSelector: React.FC<MovieSelectorProps> = ({
               placeholder={
                 selectedMovies.length >= maxMovies
                   ? `Maximum ${maxMovies} movies reached`
-                  : "Search for movies to add..."
+                  : "Search titles"
               }
               disabled={disabled || selectedMovies.length >= maxMovies}
               className="w-full px-4 py-3 text-sm bg-zinc-900 border border-zinc-700 rounded-lg text-white placeholder-zinc-400 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
@@ -243,7 +243,7 @@ const MovieSelector: React.FC<MovieSelectorProps> = ({
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-zinc-500 text-xs text-center">
-                        No Image
+                        No poster
                       </div>
                     )}
                   </div>
@@ -299,7 +299,7 @@ const MovieSelector: React.FC<MovieSelectorProps> = ({
       <div>
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-lg font-semibold text-purple-200">
-            Selected Movies ({selectedMovies.length}/{maxMovies})
+            Selected movies ({selectedMovies.length}/{maxMovies})
           </h3>
 
           {selectedMovies.length > 0 && (
@@ -308,7 +308,7 @@ const MovieSelector: React.FC<MovieSelectorProps> = ({
               disabled={disabled}
               className="text-sm text-zinc-400 hover:text-red-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Clear All
+              Clear all
             </button>
           )}
         </div>
@@ -316,9 +316,9 @@ const MovieSelector: React.FC<MovieSelectorProps> = ({
         {selectedMovies.length === 0 ? (
           <div className="bg-zinc-900/50 border border-zinc-800 rounded-lg p-8 text-center">
             <div className="text-4xl mb-3">🎬</div>
-            <p className="text-zinc-400 mb-2">No movies in your wheel yet</p>
+            <p className="text-zinc-400 mb-2">No titles yet</p>
             <p className="text-zinc-500 text-sm">
-              Add at least 2 movies to start spinning!
+              Add at least 2 to spin.
             </p>
           </div>
         ) : (
@@ -393,7 +393,7 @@ const MovieSelector: React.FC<MovieSelectorProps> = ({
                   ? `Ready to spin! (Can add ${
                       maxMovies - selectedMovies.length
                     } more)`
-                  : "Wheel is full - ready to spin!"}
+                  : "Wheel ready"}
               </span>
 
               {selectedMovies.length >= 2 && (

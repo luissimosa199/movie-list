@@ -87,7 +87,7 @@ function getSeriesYear(series: TMDBSeries) {
 
 function getKnownFor(person: PersonSearchResult) {
   if (!person.known_for?.length) {
-    return "Open the profile for film and series credits.";
+    return "Open the profile for credits.";
   }
 
   return person.known_for
@@ -259,7 +259,7 @@ export default function SearchPageClient({
               {getMovieYear(movie) ?? "Unknown Year"}
             </p>
             <p className="mt-3 line-clamp-3 text-sm leading-6 text-zinc-300">
-              {movie.overview || "Open the detail page for synopsis and list actions."}
+              {movie.overview || "Open details for more."}
             </p>
           </div>
         </Link>
@@ -296,7 +296,7 @@ export default function SearchPageClient({
               {getSeriesYear(series) ?? "Unknown Year"}
             </p>
             <p className="mt-3 line-clamp-3 text-sm leading-6 text-zinc-300">
-              {series.overview || "Open the show page for more detail and watch actions."}
+              {series.overview || "Open details for more."}
             </p>
           </div>
         </Link>
@@ -350,11 +350,10 @@ export default function SearchPageClient({
                 Search Archive
               </p>
               <h1 className="mt-3 max-w-3xl text-4xl font-semibold tracking-tight md:text-5xl">
-                Keep searching past the first few matches.
+                Search titles and people.
               </h1>
               <p className="mt-4 max-w-2xl text-sm leading-7 text-zinc-300 md:text-base">
-                Move between titles and people without leaving the result flow,
-                then open the exact movie, series, actor, or director page.
+                Search titles and people from one view.
               </p>
             </div>
 
@@ -373,7 +372,7 @@ export default function SearchPageClient({
                 type="search"
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
-                placeholder="Search by title or person"
+                placeholder="Search titles or people"
                 className="min-h-[4rem] w-full rounded-[1.35rem] border border-blue-300/30 bg-[linear-gradient(180deg,rgba(17,24,39,0.76),rgba(5,7,12,0.8))] px-12 text-[1rem] font-medium text-white shadow-[0_20px_65px_rgba(0,0,0,0.35)] placeholder:text-blue-100/45 focus:border-fuchsia-200/50 focus:outline-none"
               />
               {isLoading ? (
@@ -413,11 +412,11 @@ export default function SearchPageClient({
 
         <section className="space-y-4">
           {!trimmedQuery ? (
-            <EmptyState title="Start with a search" copy="Enter a title or name to load results." />
+            <EmptyState title="Start searching" copy="Enter a title or name." />
           ) : error ? (
             <EmptyState title="Search unavailable" copy={error} />
           ) : !isLoading && results.length === 0 ? (
-            <EmptyState title="No results found" copy="Try a different title or person name." />
+            <EmptyState title="No results found" copy="Try another title or name." />
           ) : (
             <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
               {results.map(renderResult)}
@@ -428,7 +427,7 @@ export default function SearchPageClient({
 
           {isLoadingMore ? (
             <div className="rounded-[1.25rem] border border-white/10 bg-white/[0.04] px-5 py-4 text-center text-sm text-zinc-400">
-              Loading more results...
+              Loading more...
             </div>
           ) : null}
 

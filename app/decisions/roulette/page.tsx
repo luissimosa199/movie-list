@@ -146,8 +146,8 @@ const RouletteGamePage = () => {
         <DecisionHero
           icon="🎪"
           eyebrow="Movie Roulette"
-          title="Load the wheel and let it settle the room."
-          description="This mode is best when you already have contenders. Add movies, charge the spin, and let the wheel land the choice without another round of group indecision."
+          title="Load the wheel and let it decide."
+          description="Add contenders, charge the spin, and let the wheel choose."
           accent="purple"
         >
           <div className="rounded-[1.5rem] border border-white/10 bg-black/20 p-4 md:p-5">
@@ -162,7 +162,7 @@ const RouletteGamePage = () => {
                 </div>
               </div>
               <div className="rounded-2xl border border-white/10 bg-white/6 px-4 py-3">
-                <div className="text-sm font-semibold text-white">Game state</div>
+                <div className="text-sm font-semibold text-white">State</div>
                 <div className="mt-1 text-sm capitalize text-zinc-400">
                   {gameState}
                 </div>
@@ -172,9 +172,9 @@ const RouletteGamePage = () => {
         </DecisionHero>
 
         <DiscoverySearchSection
-          eyebrow="Wheel Prep"
-          title="Find contenders before you load the roulette wheel."
-          description="Search from here when the shortlist is not fully formed yet, then come back and add the titles that deserve a spin."
+          eyebrow="Wheel prep"
+          title="Add contenders first."
+          description="Search first, then add titles."
         />
 
         <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
@@ -192,11 +192,10 @@ const RouletteGamePage = () => {
           <div className="xl:col-span-1">
             <div className="rounded-[1.75rem] border border-white/10 bg-panel/70 p-5 text-center shadow-2xl shadow-black/15 md:p-6">
               <h2 className="text-2xl font-semibold text-purple-200">
-                The Wheel of Fate
+                Wheel
               </h2>
               <p className="mt-2 text-sm leading-6 text-zinc-400">
-                More charge means more drama. Once the spin starts, the wheel owns
-                the result.
+                Hold longer for bigger spins.
               </p>
 
               <RouletteWheel
