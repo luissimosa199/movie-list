@@ -2,13 +2,15 @@
 
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
-import SearchBar from "@/components/SearchBar";
+import CatalogSearch from "@/components/search/CatalogSearch";
 
-export default function HeaderMovieSearch() {
+export default function HeaderSearch() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
-  const isMovieDetailPage =
-    pathname.startsWith("/movies/") && pathname !== "/movies";
+  const isDetailPage =
+    pathname.startsWith("/movies/") ||
+    pathname.startsWith("/series/") ||
+    pathname.startsWith("/people/");
 
   useEffect(() => {
     setIsOpen(false);
@@ -27,7 +29,7 @@ export default function HeaderMovieSearch() {
     };
   }, [isOpen]);
 
-  if (!isMovieDetailPage) {
+  if (!isDetailPage) {
     return null;
   }
 
@@ -35,14 +37,18 @@ export default function HeaderMovieSearch() {
     <>
       <div className="hidden min-w-0 flex-1 xl:block">
         <div className="mx-auto w-full max-w-md">
-          <SearchBar compact className="z-[90]" />
+          <CatalogSearch
+            compact
+            placeholder="Search titles, people, and more"
+            limit={5}
+          />
         </div>
       </div>
       <div className="md:hidden">
         <button
           type="button"
           onClick={() => setIsOpen(true)}
-          aria-label="Open movie search"
+          aria-label="Open catalog search"
           className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-white/6 text-zinc-100 shadow-lg shadow-black/25 hover:border-white/20 hover:bg-white/10"
         >
           <svg
@@ -65,7 +71,7 @@ export default function HeaderMovieSearch() {
         <div className="fixed inset-0 z-[250] md:hidden">
           <button
             type="button"
-            aria-label="Close movie search"
+            aria-label="Close catalog search"
             onClick={() => setIsOpen(false)}
             className="absolute inset-0 bg-black/80 backdrop-blur-sm"
           />
@@ -77,7 +83,7 @@ export default function HeaderMovieSearch() {
                   Search
                 </p>
                 <p className="mt-1 text-lg font-semibold text-white">
-                  Search movie
+                  Search the catalog
                 </p>
               </div>
               <button
@@ -102,7 +108,10 @@ export default function HeaderMovieSearch() {
               </button>
             </div>
 
-            <SearchBar className="z-[90]" />
+            <CatalogSearch
+              placeholder="Search titles, people, and more"
+              limit={5}
+            />
           </div>
         </div>
       ) : null}

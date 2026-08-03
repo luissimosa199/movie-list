@@ -20,6 +20,73 @@ export interface TMDBMovieWithDbStatus extends TMDBMovie {
   inDb: boolean;
 }
 
+export interface TMDBSearchMovieResult {
+  adult: boolean;
+  backdrop_path: string | null;
+  genre_ids: number[];
+  id: number;
+  media_type: "movie";
+  original_language: string;
+  original_title: string;
+  overview: string | null;
+  popularity: number;
+  poster_path: string | null;
+  release_date: string | null;
+  title: string;
+  video: boolean;
+  vote_average: number;
+  vote_count: number;
+}
+
+export interface TMDBSearchSeriesResult {
+  adult: boolean;
+  backdrop_path: string | null;
+  genre_ids: number[];
+  id: number;
+  media_type: "tv";
+  origin_country: string[];
+  original_language: string;
+  original_name: string;
+  overview: string | null;
+  popularity: number;
+  poster_path: string | null;
+  first_air_date: string | null;
+  name: string;
+  vote_average: number;
+  vote_count: number;
+}
+
+export interface TMDBSearchPersonResult {
+  adult: boolean;
+  gender: number | null;
+  id: number;
+  known_for?: TMDBPersonKnownFor[];
+  known_for_department: string;
+  media_type: "person";
+  name: string;
+  original_name: string;
+  popularity: number;
+  profile_path: string | null;
+}
+
+export type TMDBSearchMultiResult =
+  | TMDBSearchMovieResult
+  | TMDBSearchSeriesResult
+  | TMDBSearchPersonResult;
+
+export type UnifiedSearchKind = "movie" | "series" | "actor" | "director";
+
+export interface UnifiedSearchResult {
+  kind: UnifiedSearchKind;
+  id: number;
+  title: string;
+  year: number | null;
+  overview: string | null;
+  posterPath: string | null;
+  href: string;
+  voteAverage: number | null;
+  voteCount: number | null;
+}
 export interface FullDetailTMDBMovie extends TMDBMovie {
   belongs_to_collection: null | {
     id: number;
@@ -438,3 +505,7 @@ export interface RouletteHistory {
   timestamp: number;
   movies: TMDBMovie[];
 }
+
+
+
+

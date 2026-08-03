@@ -5,7 +5,7 @@ import {
   getTopRatedMovies,
   getUpcomingMovies,
 } from "@/api/tmdb";
-import SearchBar from "@/components/SearchBar";
+import CatalogSearch from "@/components/search/CatalogSearch";
 import DecisionsBanner from "@/components/DecisionsBanner";
 
 const movieSections = [
@@ -49,7 +49,7 @@ export default async function Movies() {
                 Browse movies.
               </h1>
               <p className="mt-4 max-w-2xl text-sm leading-7 text-zinc-300 md:text-base">
-                Search titles or browse popular, top-rated, and upcoming releases.
+                Search the catalog, then browse popular, top-rated, and upcoming releases.
               </p>
 
               <div className="mt-6 flex flex-wrap gap-3 text-sm text-zinc-300">
@@ -57,7 +57,7 @@ export default async function Movies() {
                   <span className="text-white">3 feeds</span>
                 </div>
                 <div className="rounded-full border border-white/10 bg-white/6 px-4 py-2">
-                  <span className="text-white">Fast search</span>
+                  <span className="text-white">Catalog search</span>
                 </div>
                 <div className="rounded-full border border-white/10 bg-white/6 px-4 py-2">
                   <span className="text-white">Grid or list</span>
@@ -74,7 +74,7 @@ export default async function Movies() {
                 Search
               </p>
               <div className="relative z-10">
-                <SearchBar />
+                <CatalogSearch placeholder="Search movies, series, actors, and directors" />
               </div>
             </div>
           </div>
