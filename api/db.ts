@@ -1,3 +1,4 @@
+import { Prisma } from "@prisma/client";
 import prisma from "@/lib/prisma";
 import {
   CreateMovieData,
@@ -26,6 +27,17 @@ type MovieWatchEventRecord = {
     };
   };
 };
+
+export type ProfileSortOrder = "newest" | "oldest";
+
+function getSortDirection(sort: ProfileSortOrder): Prisma.SortOrder {
+  return sort === "oldest" ? "asc" : "desc";
+}
+
+function getGenreFilter(genre?: string | null): { has: string } | undefined {
+  const normalizedGenre = genre?.trim();
+  return normalizedGenre ? { has: normalizedGenre } : undefined;
+}
 
 function mapMovieWithWatchStats(movie: MovieWithWatchStatsRecord): Movie {
   const latestWatch = movie.watch_events[0] ?? null;
@@ -119,15 +131,26 @@ async function requireOwnedSeriesId(userId: string, id: number): Promise<number>
 export async function getLatestWatchedMovies(
   userId: string,
   limit: number = 10,
-  offset: number = 0
+  offset: number = 0,
+  sort: ProfileSortOrder = "newest",
+  genre?: string | null
 ): Promise<WatchedMovie[]> {
+  const sortDirection = getSortDirection(sort);
+  const genreFilter = getGenreFilter(genre);
   const events = (await prisma.movie_watch_events.findMany({
     where: {
       userId,
+      ...(genreFilter
+        ? {
+            movie: {
+              genres: genreFilter,
+            },
+          }
+        : {}),
     },
     take: limit,
     skip: offset,
-    orderBy: [{ watched_at: "desc" }, { id: "desc" }],
+    orderBy: [{ watched_at: sortDirection }, { id: sortDirection }],
     include: {
       movie: {
         include: {
@@ -147,20 +170,23 @@ export async function getLatestWatchedMovies(
 export async function getRecentlyAddedMovies(
   userId: string,
   limit: number = 10,
-  offset: number = 0
+  offset: number = 0,
+  sort: ProfileSortOrder = "newest",
+  genre?: string | null
 ): Promise<Movie[]> {
+  const sortDirection = getSortDirection(sort);
+  const genreFilter = getGenreFilter(genre);
   const movies = (await prisma.movies.findMany({
     where: {
       userId,
       watch_events: {
         none: {},
       },
+      ...(genreFilter ? { genres: genreFilter } : {}),
     },
     take: limit,
     skip: offset,
-    orderBy: {
-      created_at: "desc",
-    },
+    orderBy: [{ created_at: sortDirection }, { id: sortDirection }],
     include: {
       watch_events: {
         select: {
@@ -181,6 +207,51 @@ export async function getRecentlyAddedMovies(
   })) as MovieWithWatchStatsRecord[];
 
   return movies.map(mapMovieWithWatchStats);
+}
+
+export async function getLatestWatchedSeries(
+  userId: string,
+  limit: number = 10,
+  offset: number = 0,
+  sort: ProfileSortOrder = "newest",
+  genre?: string | null
+): Promise<SeriesType[]> {
+  const sortDirection = getSortDirection(sort);
+  const genreFilter = getGenreFilter(genre);
+
+  return (await prisma.series.findMany({
+    where: {
+      userId,
+      watched_at: {
+        not: null,
+      },
+      ...(genreFilter ? { genres: genreFilter } : {}),
+    },
+    take: limit,
+    skip: offset,
+    orderBy: [{ watched_at: sortDirection }, { id: sortDirection }],
+  })) as SeriesType[];
+}
+
+export async function getRecentlyAddedSeries(
+  userId: string,
+  limit: number = 10,
+  offset: number = 0,
+  sort: ProfileSortOrder = "newest",
+  genre?: string | null
+): Promise<SeriesType[]> {
+  const sortDirection = getSortDirection(sort);
+  const genreFilter = getGenreFilter(genre);
+
+  return (await prisma.series.findMany({
+    where: {
+      userId,
+      ...(genreFilter ? { genres: genreFilter } : {}),
+    },
+    take: limit,
+    skip: offset,
+    orderBy: [{ created_at: sortDirection }, { id: sortDirection }],
+  })) as SeriesType[];
 }
 
 export async function getMovie(userId: string, id: number): Promise<Movie | null> {

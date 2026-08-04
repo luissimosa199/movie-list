@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { Series, TMDBSeries } from "@/types";
 import Image from "next/image";
@@ -31,8 +29,16 @@ const SeriesCard: React.FC<SeriesCardProps> = ({
   const genres = getSeriesGenres(series, source);
   const firstAirDate =
     source === "db"
-      ? (series as Series).first_air_date
-      : (series as TMDBSeries).first_air_date;
+      ? (series as Series).first_air_date ?? null
+      : (series as TMDBSeries).first_air_date ?? null;
+  const scoreValue =
+    source === "db"
+      ? (series as Series).score ?? null
+      : null;
+  const firstAirDateLabel = firstAirDate
+    ? getFormattedAirDate(firstAirDate, source)
+    : "Air date unavailable";
+  const genresLabel = genres?.length ? genres.join(", ") : "No genres listed";
 
   const cardClasses = isCompact
     ? "relative flex h-full flex-col overflow-hidden rounded-[1.5rem] border border-white/10 bg-[linear-gradient(180deg,rgba(15,23,42,0.96),rgba(9,12,18,0.98))] shadow-[0_20px_60px_rgba(0,0,0,0.22)] transition-transform duration-200 hover:-translate-y-0.5 hover:border-white/15 hover:shadow-[0_26px_70px_rgba(0,0,0,0.3)]"
@@ -117,7 +123,7 @@ const SeriesCard: React.FC<SeriesCardProps> = ({
                   : "text-sm leading-6 text-zinc-400"
               }
             >
-              First aired: {getFormattedAirDate(firstAirDate, source)}
+              First aired: {firstAirDateLabel}
             </p>
 
             {!isCompact && (
@@ -136,17 +142,15 @@ const SeriesCard: React.FC<SeriesCardProps> = ({
               </>
             )}
 
-            {!isCompact && genres && (
-              <p
-                className={
-                  isCompact
-                    ? "text-xs leading-5 text-zinc-400"
-                    : "text-sm leading-6 text-zinc-400"
-                }
-              >
-                <span className="text-zinc-500">Genres:</span> {genres.join(", ")}
-              </p>
-            )}
+            <p
+              className={
+                isCompact
+                  ? "text-xs leading-5 text-zinc-400"
+                  : "text-sm leading-6 text-zinc-400"
+              }
+            >
+              <span className="text-zinc-500">Genres:</span> {genresLabel}
+            </p>
 
             {!isCompact && source === "db" && (series as Series).number_of_seasons && (
               <p
@@ -175,14 +179,12 @@ const SeriesCard: React.FC<SeriesCardProps> = ({
             )}
 
             <div className="flex flex-wrap gap-2 text-xs text-zinc-300">
-              {source === "db" && (series as Series).score && (
+              {source === "db" ? (
                 <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1">
                   <span className="text-zinc-500">Your Score:</span>{" "}
-                  {(series as Series).score}
+                  {scoreValue ?? "Not rated yet"}
                 </span>
-              )}
-
-              {source === "tmdb" && (
+              ) : (
                 <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1">
                   <span className="text-zinc-500">TMDB Rating:</span>{" "}
                   {(series as TMDBSeries).vote_average.toFixed(1)} / 10
