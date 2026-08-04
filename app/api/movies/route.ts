@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
-import { addMovieToList, removeMovieFromList, movieExistsInDb } from "@/api/db";
+import { addMovieToList, removeMovieFromList } from "@/api/db";
 import type { TMDBMovie } from "@/types";
-import { getMovieDetails, searchMovies } from "@/api/tmdb";
+import { getMovieDetails } from "@/api/tmdb";
 import { getRequestUser } from "@/lib/auth-session";
 
 interface TMDBMovieDetails extends TMDBMovie {
@@ -41,7 +41,6 @@ export async function POST(request: Request) {
       watched_at: null,
     });
 
-    // Revalidate cache for affected pages
     revalidatePath("/movies");
     revalidatePath(`/movies/${result.id}`);
     revalidatePath("/profile/recently-added");
@@ -51,41 +50,6 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error("Error adding movie:", error);
     return NextResponse.json({ error: "Failed to add movie" }, { status: 500 });
-  }
-}
-
-export async function GET(request: Request) {
-  try {
-    const user = await getRequestUser(request);
-    const { searchParams } = new URL(request.url);
-    const query = searchParams.get("query") || "";
-    const page = parseInt(searchParams.get("page") || "1");
-    const limit = parseInt(searchParams.get("limit") || "10");
-
-    const movies = await searchMovies(query, page, limit);
-
-    // Add database status to each movie result
-    const moviesWithDbStatus = await Promise.all(
-      movies.results.map(async (movie) => {
-        const dbId = user ? await movieExistsInDb(user.id, movie.id) : false;
-        return {
-          ...movie,
-          dbId: dbId || null,
-          inDb: !!dbId
-        };
-      })
-    );
-
-    return NextResponse.json({
-      ...movies,
-      results: moviesWithDbStatus
-    });
-  } catch (error) {
-    console.error("Error searching movies:", error);
-    return NextResponse.json(
-      { error: "Failed to search movies" },
-      { status: 500 }
-    );
   }
 }
 
@@ -99,7 +63,6 @@ export async function DELETE(request: Request) {
     const { id } = await request.json();
     const result = await removeMovieFromList(user.id, id);
 
-    // Revalidate cache for affected pages
     revalidatePath("/movies");
     revalidatePath(`/movies/${id}`);
     revalidatePath("/profile/recently-added");
@@ -114,3 +77,4 @@ export async function DELETE(request: Request) {
     );
   }
 }
+

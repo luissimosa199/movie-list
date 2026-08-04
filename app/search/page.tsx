@@ -1,6 +1,4 @@
-import SearchPageClient from "@/components/search/SearchPageClient";
-
-type SearchType = "movie" | "series" | "actor" | "director";
+import CatalogSearchPage from "@/components/search/CatalogSearchPage";
 
 interface SearchPageProps {
   searchParams: Promise<{
@@ -9,32 +7,13 @@ interface SearchPageProps {
   }>;
 }
 
-function getInitialType(type?: string): SearchType {
-  if (
-    type === "movie" ||
-    type === "series" ||
-    type === "actor" ||
-    type === "director"
-  ) {
-    return type;
-  }
-
-  return "movie";
-}
-
 export default async function SearchPage({ searchParams }: SearchPageProps) {
   const params = await searchParams;
 
-  return (
-    <SearchPageClient
-      initialQuery={params.q ?? ""}
-      initialType={getInitialType(params.type)}
-    />
-  );
+  return <CatalogSearchPage initialQuery={params.q ?? ""} />;
 }
 
 export const metadata = {
   title: "Search - Movie Tracker",
-  description:
-    "Search titles, series, actors, and directors.",
+  description: "Search movies, series, actors, and directors.",
 };

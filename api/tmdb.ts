@@ -1,4 +1,16 @@
-import { TMDBMovie, TMDBSeries, TMDBPerson, FullDetailTMDBMovie, FullDetailTMDBSeries, FullDetailTMDBPerson, Genre, DiscoverParams, MovieCredits, ExternalIds } from "@/types";
+import {
+  DiscoverParams,
+  ExternalIds,
+  FullDetailTMDBMovie,
+  FullDetailTMDBPerson,
+  FullDetailTMDBSeries,
+  Genre,
+  MovieCredits,
+  TMDBMovie,
+  TMDBPerson,
+  TMDBSearchMultiResult,
+  TMDBSeries,
+} from "@/types";
 
 type QueryParams = Record<string, string | number>;
 
@@ -76,6 +88,23 @@ export async function searchPeople(
   };
 }
 
+export async function searchAllMedia(
+  query: string,
+  page: number = 1,
+  limit: number = 10
+): Promise<TMDBResponse<TMDBSearchMultiResult>> {
+  const response = await fetchFromTMDB<TMDBResponse<TMDBSearchMultiResult>>(
+    "/search/multi",
+    {
+      query,
+      page,
+    }
+  );
+  return {
+    ...response,
+    results: response.results.slice(0, limit),
+  };
+}
 export async function searchMovies(
   query: string,
   page: number = 1,
@@ -351,3 +380,5 @@ export function buildDiscoverParams(filters: {
 
   return params;
 }
+
+

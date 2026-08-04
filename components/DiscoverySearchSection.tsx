@@ -1,7 +1,6 @@
 "use client";
 
-import SearchBar from "@/components/SearchBar";
-import SeriesSearchBar from "@/components/SeriesSearchBar";
+import CatalogSearch from "@/components/search/CatalogSearch";
 
 interface DiscoverySearchSectionProps {
   eyebrow?: string;
@@ -10,10 +9,12 @@ interface DiscoverySearchSectionProps {
   className?: string;
 }
 
+const discoveryKinds = ["Movies", "Series", "People", "Directors"];
+
 export default function DiscoverySearchSection({
   eyebrow = "Search",
-  title = "Search titles.",
-  description = "Jump between views without losing place.",
+  title = "Search the catalog.",
+  description = "Find titles and people without leaving the page.",
   className = "",
 }: DiscoverySearchSectionProps) {
   return (
@@ -41,42 +42,27 @@ export default function DiscoverySearchSection({
           </p>
         </div>
 
-        <div className="grid gap-4 xl:grid-cols-2">
+        <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_17rem] xl:items-start">
           <div className="relative z-0 rounded-[1.55rem] border border-white/10 bg-black/20 p-4 backdrop-blur-sm focus-within:z-[140] has-[input:not(:placeholder-shown)]:z-[140] md:p-5">
-            <div className="mb-3 flex items-center justify-between gap-3">
-              <div>
-                <p className="text-[0.65rem] font-medium uppercase tracking-[0.28em] text-zinc-500">
-                  Movies
-                </p>
-                <p className="mt-1 text-sm text-zinc-300">
-                  Syncs when signed in
-                </p>
-              </div>
-              <span className="rounded-full border border-blue-400/20 bg-blue-400/10 px-3 py-1 text-[0.65rem] font-medium uppercase tracking-[0.22em] text-blue-200">
-                Movies
-              </span>
-            </div>
-            <SearchBar />
+            <CatalogSearch
+                            placeholder="Search movies, series, actors, and directors"
+              limit={6}
+            />
           </div>
 
-          <div className="relative z-0 rounded-[1.55rem] border border-white/10 bg-black/20 p-4 backdrop-blur-sm focus-within:z-[140] has-[input:not(:placeholder-shown)]:z-[140] md:p-5">
-            <div className="mb-3 flex items-center justify-between gap-3">
-              <div>
-                <p className="text-[0.65rem] font-medium uppercase tracking-[0.28em] text-zinc-500">
-                  Series
-                </p>
-                <p className="mt-1 text-sm text-zinc-300">
-                  Open show details
-                </p>
-              </div>
-              <span className="rounded-full border border-emerald-400/20 bg-emerald-400/10 px-3 py-1 text-[0.65rem] font-medium uppercase tracking-[0.22em] text-emerald-200">
-                Series
+          <div className="flex flex-wrap gap-2 xl:flex-col xl:pt-1">
+            {discoveryKinds.map((kind) => (
+              <span
+                key={kind}
+                className="inline-flex items-center rounded-full border border-white/10 bg-white/[0.04] px-3 py-2 text-[0.65rem] font-medium uppercase tracking-[0.22em] text-zinc-400"
+              >
+                {kind}
               </span>
-            </div>
-            <SeriesSearchBar />
+            ))}
           </div>
         </div>
       </div>
     </section>
   );
 }
+

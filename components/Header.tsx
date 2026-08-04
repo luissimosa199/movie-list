@@ -4,7 +4,7 @@ import AuthButtons from "./AuthButtons";
 import MobileMenu from "./MobileMenu";
 import NavLinks from "./NavLinks";
 import ViewToggle from "./ViewToggle";
-import HeaderMovieSearch from "./HeaderMovieSearch";
+import HeaderSearch from "./HeaderSearch";
 
 export default async function Header() {
   const session = await getServerSession();
@@ -34,7 +34,7 @@ export default async function Header() {
             </div>
           </div>
 
-          <HeaderMovieSearch />
+          <HeaderSearch />
 
           <div className="hidden items-center gap-3 md:flex">
             <AuthButtons isSignedIn={isSignedIn} />

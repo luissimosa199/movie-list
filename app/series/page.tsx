@@ -1,7 +1,7 @@
 import SeriesCardWrapper from "@/components/SeriesCardWrapper";
 import ClientGridWrapper from "@/components/ClientGridWrapper";
 import { getPopularSeries } from "@/api/tmdb";
-import SeriesSearchBar from "@/components/SeriesSearchBar";
+import CatalogSearch from "@/components/search/CatalogSearch";
 
 export default async function SeriesPage() {
   const popularSeries = await getPopularSeries(1, 20);
@@ -24,7 +24,7 @@ export default async function SeriesPage() {
                 Keep series organized.
               </h1>
               <p className="mt-4 max-w-2xl text-sm leading-7 text-zinc-300 md:text-base">
-                Search fast, then browse series.
+                Search the catalog, then browse popular series.
               </p>
 
               <div className="mt-6 flex flex-wrap gap-3 text-sm text-zinc-300">
@@ -32,7 +32,7 @@ export default async function SeriesPage() {
                   <span className="text-white">Popular series</span>
                 </div>
                 <div className="rounded-full border border-white/10 bg-white/6 px-4 py-2">
-                  <span className="text-white">TMDB search</span>
+                  <span className="text-white">Catalog search</span>
                 </div>
                 <div className="rounded-full border border-white/10 bg-white/6 px-4 py-2">
                   <span className="text-white">Consistent layout</span>
@@ -49,7 +49,7 @@ export default async function SeriesPage() {
                 Search
               </p>
               <div className="relative z-10">
-                <SeriesSearchBar />
+                <CatalogSearch placeholder="Search movies, series, actors, and directors" />
               </div>
             </div>
           </div>
