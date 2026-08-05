@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { Movie, TMDBMovie } from "@/types";
 import Image from "next/image";
@@ -35,12 +33,23 @@ const MovieCard: React.FC<MovieCardProps> = ({
   const genres = getGenres(movie, source);
   const releaseDate =
     source === "db"
-      ? (movie as Movie).release_date
-      : (movie as TMDBMovie).release_date;
+      ? (movie as Movie).release_date ?? null
+      : (movie as TMDBMovie).release_date ?? null;
   const watchedAt =
     source === "db"
       ? (movie as Movie).watched_at ?? null
       : watchedMovie?.watched_at ?? null;
+  const scoreValue =
+    source === "db"
+      ? (movie as Movie).score ?? null
+      : watchedMovie?.score ?? null;
+  const releaseDateLabel = releaseDate
+    ? getFormattedDate(releaseDate, source)
+    : "Release date unavailable";
+  const watchedAtLabel = watchedAt
+    ? getFormattedDate(watchedAt, "db")
+    : "Watch date unavailable";
+  const genresLabel = genres?.length ? genres.join(", ") : "No genres listed";
 
   const cardClasses = isCompact
     ? "relative flex h-full flex-col overflow-hidden rounded-[1.5rem] border border-white/10 bg-[linear-gradient(180deg,rgba(15,23,42,0.96),rgba(9,12,18,0.98))] shadow-[0_20px_60px_rgba(0,0,0,0.22)] transition-transform duration-200 hover:-translate-y-0.5 hover:border-white/15 hover:shadow-[0_26px_70px_rgba(0,0,0,0.3)]"
@@ -135,9 +144,7 @@ const MovieCard: React.FC<MovieCardProps> = ({
                   : "text-sm leading-6 text-zinc-400"
               }
             >
-              {isWatched
-                ? `Last watched: ${getFormattedDate(watchedAt, "db")}`
-                : `Released: ${getFormattedDate(releaseDate, source)}`}
+              {isWatched ? `Last watched: ${watchedAtLabel}` : `Released: ${releaseDateLabel}`}
             </p>
 
             {source === "db" &&
@@ -170,17 +177,15 @@ const MovieCard: React.FC<MovieCardProps> = ({
               </>
             )}
 
-            {!isCompact && genres && (
-              <p
-                className={
-                  isCompact
-                    ? "text-xs leading-5 text-zinc-400"
-                    : "text-sm leading-6 text-zinc-400"
-                }
-              >
-                <span className="text-zinc-500">Genres:</span> {genres.join(", ")}
-              </p>
-            )}
+            <p
+              className={
+                isCompact
+                  ? "text-xs leading-5 text-zinc-400"
+                  : "text-sm leading-6 text-zinc-400"
+              }
+            >
+              <span className="text-zinc-500">Genres:</span> {genresLabel}
+            </p>
 
             {!isCompact && source === "db" && (movie as Movie).runtime && (
               <p
@@ -196,15 +201,17 @@ const MovieCard: React.FC<MovieCardProps> = ({
             )}
 
             <div className="flex flex-wrap gap-2 text-xs text-zinc-300">
-              {((source === "db" && (movie as Movie).score) ||
-                (source === "tmdb" && watchedMovie?.score)) && (
+              {source === "db" ? (
                 <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1">
                   <span className="text-zinc-500">Your Score:</span>{" "}
-                  {source === "db" ? (movie as Movie).score : watchedMovie?.score}
+                  {scoreValue ?? "Not rated yet"}
                 </span>
-              )}
-
-              {source === "tmdb" && !watchedMovie?.score && (
+              ) : scoreValue != null ? (
+                <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1">
+                  <span className="text-zinc-500">Your Score:</span>{" "}
+                  {scoreValue}
+                </span>
+              ) : (
                 <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1">
                   <span className="text-zinc-500">TMDB Rating:</span>{" "}
                   {(movie as TMDBMovie).vote_average.toFixed(1)} / 10
