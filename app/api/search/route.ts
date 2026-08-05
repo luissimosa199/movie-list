@@ -39,7 +39,7 @@ function mapMediaResult(result: TMDBSearchMultiResult): UnifiedSearchResult | nu
       year: getYear(movie.release_date),
       overview: movie.overview,
       posterPath: movie.poster_path,
-      href: `/movies/${movie.id}`,
+      href: `/movies/${movie.id}?tmdb=true`,
       voteAverage: movie.vote_average,
       voteCount: movie.vote_count,
     };
@@ -54,7 +54,7 @@ function mapMediaResult(result: TMDBSearchMultiResult): UnifiedSearchResult | nu
       year: getYear(series.first_air_date),
       overview: series.overview,
       posterPath: series.poster_path,
-      href: `/series/${series.id}`,
+      href: `/series/${series.id}?tmdb=true`,
       voteAverage: series.vote_average,
       voteCount: series.vote_count,
     };
