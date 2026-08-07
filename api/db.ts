@@ -183,6 +183,38 @@ export async function getRecentlyAddedMovies(
   return movies.map(mapMovieWithWatchStats);
 }
 
+export async function getLatestWatchedSeries(
+  userId: string,
+  limit: number = 10,
+  offset: number = 0
+): Promise<SeriesType[]> {
+  return (await prisma.series.findMany({
+    where: {
+      userId,
+      watched_at: { not: null },
+    },
+    take: limit,
+    skip: offset,
+    orderBy: [{ watched_at: "desc" }, { id: "desc" }],
+  })) as SeriesType[];
+}
+
+export async function getRecentlyAddedSeries(
+  userId: string,
+  limit: number = 10,
+  offset: number = 0
+): Promise<SeriesType[]> {
+  return (await prisma.series.findMany({
+    where: {
+      userId,
+      watched_at: null,
+    },
+    take: limit,
+    skip: offset,
+    orderBy: [{ created_at: "desc" }, { id: "desc" }],
+  })) as SeriesType[];
+}
+
 export async function getMovie(userId: string, id: number): Promise<Movie | null> {
   return getMovieWithWatchStatsByWhere(userId, { id });
 }

@@ -1,14 +1,17 @@
-import MovieCard from "@/components/MovieCard";
-import ClientGridWrapper from "@/components/ClientGridWrapper";
-import { getRecentlyAddedMovies } from "@/api/db";
+import { getRecentlyAddedMovies, getRecentlyAddedSeries } from "@/api/db";
 import Link from "next/link";
 import { requireUser } from "@/lib/auth-session";
 import DiscoverySearchSection from "@/components/DiscoverySearchSection";
+import ProfileMediaList from "@/components/profile/ProfileMediaList";
 
 export default async function RecentlyAddedPage() {
   const user = await requireUser("/profile/recently-added");
-  // Get the last 50 recently added movies
-  const recentlyAddedMovies = await getRecentlyAddedMovies(user.id, 50);
+  // Get the latest unwatched movies and series
+  const [recentlyAddedMovies, recentlyAddedSeries] = await Promise.all([
+    getRecentlyAddedMovies(user.id, 50),
+    getRecentlyAddedSeries(user.id, 50),
+  ]);
+  const totalItems = recentlyAddedMovies.length + recentlyAddedSeries.length;
 
   return (
     <main className="bg-black text-white min-h-screen py-12 px-4">
@@ -47,22 +50,16 @@ export default async function RecentlyAddedPage() {
           description="Jump to another title without losing place."
         />
 
-        {recentlyAddedMovies.length > 0 ? (
+        {totalItems > 0 ? (
           <>
             <p className="text-zinc-400 mb-8">
-              Showing {recentlyAddedMovies.length} additions
+              Showing {totalItems} additions
             </p>
-            <ClientGridWrapper>
-              {recentlyAddedMovies.map((movie) => (
-                <MovieCard
-                  key={movie.id}
-                  movie={movie}
-                  source="db"
-                  isMovieInDb={movie.id}
-                  watchedMovie={null}
-                />
-              ))}
-            </ClientGridWrapper>
+            <ProfileMediaList
+              kind="recent"
+              movies={recentlyAddedMovies}
+              series={recentlyAddedSeries}
+            />
           </>
         ) : (
           <div className="bg-zinc-900 rounded-lg p-12 text-center border border-zinc-800">
@@ -82,16 +79,22 @@ export default async function RecentlyAddedPage() {
               </svg>
             </div>
             <p className="text-zinc-400 text-xl mb-2">
-              No movies in your list yet
+              No titles in your list yet
             </p>
             <p className="text-zinc-500">
-              Add titles to your list and they will appear here.
+              Add movies or series to your list and they will appear here.
             </p>
             <Link
               href="/movies"
               className="inline-block mt-6 bg-primary hover:bg-primary/90 text-white py-3 px-6 rounded-md transition-colors font-medium"
             >
               Browse movies
+            </Link>
+            <Link
+              href="/series"
+              className="inline-block mt-6 ml-3 border border-white/10 hover:border-white/20 text-white py-3 px-6 rounded-md transition-colors font-medium"
+            >
+              Browse series
             </Link>
           </div>
         )}
