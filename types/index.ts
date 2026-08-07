@@ -293,7 +293,7 @@ export interface Movie {
   watch_count?: number;
   title: string;
   overview?: string | null;
-  release_date: Date;
+  release_date: Date | null;
   runtime?: number | null;
   genres?: string[] | null;
   poster_url?: string | null;
@@ -432,7 +432,7 @@ export interface Series {
   watched_at?: Date | null;
   name: string;
   overview?: string | null;
-  first_air_date: Date;
+  first_air_date: Date | null;
   last_air_date?: Date | null;
   number_of_episodes?: number | null;
   number_of_seasons?: number | null;
@@ -445,7 +445,7 @@ export interface CreateSeriesData {
   tmdb_id: number;
   name: string;
   overview: string;
-  first_air_date: Date;
+  first_air_date: Date | null;
   last_air_date?: Date | null;
   number_of_episodes?: number;
   number_of_seasons?: number;
