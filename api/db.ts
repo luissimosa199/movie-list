@@ -144,6 +144,28 @@ export async function getLatestWatchedMovies(
   return events.map(mapWatchedMovie);
 }
 
+async function getAllLatestWatchedMovies(userId: string): Promise<WatchedMovie[]> {
+  const events = (await prisma.movie_watch_events.findMany({
+    where: {
+      userId,
+    },
+    orderBy: [{ watched_at: "desc" }, { id: "desc" }],
+    include: {
+      movie: {
+        include: {
+          _count: {
+            select: {
+              watch_events: true,
+            },
+          },
+        },
+      },
+    },
+  })) as MovieWatchEventRecord[];
+
+  return events.map(mapWatchedMovie);
+}
+
 export async function getRecentlyAddedMovies(
   userId: string,
   limit: number = 10,
@@ -181,6 +203,69 @@ export async function getRecentlyAddedMovies(
   })) as MovieWithWatchStatsRecord[];
 
   return movies.map(mapMovieWithWatchStats);
+}
+
+async function getAllRecentlyAddedMovies(userId: string): Promise<Movie[]> {
+  const movies = (await prisma.movies.findMany({
+    where: {
+      userId,
+    },
+    orderBy: [{ created_at: "desc" }, { id: "desc" }],
+    include: {
+      watch_events: {
+        select: {
+          id: true,
+          watched_at: true,
+        },
+        orderBy: {
+          watched_at: "desc",
+        },
+        take: 1,
+      },
+      _count: {
+        select: {
+          watch_events: true,
+        },
+      },
+    },
+  })) as MovieWithWatchStatsRecord[];
+
+  return movies.map(mapMovieWithWatchStats);
+}
+
+export async function getLatestWatchedProfileFeed(
+  userId: string
+): Promise<{ movies: WatchedMovie[]; series: SeriesType[] }> {
+  const [movies, series] = await Promise.all([
+    getAllLatestWatchedMovies(userId),
+    prisma.series.findMany({
+      where: {
+        userId,
+        watched_at: {
+          not: null,
+        },
+      },
+      orderBy: [{ watched_at: "desc" }, { id: "desc" }],
+    }),
+  ]);
+
+  return { movies, series: series as SeriesType[] };
+}
+
+export async function getRecentlyAddedProfileFeed(
+  userId: string
+): Promise<{ movies: Movie[]; series: SeriesType[] }> {
+  const [movies, series] = await Promise.all([
+    getAllRecentlyAddedMovies(userId),
+    prisma.series.findMany({
+      where: {
+        userId,
+      },
+      orderBy: [{ created_at: "desc" }, { id: "desc" }],
+    }),
+  ]);
+
+  return { movies, series: series as SeriesType[] };
 }
 
 export async function getMovie(userId: string, id: number): Promise<Movie | null> {

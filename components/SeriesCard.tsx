@@ -33,6 +33,7 @@ const SeriesCard: React.FC<SeriesCardProps> = ({
     source === "db"
       ? (series as Series).first_air_date
       : (series as TMDBSeries).first_air_date;
+  const watchedAt = source === "db" ? (series as Series).watched_at : null;
 
   const cardClasses = isCompact
     ? "relative flex h-full flex-col overflow-hidden rounded-[1.5rem] border border-white/10 bg-[linear-gradient(180deg,rgba(15,23,42,0.96),rgba(9,12,18,0.98))] shadow-[0_20px_60px_rgba(0,0,0,0.22)] transition-transform duration-200 hover:-translate-y-0.5 hover:border-white/15 hover:shadow-[0_26px_70px_rgba(0,0,0,0.3)]"
@@ -117,7 +118,9 @@ const SeriesCard: React.FC<SeriesCardProps> = ({
                   : "text-sm leading-6 text-zinc-400"
               }
             >
-              First aired: {getFormattedAirDate(firstAirDate, source)}
+              {watchedAt
+                ? `Last watched: ${getFormattedAirDate(watchedAt, "db")}`
+                : `First aired: ${getFormattedAirDate(firstAirDate, source)}`}
             </p>
 
             {!isCompact && (
@@ -175,12 +178,12 @@ const SeriesCard: React.FC<SeriesCardProps> = ({
             )}
 
             <div className="flex flex-wrap gap-2 text-xs text-zinc-300">
-              {source === "db" && (series as Series).score && (
+              {source === "db" ? (
                 <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1">
                   <span className="text-zinc-500">Your Score:</span>{" "}
-                  {(series as Series).score}
+                  {(series as Series).score ?? "Unavailable"}
                 </span>
-              )}
+              ) : null}
 
               {source === "tmdb" && (
                 <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1">
