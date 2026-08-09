@@ -196,12 +196,18 @@ const MovieCard: React.FC<MovieCardProps> = ({
             )}
 
             <div className="flex flex-wrap gap-2 text-xs text-zinc-300">
-              {((source === "db" && (movie as Movie).score) ||
-                (source === "tmdb" && watchedMovie?.score)) && (
+              {source === "db" ? (
                 <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1">
                   <span className="text-zinc-500">Your Score:</span>{" "}
-                  {source === "db" ? (movie as Movie).score : watchedMovie?.score}
+                  {(movie as Movie).score ?? "Unavailable"}
                 </span>
+              ) : (
+                watchedMovie?.score && (
+                  <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1">
+                    <span className="text-zinc-500">Your Score:</span>{" "}
+                    {watchedMovie.score}
+                  </span>
+                )
               )}
 
               {source === "tmdb" && !watchedMovie?.score && (
