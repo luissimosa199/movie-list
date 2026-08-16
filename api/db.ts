@@ -1,3 +1,5 @@
+import "server-only";
+
 import prisma from "@/lib/prisma";
 import {
   CreateMovieData,
@@ -671,6 +673,181 @@ function toUTCDateString(date: Date): string {
   const m = String(date.getUTCMonth() + 1).padStart(2, "0");
   const d = String(date.getUTCDate()).padStart(2, "0");
   return `${y}-${m}-${d}`;
+}
+
+export type ProfileStats = {
+  totalWatches: number;
+  watchesThisYear: number;
+  watchesThisMonth: number;
+  knownWatchMinutes: number;
+  activeStreakDays: number;
+  monthlyActivity: Array<{
+    key: string;
+    label: string;
+    count: number;
+    isCurrent: boolean;
+  }>;
+  activityDays: Array<{
+    date: string;
+    count: number;
+  }>;
+  topGenres: Array<{
+    genre: string;
+    count: number;
+  }>;
+  rewatches: Array<{
+    title: string;
+    count: number;
+  }>;
+  ratings: Array<{
+    score: number;
+    count: number;
+  }>;
+};
+
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+function startOfUTCDay(date: Date): Date {
+  return new Date(
+    Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate())
+  );
+}
+
+function addUTCDays(date: Date, days: number): Date {
+  return new Date(date.getTime() + days * DAY_MS);
+}
+
+/**
+ * Returns the movie-only profile summary. Every derived value originates from
+ * the caller's own movie watch events, so rewatches remain individual events.
+ */
+export async function getProfileStats(userId: string): Promise<ProfileStats> {
+  const now = new Date();
+  const today = startOfUTCDay(now);
+  const currentMonthStart = new Date(
+    Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1)
+  );
+  const currentYearStart = new Date(Date.UTC(now.getUTCFullYear(), 0, 1));
+  const nextYearStart = new Date(Date.UTC(now.getUTCFullYear() + 1, 0, 1));
+  const nextMonthStart = new Date(
+    Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 1)
+  );
+  const firstMonth = new Date(
+    Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - 11, 1)
+  );
+  const heatmapStart = addUTCDays(today, -364);
+
+  const events = await prisma.movie_watch_events.findMany({
+    where: { userId },
+    select: {
+      watched_at: true,
+      movie: {
+        select: {
+          title: true,
+          runtime: true,
+          genres: true,
+          score: true,
+        },
+      },
+    },
+    orderBy: { watched_at: "asc" },
+  });
+
+  const activityByDay = new Map<string, number>();
+  const activityByMonth = new Map<string, number>();
+  const genreCounts = new Map<string, number>();
+  const rewatchCounts = new Map<string, number>();
+  const ratingCounts = new Map<number, number>();
+  let watchesThisYear = 0;
+  let watchesThisMonth = 0;
+  let knownWatchMinutes = 0;
+
+  for (const event of events) {
+    const watchedAt = event.watched_at;
+    const day = toUTCDateString(watchedAt);
+    const month = day.slice(0, 7);
+    activityByDay.set(day, (activityByDay.get(day) ?? 0) + 1);
+    activityByMonth.set(month, (activityByMonth.get(month) ?? 0) + 1);
+
+    if (watchedAt >= currentYearStart && watchedAt < nextYearStart) {
+      watchesThisYear += 1;
+    }
+    if (watchedAt >= currentMonthStart && watchedAt < nextMonthStart) {
+      watchesThisMonth += 1;
+    }
+    if (event.movie.runtime !== null) {
+      knownWatchMinutes += event.movie.runtime;
+    }
+
+    for (const rawGenre of event.movie.genres) {
+      const genre = rawGenre.trim();
+      if (genre) genreCounts.set(genre, (genreCounts.get(genre) ?? 0) + 1);
+    }
+    rewatchCounts.set(
+      event.movie.title,
+      (rewatchCounts.get(event.movie.title) ?? 0) + 1
+    );
+  }
+
+  // Scores belong to current movies, not individual watch events.
+  const scoredMovies = await prisma.movies.findMany({
+    where: { userId, score: { not: null } },
+    select: { score: true },
+  });
+  for (const movie of scoredMovies) {
+    if (movie.score !== null) {
+      ratingCounts.set(movie.score, (ratingCounts.get(movie.score) ?? 0) + 1);
+    }
+  }
+
+  let activeStreakDays = 0;
+  for (let cursor = today; activityByDay.has(toUTCDateString(cursor)); cursor = addUTCDays(cursor, -1)) {
+    activeStreakDays += 1;
+  }
+
+  const monthlyActivity = Array.from({ length: 12 }, (_, index) => {
+    const month = new Date(
+      Date.UTC(firstMonth.getUTCFullYear(), firstMonth.getUTCMonth() + index, 1)
+    );
+    const key = `${month.getUTCFullYear()}-${String(month.getUTCMonth() + 1).padStart(2, "0")}`;
+    return {
+      key,
+      label: month.toLocaleString("en-US", { month: "short", timeZone: "UTC" }),
+      count: activityByMonth.get(key) ?? 0,
+      isCurrent: month.getTime() === currentMonthStart.getTime(),
+    };
+  });
+
+  const activityDays = Array.from({ length: 365 }, (_, index) => {
+    const date = addUTCDays(heatmapStart, index);
+    const key = toUTCDateString(date);
+    return { date: key, count: activityByDay.get(key) ?? 0 };
+  });
+
+  const byCountThenName = <T extends { count: number }>(
+    left: T,
+    right: T,
+    name: (item: T) => string
+  ) => right.count - left.count || name(left).localeCompare(name(right));
+
+  return {
+    totalWatches: events.length,
+    watchesThisYear,
+    watchesThisMonth,
+    knownWatchMinutes,
+    activeStreakDays,
+    monthlyActivity,
+    activityDays,
+    topGenres: Array.from(genreCounts, ([genre, count]) => ({ genre, count }))
+      .sort((left, right) => byCountThenName(left, right, (item) => item.genre))
+      .slice(0, 3),
+    rewatches: Array.from(rewatchCounts, ([title, count]) => ({ title, count }))
+      .filter((item) => item.count > 1)
+      .sort((left, right) => byCountThenName(left, right, (item) => item.title))
+      .slice(0, 3),
+    ratings: Array.from(ratingCounts, ([score, count]) => ({ score, count }))
+      .sort((left, right) => right.count - left.count || right.score - left.score),
+  };
 }
 
 export async function getWatchingStreak(userId: string): Promise<{

@@ -59,6 +59,7 @@ export async function addMovie(movie: TMDBMovie): Promise<Movie> {
     revalidatePath("/profile");
     revalidatePath("/profile/recently-added");
     revalidatePath("/profile/latest-watched");
+    revalidatePath("/profile/stats");
 
     return result;
   } catch (error) {
@@ -79,6 +80,7 @@ export async function removeMovie(id: number): Promise<Movie> {
     revalidatePath("/profile");
     revalidatePath("/profile/recently-added");
     revalidatePath("/profile/latest-watched");
+    revalidatePath("/profile/stats");
 
     return result;
   } catch (error) {
@@ -136,6 +138,7 @@ export async function markMovieAsWatched(
     revalidatePath("/profile");
     revalidatePath("/profile/recently-added");
     revalidatePath("/profile/latest-watched");
+    revalidatePath("/profile/stats");
 
     return {
       movie: result,
@@ -183,6 +186,7 @@ export async function updateMovieScore(
     revalidatePath("/profile");
     revalidatePath("/profile/recently-added");
     revalidatePath("/profile/latest-watched");
+    revalidatePath("/profile/stats");
 
     return result;
   } catch (error) {

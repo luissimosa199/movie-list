@@ -41,6 +41,7 @@ export async function PATCH(request: Request) {
       revalidatePath(`/movies/${dbMovieId}`);
       revalidatePath("/profile/recently-added");
       revalidatePath("/profile/latest-watched");
+      revalidatePath("/profile/stats");
 
       return NextResponse.json(result);
     }
@@ -70,6 +71,7 @@ export async function PATCH(request: Request) {
     revalidatePath(`/movies/${result.id}`);
     revalidatePath("/profile/recently-added");
     revalidatePath("/profile/latest-watched");
+    revalidatePath("/profile/stats");
 
     return NextResponse.json(result);
   } catch (error) {
