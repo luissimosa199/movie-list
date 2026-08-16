@@ -18,6 +18,14 @@ export default async function ProfilePage() {
           Profile
         </h1>
 
+        <Link
+          href="/profile/stats"
+          data-testid="profile-stats-link"
+          className="mb-10 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-sm font-semibold text-zinc-200 hover:border-primary/60 hover:bg-primary/10 hover:text-white"
+        >
+          View watching stats <span aria-hidden="true">→</span>
+        </Link>
+
         <DiscoverySearchSection
           className="mb-12"
           eyebrow="Library Lookup"

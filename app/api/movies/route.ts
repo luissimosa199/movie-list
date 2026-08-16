@@ -45,6 +45,7 @@ export async function POST(request: Request) {
     revalidatePath(`/movies/${result.id}`);
     revalidatePath("/profile/recently-added");
     revalidatePath("/profile/latest-watched");
+    revalidatePath("/profile/stats");
 
     return NextResponse.json(result);
   } catch (error) {
@@ -67,6 +68,7 @@ export async function DELETE(request: Request) {
     revalidatePath(`/movies/${id}`);
     revalidatePath("/profile/recently-added");
     revalidatePath("/profile/latest-watched");
+    revalidatePath("/profile/stats");
 
     return NextResponse.json(result);
   } catch (error) {
@@ -77,4 +79,3 @@ export async function DELETE(request: Request) {
     );
   }
 }
-
