@@ -23,11 +23,18 @@ type SortOption =
   | "score-asc"
   | "score-desc";
 
+type WatchedFilter = "not-watched" | "watched" | "all";
+
+type MediaTypeFilter = "all" | "movie" | "series";
+
 const getGenresForItem = (item: ProfileFeedItem): string[] => {
   const genres = item.mediaType === "movie" ? item.movie.genres : item.series.genres;
 
   return (genres ?? []).map((genre) => genre.trim()).filter(Boolean);
 };
+
+const isItemWatched = (item: ProfileFeedItem): boolean =>
+  Boolean(item.mediaType === "movie" ? item.movie.watched_at : item.series.watched_at);
 
 const getReleaseTimestamp = (item: ProfileFeedItem): number | null => {
   const date = item.mediaType === "movie" ? item.movie.release_date : item.series.first_air_date;
@@ -48,6 +55,10 @@ const ProfileFeed = ({
 }: ProfileFeedProps) => {
   const [genre, setGenre] = useState("all");
   const [sort, setSort] = useState<SortOption>("activity");
+  const [mediaType, setMediaType] = useState<MediaTypeFilter>("all");
+  const [watchedFilter, setWatchedFilter] = useState<WatchedFilter>(
+    feedType === "recently-added" ? "not-watched" : "all"
+  );
 
   const genres = useMemo(
     () =>
@@ -58,9 +69,14 @@ const ProfileFeed = ({
   );
 
   const visibleItems = useMemo(() => {
-    const filtered = items.filter(
-      (item) => genre === "all" || getGenresForItem(item).includes(genre)
-    );
+    const filtered = items.filter((item) => {
+      if (genre !== "all" && !getGenresForItem(item).includes(genre)) return false;
+      if (mediaType !== "all" && item.mediaType !== mediaType) return false;
+      if (watchedFilter === "watched" && !isItemWatched(item)) return false;
+      if (watchedFilter === "not-watched" && isItemWatched(item)) return false;
+
+      return true;
+    });
 
     return filtered
       .map((item, index) => ({ item, index }))
@@ -88,7 +104,7 @@ const ProfileFeed = ({
         return (leftValue - rightValue) * direction || leftIndex - rightIndex;
       })
       .map(({ item }) => item);
-  }, [genre, items, sort]);
+  }, [genre, items, sort, mediaType, watchedFilter]);
 
   if (items.length === 0) {
     return (
@@ -107,7 +123,49 @@ const ProfileFeed = ({
 
   return (
     <div>
-      <div className="mb-8 flex flex-col gap-4 rounded-2xl border border-white/10 bg-white/[0.03] p-4 sm:flex-row sm:items-end sm:justify-between">
+      <div className="mb-8 flex flex-col gap-4 rounded-2xl border border-white/10 bg-white/[0.03] p-4 sm:flex-row sm:flex-wrap sm:items-end sm:justify-between">
+        {feedType === "recently-added" && (
+          <div className="flex flex-col gap-2 text-sm text-zinc-400">
+            Watched status
+            <div className="flex rounded-lg border border-white/10 bg-zinc-900 p-1">
+              {(
+                [
+                  { value: "not-watched", label: "Not watched" },
+                  { value: "watched", label: "Watched" },
+                  { value: "all", label: "All" },
+                ] as { value: WatchedFilter; label: string }[]
+              ).map((option) => (
+                <button
+                  key={option.value}
+                  type="button"
+                  onClick={() => setWatchedFilter(option.value)}
+                  aria-pressed={watchedFilter === option.value}
+                  className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
+                    watchedFilter === option.value
+                      ? "bg-primary text-white"
+                      : "text-zinc-400 hover:text-white"
+                  }`}
+                >
+                  {option.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <label className="flex flex-col gap-2 text-sm text-zinc-400">
+          Type
+          <select
+            value={mediaType}
+            onChange={(event) => setMediaType(event.target.value as MediaTypeFilter)}
+            className="min-w-40 rounded-lg border border-white/10 bg-zinc-900 px-3 py-2 text-white outline-none transition-colors focus:border-primary"
+          >
+            <option value="all">Movies & series</option>
+            <option value="movie">Movies</option>
+            <option value="series">Series</option>
+          </select>
+        </label>
+
         <label className="flex flex-col gap-2 text-sm text-zinc-400">
           Genre
           <select
