@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { afterAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   addMovieToList,
   addSeriesToList,
@@ -20,6 +20,7 @@ import {
   updateSeriesScore,
 } from "@/api/db";
 import { alice, bob } from "@/tests/fixtures/catalog";
+import { verifyDisposableDatabase } from "@/tests/setup/database-safety";
 
 const prisma = new PrismaClient();
 const NOW = new Date("2026-09-09T12:00:00.000Z");
@@ -135,13 +136,21 @@ async function seed() {
   return { arrival, madMax, inception, bobArrival, watchedSeries, unwatchedSeries };
 }
 
+let databaseVerified = false;
+
+beforeAll(async () => {
+  await verifyDisposableDatabase();
+  databaseVerified = true;
+});
+
 beforeEach(async () => {
+  if (!databaseVerified) throw new Error("Disposable database was not verified before destructive test setup");
   vi.useRealTimers();
   await cleanDatabase();
 });
 
 afterAll(async () => {
-  await cleanDatabase();
+  if (databaseVerified) await cleanDatabase();
   await prisma.$disconnect();
 });
 
