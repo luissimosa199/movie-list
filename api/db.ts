@@ -721,8 +721,10 @@ function addUTCDays(date: Date, days: number): Date {
  * Returns the movie-only profile summary. Every derived value originates from
  * the caller's own movie watch events, so rewatches remain individual events.
  */
-export async function getProfileStats(userId: string): Promise<ProfileStats> {
-  const now = new Date();
+export async function getProfileStats(
+  userId: string,
+  now: Date = new Date()
+): Promise<ProfileStats> {
   const today = startOfUTCDay(now);
   const currentMonthStart = new Date(
     Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1)

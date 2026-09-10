@@ -4,6 +4,13 @@ import ClientGridWrapper from "@/components/ClientGridWrapper";
 import MovieCard from "@/components/MovieCard";
 import SeriesCard from "@/components/SeriesCard";
 import { ProfileFeedItem } from "@/types";
+import {
+  filterAndSortProfileFeed,
+  listProfileFeedGenres,
+  ProfileFeedMediaTypeFilter,
+  ProfileFeedSort,
+  ProfileFeedWatchedFilter,
+} from "@/utils/profileFeed";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 
@@ -16,35 +23,6 @@ type ProfileFeedProps = {
   emptyActionHref: string;
 };
 
-type SortOption =
-  | "activity"
-  | "release-asc"
-  | "release-desc"
-  | "score-asc"
-  | "score-desc";
-
-type WatchedFilter = "not-watched" | "watched" | "all";
-
-type MediaTypeFilter = "all" | "movie" | "series";
-
-const getGenresForItem = (item: ProfileFeedItem): string[] => {
-  const genres = item.mediaType === "movie" ? item.movie.genres : item.series.genres;
-
-  return (genres ?? []).map((genre) => genre.trim()).filter(Boolean);
-};
-
-const isItemWatched = (item: ProfileFeedItem): boolean =>
-  Boolean(item.mediaType === "movie" ? item.movie.watched_at : item.series.watched_at);
-
-const getReleaseTimestamp = (item: ProfileFeedItem): number | null => {
-  const date = item.mediaType === "movie" ? item.movie.release_date : item.series.first_air_date;
-
-  return date ? new Date(date).getTime() : null;
-};
-
-const getScore = (item: ProfileFeedItem): number | null =>
-  item.mediaType === "movie" ? item.movie.score ?? null : item.series.score ?? null;
-
 const ProfileFeed = ({
   items,
   feedType,
@@ -54,56 +32,24 @@ const ProfileFeed = ({
   emptyActionHref,
 }: ProfileFeedProps) => {
   const [genre, setGenre] = useState("all");
-  const [sort, setSort] = useState<SortOption>("activity");
-  const [mediaType, setMediaType] = useState<MediaTypeFilter>("all");
-  const [watchedFilter, setWatchedFilter] = useState<WatchedFilter>(
+  const [sort, setSort] = useState<ProfileFeedSort>("activity");
+  const [mediaType, setMediaType] = useState<ProfileFeedMediaTypeFilter>("all");
+  const [watchedFilter, setWatchedFilter] = useState<ProfileFeedWatchedFilter>(
     feedType === "recently-added" ? "not-watched" : "all"
   );
 
   const genres = useMemo(
-    () =>
-      Array.from(
-        new Set(items.flatMap((item) => getGenresForItem(item)))
-      ).sort((a, b) => a.localeCompare(b)),
+    () => listProfileFeedGenres(items),
     [items]
   );
 
   const visibleItems = useMemo(() => {
-    const filtered = items.filter((item) => {
-      if (genre !== "all" && !getGenresForItem(item).includes(genre)) return false;
-      if (mediaType !== "all" && item.mediaType !== mediaType) return false;
-      if (watchedFilter === "watched" && !isItemWatched(item)) return false;
-      if (watchedFilter === "not-watched" && isItemWatched(item)) return false;
-
-      return true;
+    return filterAndSortProfileFeed(items, {
+      genre,
+      sort,
+      mediaType,
+      watched: watchedFilter,
     });
-
-    return filtered
-      .map((item, index) => ({ item, index }))
-      .sort(({ item: left, index: leftIndex }, { item: right, index: rightIndex }) => {
-        if (sort === "activity") {
-          return (
-            new Date(right.activityDate).getTime() -
-              new Date(left.activityDate).getTime() ||
-            leftIndex - rightIndex
-          );
-        }
-
-        const leftValue =
-          sort.startsWith("release") ? getReleaseTimestamp(left) : getScore(left);
-        const rightValue =
-          sort.startsWith("release") ? getReleaseTimestamp(right) : getScore(right);
-
-        if (leftValue === null && rightValue === null) {
-          return leftIndex - rightIndex;
-        }
-        if (leftValue === null) return 1;
-        if (rightValue === null) return -1;
-
-        const direction = sort.endsWith("desc") ? -1 : 1;
-        return (leftValue - rightValue) * direction || leftIndex - rightIndex;
-      })
-      .map(({ item }) => item);
   }, [genre, items, sort, mediaType, watchedFilter]);
 
   if (items.length === 0) {
@@ -133,7 +79,7 @@ const ProfileFeed = ({
                   { value: "not-watched", label: "Not watched" },
                   { value: "watched", label: "Watched" },
                   { value: "all", label: "All" },
-                ] as { value: WatchedFilter; label: string }[]
+                ] as { value: ProfileFeedWatchedFilter; label: string }[]
               ).map((option) => (
                 <button
                   key={option.value}
@@ -157,7 +103,7 @@ const ProfileFeed = ({
           Type
           <select
             value={mediaType}
-            onChange={(event) => setMediaType(event.target.value as MediaTypeFilter)}
+            onChange={(event) => setMediaType(event.target.value as ProfileFeedMediaTypeFilter)}
             className="min-w-40 rounded-lg border border-white/10 bg-zinc-900 px-3 py-2 text-white outline-none transition-colors focus:border-primary"
           >
             <option value="all">Movies & series</option>
@@ -186,7 +132,7 @@ const ProfileFeed = ({
           Sort by
           <select
             value={sort}
-            onChange={(event) => setSort(event.target.value as SortOption)}
+            onChange={(event) => setSort(event.target.value as ProfileFeedSort)}
             className="min-w-56 rounded-lg border border-white/10 bg-zinc-900 px-3 py-2 text-white outline-none transition-colors focus:border-primary"
           >
             <option value="activity">

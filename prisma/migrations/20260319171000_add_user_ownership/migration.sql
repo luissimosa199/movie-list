@@ -32,7 +32,12 @@ WHERE "s"."userId" IS NULL;
 
 DO $$
 BEGIN
-    IF NOT EXISTS (SELECT 1 FROM "user") THEN
+    IF NOT EXISTS (SELECT 1 FROM "user")
+       AND (
+           EXISTS (SELECT 1 FROM "movies")
+           OR EXISTS (SELECT 1 FROM "movie_watch_events")
+           OR EXISTS (SELECT 1 FROM "series")
+       ) THEN
         RAISE EXCEPTION 'Cannot backfill ownership: no Better Auth user exists';
     END IF;
 

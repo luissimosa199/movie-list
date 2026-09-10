@@ -127,7 +127,7 @@ model series {
   watched_at       DateTime? @db.Timestamp(6)
   added_to_list_at DateTime? @db.Timestamp(6)
 
-  tmdb_id  Int     @unique
+  tmdb_id  Int
   name     String
   overview String?
 
