@@ -7,6 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint . --ignore-pattern .next --ignore-pattern generated --ignore-pattern node_modules",
+    "test": "tsx tests/setup/prepare-database.ts && vitest run",
+    "test:unit": "vitest run --exclude tests/api/db.integration.test.ts",
+    "test:watch": "vitest",
     "postinstall": "prisma generate",
     "restore:movies": "tsx scripts/restoreMoviesFromCsv.ts movies.csv"
   },
@@ -23,16 +26,20 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
+    "@testing-library/react": "^16.3.3",
+    "@testing-library/user-event": "^14.6.7",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "baseline-browser-mapping": "^2.10.9",
     "eslint": "^9",
     "eslint-config-next": "15.2.2",
+    "jsdom": "^26.1.0",
     "playwright": "^1.58.2",
     "prisma": "^6.5.0",
     "tailwindcss": "^4",
     "tsx": "^4.19.3",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^3.2.7"
   }
 }
