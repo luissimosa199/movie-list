@@ -3,7 +3,6 @@ import ClientGridWrapper from "@/components/ClientGridWrapper";
 import { getLatestWatchedMovies, getRecentlyAddedMovies } from "@/api/db";
 import Link from "next/link";
 import { requireUser } from "@/lib/auth-session";
-import DiscoverySearchSection from "@/components/DiscoverySearchSection";
 
 export default async function ProfilePage() {
   const user = await requireUser("/profile");
@@ -26,12 +25,6 @@ export default async function ProfilePage() {
           View watching stats <span aria-hidden="true">→</span>
         </Link>
 
-        <DiscoverySearchSection
-          className="mb-12"
-          eyebrow="Library Lookup"
-          title="Search while you browse."
-          description="Keep discovery handy."
-        />
 
         {/* Latest watched Movies Section */}
         <div className="mb-12">

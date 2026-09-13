@@ -18,7 +18,6 @@ import TournamentProgress from "@/components/decisions/TournamentProgress";
 import TournamentChampion from "@/components/decisions/TournamentChampion";
 import DecisionBreadcrumbs from "@/components/decisions/DecisionBreadcrumbs";
 import DecisionHero from "@/components/decisions/DecisionHero";
-import DiscoverySearchSection from "@/components/DiscoverySearchSection";
 
 type TournamentPhase = "setup" | "battle" | "champion";
 
@@ -156,11 +155,6 @@ const VSBattlePage = () => {
           </div>
         </DecisionHero>
 
-        <DiscoverySearchSection
-          eyebrow="Bracket Prep"
-          title="Search first."
-          description="Use search before you seed the bracket."
-        />
 
         {error ? (
           <div className="rounded-[1.5rem] border border-red-500/35 bg-red-950/20 p-4 text-red-200">

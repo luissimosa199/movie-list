@@ -1,20 +1,50 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import CatalogSearch from "@/components/search/CatalogSearch";
+import { SearchIcon } from "@/components/search/SearchShared";
+
+const DESKTOP_QUERY = "(min-width: 1024px)";
 
 export default function HeaderSearch() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
-  const isDetailPage =
-    pathname.startsWith("/movies/") ||
-    pathname.startsWith("/series/") ||
-    pathname.startsWith("/people/");
+  const desktopRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setIsOpen(false);
   }, [pathname]);
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      const isShortcut =
+        (event.metaKey || event.ctrlKey) &&
+        !event.altKey &&
+        !event.shiftKey &&
+        event.key.toLowerCase() === "k";
+
+      if (!isShortcut) {
+        return;
+      }
+
+      event.preventDefault();
+
+      if (window.matchMedia(DESKTOP_QUERY).matches) {
+        const input = desktopRef.current?.querySelector("input");
+        input?.focus();
+        input?.select();
+        return;
+      }
+
+      setIsOpen(true);
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
 
   useEffect(() => {
     if (!isOpen) {
@@ -24,94 +54,60 @@ export default function HeaderSearch() {
     const originalOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
 
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener("keydown", handleEscape);
+
     return () => {
       document.body.style.overflow = originalOverflow;
+      document.removeEventListener("keydown", handleEscape);
     };
   }, [isOpen]);
 
-  if (!isDetailPage) {
-    return null;
-  }
-
   return (
     <>
-      <div className="hidden min-w-0 flex-1 xl:block">
-        <div className="mx-auto w-full max-w-md">
-          <CatalogSearch
-            compact
-            placeholder="Search titles, people, and more"
-            limit={5}
-          />
-        </div>
+      <div ref={desktopRef} className="hidden w-52 lg:block xl:w-[18.75rem]">
+        <CatalogSearch
+          variant="pill"
+          placeholder="Search"
+          limit={5}
+          showShortcutHint
+        />
       </div>
-      <div className="md:hidden">
-        <button
-          type="button"
-          onClick={() => setIsOpen(true)}
-          aria-label="Open catalog search"
-          className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-white/6 text-zinc-100 shadow-lg shadow-black/25 hover:border-white/20 hover:bg-white/10"
-        >
-          <svg
-            className="h-5 w-5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={1.8}
-              d="m21 21-4.35-4.35m1.85-5.15a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"
-            />
-          </svg>
-        </button>
-      </div>
+
+      <button
+        type="button"
+        onClick={() => setIsOpen((open) => !open)}
+        aria-expanded={isOpen}
+        aria-label={isOpen ? "Close search" : "Open search"}
+        className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-white/6 text-zinc-100 shadow-lg shadow-black/25 hover:border-white/20 hover:bg-white/10 md:h-10 md:w-10 md:rounded-full lg:hidden"
+      >
+        <SearchIcon className="h-5 w-5" />
+      </button>
 
       {isOpen ? (
-        <div className="fixed inset-0 z-[250] md:hidden">
+        <div className="lg:hidden">
           <button
             type="button"
-            aria-label="Close catalog search"
+            aria-label="Close search"
             onClick={() => setIsOpen(false)}
-            className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+            className="absolute inset-x-0 top-full z-[240] h-[calc(100dvh-4.75rem)] bg-black/70 backdrop-blur-sm"
           />
 
-          <div className="absolute inset-x-4 top-20 rounded-[1.75rem] border border-white/10 bg-[linear-gradient(180deg,rgba(20,26,37,0.98),rgba(10,14,22,0.98))] p-4 shadow-2xl shadow-black/50">
-            <div className="mb-4 flex items-center justify-between border-b border-white/8 pb-4">
-              <div>
-                <p className="text-[0.68rem] uppercase tracking-[0.3em] text-zinc-500">
-                  Search
-                </p>
-                <p className="mt-1 text-lg font-semibold text-white">
-                  Search the catalog
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => setIsOpen(false)}
-                aria-label="Close search"
-                className="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-white/10 bg-white/6 text-zinc-200 hover:border-white/20 hover:bg-white/10"
-              >
-                <svg
-                  className="h-5 w-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={1.8}
-                    d="M6 18 18 6M6 6l12 12"
-                  />
-                </svg>
-              </button>
+          <div className="absolute inset-x-0 top-full z-[250] border-b border-white/8 bg-black/80 pb-4 pt-3 backdrop-blur-xl">
+            <div className="page-frame">
+              <CatalogSearch
+                variant="pill"
+                placeholder="Search"
+                limit={5}
+                fullWidthPanel
+                autoFocus
+              />
             </div>
-
-            <CatalogSearch
-              placeholder="Search titles, people, and more"
-              limit={5}
-            />
           </div>
         </div>
       ) : null}
