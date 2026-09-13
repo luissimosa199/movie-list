@@ -1,5 +1,4 @@
 import { getLatestWatchedProfileFeed } from "@/api/db";
-import DiscoverySearchSection from "@/components/DiscoverySearchSection";
 import ProfileFeed from "@/components/ProfileFeed";
 import { requireUser } from "@/lib/auth-session";
 import { ProfileFeedItem } from "@/types";
@@ -56,12 +55,6 @@ export default async function LatestWatchedPage() {
           Latest watched
         </h1>
 
-        <DiscoverySearchSection
-          className="mb-10"
-          eyebrow="Lookup"
-          title="Search while reviewing watches."
-          description="Jump to a title without losing place."
-        />
 
         <ProfileFeed
           items={items}

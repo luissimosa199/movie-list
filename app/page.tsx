@@ -9,7 +9,6 @@ import {
   getMoviesWatchedThisYearCount,
 } from "@/api/db";
 import { requireUser } from "@/lib/auth-session";
-import DiscoverySearchSection from "@/components/DiscoverySearchSection";
 
 export default async function Home() {
   const user = await requireUser("/");
@@ -34,12 +33,6 @@ export default async function Home() {
           <h1 className="text-3xl md:text-4xl font-bold mb-6 tracking-tight">
             Home
           </h1>
-          <DiscoverySearchSection
-            className="mb-8"
-            eyebrow="Discovery Access"
-            title="Search the catalog."
-            description="Search above, then check stats."
-          />
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-6">
               <div className="text-zinc-400 text-sm">Total watched</div>

@@ -1,4 +1,3 @@
-import DiscoverySearchSection from "@/components/DiscoverySearchSection";
 
 const pillars = [
   {
@@ -110,11 +109,6 @@ export default function AboutPage() {
           </div>
         </section>
 
-        <DiscoverySearchSection
-          eyebrow="Catalog Access"
-          title="Jump into the catalog from here."
-          description="Search here, then return."
-        />
 
         <section className="grid gap-4 md:gap-5 lg:grid-cols-3">
           {pillars.map((pillar) => (

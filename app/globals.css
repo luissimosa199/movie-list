@@ -83,6 +83,11 @@ button {
   outline-offset: 2px;
 }
 
+/* Search fields show focus on their frame instead of the bare input. */
+input[role="combobox"]:focus-visible {
+  outline: none;
+}
+
 main {
   position: relative;
 }

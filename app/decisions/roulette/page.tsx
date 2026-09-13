@@ -13,7 +13,6 @@ import RouletteControls from "@/components/decisions/RouletteControls";
 import WinnerDisplay from "@/components/decisions/WinnerDisplay";
 import DecisionBreadcrumbs from "@/components/decisions/DecisionBreadcrumbs";
 import DecisionHero from "@/components/decisions/DecisionHero";
-import DiscoverySearchSection from "@/components/DiscoverySearchSection";
 
 interface RouletteHistory {
   winner: TMDBMovie;
@@ -171,11 +170,6 @@ const RouletteGamePage = () => {
           </div>
         </DecisionHero>
 
-        <DiscoverySearchSection
-          eyebrow="Wheel prep"
-          title="Add contenders first."
-          description="Search first, then add titles."
-        />
 
         <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
           <div className="xl:col-span-1">

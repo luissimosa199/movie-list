@@ -1,5 +1,4 @@
 import { getRecentlyAddedProfileFeed } from "@/api/db";
-import DiscoverySearchSection from "@/components/DiscoverySearchSection";
 import ProfileFeed from "@/components/ProfileFeed";
 import { requireUser } from "@/lib/auth-session";
 import { ProfileFeedItem } from "@/types";
@@ -50,12 +49,6 @@ export default async function RecentlyAddedPage() {
           Recently added
         </h1>
 
-        <DiscoverySearchSection
-          className="mb-10"
-          eyebrow="Lookup"
-          title="Search while reviewing additions."
-          description="Jump to another title without losing place."
-        />
 
         <ProfileFeed
           items={items}

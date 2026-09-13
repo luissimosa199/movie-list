@@ -2,7 +2,6 @@ import React from "react";
 import Link from "next/link";
 import DecisionBreadcrumbs from "@/components/decisions/DecisionBreadcrumbs";
 import DecisionHero from "@/components/decisions/DecisionHero";
-import DiscoverySearchSection from "@/components/DiscoverySearchSection";
 
 const gameCards = [
   {
@@ -89,11 +88,6 @@ export default function DecisionsPage() {
           </div>
         </DecisionHero>
 
-        <DiscoverySearchSection
-          eyebrow="Decision Prep"
-          title="Search first."
-          description="Jump to a title before you start."
-        />
 
         <section className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           {gameCards.map((card) => (

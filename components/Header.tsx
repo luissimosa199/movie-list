@@ -34,15 +34,17 @@ export default async function Header() {
             </div>
           </div>
 
-          <HeaderSearch />
+          <div className="flex min-w-0 flex-1 items-center justify-end gap-3">
+            <HeaderSearch />
 
-          <div className="hidden items-center gap-3 md:flex">
-            <AuthButtons isSignedIn={isSignedIn} />
-            <ViewToggle />
-          </div>
+            <div className="hidden items-center gap-3 md:flex">
+              <AuthButtons isSignedIn={isSignedIn} />
+              <ViewToggle />
+            </div>
 
-          <div className="flex items-center gap-2 md:hidden">
-            <MobileMenu isSignedIn={isSignedIn} />
+            <div className="flex items-center md:hidden">
+              <MobileMenu isSignedIn={isSignedIn} />
+            </div>
           </div>
         </nav>
       </div>
