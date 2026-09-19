@@ -8,14 +8,6 @@ function formatHours(minutes: number): string {
   return `${Number.isInteger(hours) ? hours : hours.toFixed(1)}h`;
 }
 
-function intensityFor(count: number): number {
-  if (count >= 5) return 4;
-  if (count >= 3) return 3;
-  if (count >= 2) return 2;
-  if (count >= 1) return 1;
-  return 0;
-}
-
 function slugify(value: string): string {
   return value
     .toLowerCase()
@@ -67,7 +59,6 @@ export default async function ProfileStatsPage() {
     );
   }
 
-  const heatmapPadding = new Date(`${stats.activityDays[0].date}T00:00:00.000Z`).getUTCDay();
   const maxMonthlyCount = Math.max(...stats.monthlyActivity.map((month) => month.count), 1);
   const hasTaste =
     stats.topGenres.length > 0 || stats.rewatches.length > 0 || stats.ratings.length > 0;
@@ -126,48 +117,6 @@ export default async function ProfileStatsPage() {
                 <span className="truncate text-center text-[10px] font-medium text-zinc-500 sm:text-xs">{month.label}</span>
               </div>
             ))}
-          </div>
-        </section>
-
-        <section data-testid="stats-activity-grid" className="mt-6 overflow-hidden rounded-3xl border border-white/10 bg-zinc-950 p-5 sm:p-7">
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-baseline sm:justify-between">
-            <div>
-              <h2 className="text-xl font-semibold">Daily activity</h2>
-              <p className="mt-1 text-sm text-zinc-400">A trailing year of movie watches, aligned Sunday through Saturday.</p>
-            </div>
-            <div data-testid="stats-intensity-legend" className="flex items-center gap-1.5 text-xs text-zinc-500" aria-label="Activity intensity legend">
-              <span>Less</span>
-              {[0, 1, 2, 3, 4].map((level) => <span key={level} data-intensity={level} className="h-3 w-3 rounded-sm bg-primary" style={{ opacity: level === 0 ? 0.12 : level * 0.23 + 0.08 }} />)}
-              <span>More</span>
-            </div>
-          </div>
-          <div className="mt-6 max-w-full overflow-x-auto pb-2">
-            <div className="grid min-w-[700px] grid-cols-7 gap-1.5" role="grid" aria-label="Movie watches by day">
-              {Array.from({ length: heatmapPadding }, (_, index) => <span key={`blank-${index}`} aria-hidden="true" />)}
-              {stats.activityDays.map((day) => {
-                const intensity = intensityFor(day.count);
-                return (
-                  <span
-                    key={day.date}
-                    data-testid={`stats-day-${day.date}`}
-                    data-count={day.count}
-                    data-intensity={intensity}
-                  >
-                    <span
-                      role="gridcell"
-                      tabIndex={0}
-                      data-testid={day.count > 0 ? `stats-day-count-${day.count}` : undefined}
-                      data-count={day.count}
-                      data-intensity={intensity}
-                      aria-label={`${day.date}: ${day.count} ${day.count === 1 ? "movie watch" : "movie watches"}`}
-                      title={`${day.date}: ${day.count} watches`}
-                      className="block aspect-square rounded-sm bg-primary outline-none ring-primary/80 focus:ring-2"
-                      style={{ opacity: intensity === 0 ? 0.12 : intensity * 0.23 + 0.08 }}
-                    />
-                  </span>
-                );
-              })}
-            </div>
           </div>
         </section>
 
