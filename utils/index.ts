@@ -36,11 +36,12 @@ export const getFormattedDate = (
   const parsedDate =
     source === "db" ? new Date(date as Date) : new Date(date as string);
 
-  // Use consistent date format to avoid hydration mismatches
+  // Pin timeZone so server (UTC) and client (local) render the same date
   return parsedDate.toLocaleDateString('en-US', {
     year: 'numeric',
     month: '2-digit',
-    day: '2-digit'
+    day: '2-digit',
+    timeZone: 'UTC'
   });
 };
 
@@ -54,11 +55,12 @@ export const getFormattedAirDate = (
   const parsedDate =
     source === "db" ? new Date(date as Date) : new Date(date as string);
 
-  // Use consistent date format to avoid hydration mismatches
+  // Pin timeZone so server (UTC) and client (local) render the same date
   return parsedDate.toLocaleDateString('en-US', {
     year: 'numeric',
     month: '2-digit',
-    day: '2-digit'
+    day: '2-digit',
+    timeZone: 'UTC'
   });
 };
 
